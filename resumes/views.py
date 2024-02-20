@@ -29,11 +29,9 @@ def index(request):
 def details(request, resume_id):
     comment_form = UploadCommentForm()
     rating_form = RatingForm()
-    print(request.method)
-    print(request.META.get('HTTP_X_REQUESTED_WITH'))
+
+    print(request.POST)
     if request.method == 'POST' and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-        print(request)
-        print(request.POST)
         if request.POST['form_type'] == 'comment_form':
             comment_form = UploadCommentForm(request.POST)
 
@@ -44,7 +42,8 @@ def details(request, resume_id):
                 comment.save()
 
                 return JsonResponse({"comment": comment.text}, status=200)
-        elif 'rating_form' in request.POST:
+        elif request.POST['form_type'] == 'rating_form':
+            print("rating form")
             rating_form = RatingForm(request.POST)
 
             if rating_form.is_valid():

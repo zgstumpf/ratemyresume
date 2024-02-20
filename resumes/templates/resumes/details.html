@@ -37,6 +37,7 @@
 <form id="ratingForm" method="post" action="{% url 'details' resume_id=resume.id %}" data-resume-id="{{ resume.id }}" enctype="multipart/form-data">
     {% csrf_token %}
     {{ rating_form.as_p }}
+    <input type="hidden" name="form_type" value="rating_form">
     <button type="submit" name="rating_form">Submit</button>
 </form>
 
