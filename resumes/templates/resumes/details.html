@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block pageSpecificStaticFiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'resumes/details.css' %}">
+    <script src="{% static 'resumes/details.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <p>{{ resume.name }}</p>
+    <p>{{ resume.description }}</p>
+    <p>Uploaded {{ resume.created_at}}</p>
+    <p>Last Updated {{ resume.updated_at}}</p>
+
+    <a href="{{ resume.file.url }}" target="_blank">Download</a>
+
+{% if resume.file.name|slice:"-3:" == "pdf" %}
+    <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open PDF in browser</a>
+    <embed src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="60%" height="600px">
+{% endif %}
+
+{% for comment in comments %}
+<p>{{ comment.text }}</p>
+{% endfor %}
+
+{% for rating in ratings %}
+<p>{{ rating.value }}</p>
+{% endfor %}
+
+<form method="post" action="{% url 'details' resume_id=resume.id %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit" name="comment_form">Submit</button>
+</form>
+
+<form method="post" action="{% url 'details' resume_id=resume.id %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ rating_form.as_p }}
+    <button type="submit" name="rating_form">Submit</button>
+</form>
+
+{% endblock %}
