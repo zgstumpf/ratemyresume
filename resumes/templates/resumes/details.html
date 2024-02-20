@@ -27,13 +27,14 @@
 <p>{{ rating.value }}</p>
 {% endfor %}
 
-<form method="post" action="{% url 'details' resume_id=resume.id %}" enctype="multipart/form-data">
+<form id="commentForm" method="post" action="{% url 'details' resume_id=resume.id %}" data-resume-id="{{ resume.id }}" enctype="multipart/form-data">
     {% csrf_token %}
     {{ comment_form.as_p }}
+    <input type="hidden" name="form_type" value="comment_form">
     <button type="submit" name="comment_form">Submit</button>
 </form>
 
-<form method="post" action="{% url 'details' resume_id=resume.id %}" enctype="multipart/form-data">
+<form id="ratingForm" method="post" action="{% url 'details' resume_id=resume.id %}" data-resume-id="{{ resume.id }}" enctype="multipart/form-data">
     {% csrf_token %}
     {{ rating_form.as_p }}
     <button type="submit" name="rating_form">Submit</button>

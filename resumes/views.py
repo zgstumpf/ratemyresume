@@ -1,7 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.core import serializers
-from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from pdf2image import convert_from_path
 
@@ -28,8 +27,14 @@ def index(request):
     return render(request, "resumes/index.html", context = {"resumes": resumes})
 
 def details(request, resume_id):
-    if request.method == 'POST':
-        if 'comment_form' in request.POST:
+    comment_form = UploadCommentForm()
+    rating_form = RatingForm()
+    print(request.method)
+    print(request.META.get('HTTP_X_REQUESTED_WITH'))
+    if request.method == 'POST' and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        print(request)
+        print(request.POST)
+        if request.POST['form_type'] == 'comment_form':
             comment_form = UploadCommentForm(request.POST)
 
             if comment_form.is_valid():
@@ -38,7 +43,7 @@ def details(request, resume_id):
                 comment.resume_id = resume_id
                 comment.save()
 
-                return HttpResponseRedirect(request.path_info)
+                return JsonResponse({"comment": comment.text}, status=200)
         elif 'rating_form' in request.POST:
             rating_form = RatingForm(request.POST)
 
@@ -48,24 +53,22 @@ def details(request, resume_id):
                 rating.resume_id = resume_id
                 rating.save()
 
-                return HttpResponseRedirect(request.path_info)
-    else:
-        comment_form = UploadCommentForm()
-        rating_form = RatingForm()
+                return JsonResponse({"rating": rating.value}, status=200)
 
     try:
         resume = Resume.objects.get(pk=resume_id)
-        pdf_path = resume.file.path
-
-        with open(pdf_path, 'rb') as pdf_file:
-            pdf_content = base64.b64encode(pdf_file.read()).decode()
-
-        # '-' before field name makes order_by do descending
-        comments = Comment.objects.filter(resume_id=resume_id).order_by('-created_at')
-        ratings = Rating.objects.filter(resume_id=resume_id).order_by('-created_at')
-
     except Resume.DoesNotExist:
         raise Http404("Resume does not exist")
+
+    pdf_path = resume.file.path
+
+    with open(pdf_path, 'rb') as pdf_file:
+        pdf_content = base64.b64encode(pdf_file.read()).decode()
+
+    # '-' before field name makes order_by do descending
+    comments = Comment.objects.filter(resume_id=resume_id).order_by('-created_at')
+    ratings = Rating.objects.filter(resume_id=resume_id).order_by('-created_at')
+
     return render(request, "resumes/details.html", {"resume": resume, "pdf": pdf_content, "comment_form": comment_form, "rating_form": rating_form, "comments": comments, "ratings": ratings})
 
 def view_pdf(request, resume_id):
