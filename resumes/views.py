@@ -27,23 +27,47 @@ def index(request):
     return render(request, "resumes/index.html", context = {"resumes": resumes})
 
 def details(request, resume_id):
+    # request may be sent to this view in multiple ways
+    # 1. User searches URL details/<int:resume_id>/
+    #    (example) request: <WSGIRequest: GET '/details/1/'>
+    # 2. commentForm or ratingForm are submitted, triggering corresponding functions
+    #    in details.js. These functions send AJAX POST requests to the view
+    #    (example) request: <WSGIRequest: POST '/details/1/'>
+    # request is type: <class 'django.core.handlers.wsgi.WSGIRequest'>
+    # You can use dir(request) to print all properties/methods of this class
+
+    # Initialize empty comment and rating forms
     comment_form = UploadCommentForm()
     rating_form = RatingForm()
 
-    print(request.POST)
-    if request.method == 'POST' and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+    # If request originates from searching URL, request.method == 'GET'
+    # If request originates from form submission, request.method == 'POST'
+    if request.method == 'POST':
+        # 'form_type' is a hidden input field added to the comment form with a preset value of 'comment_form'
+        # When the form is submitted, 'form-type' and its value will be submitted with it in the request
+        # Because the details view has multiple forms, this hidden input field is used to identify the forms
         if request.POST['form_type'] == 'comment_form':
+            # Django takes care of extracting required info from request
             comment_form = UploadCommentForm(request.POST)
 
+            # Django does validation and sanitizes data
             if comment_form.is_valid():
+                # Save the form data to a comment object, but do not upload to database yet
                 comment = comment_form.save(commit=False)
+
+                # Add user_id (from request info) and resume_id (from URL) to comment object
                 comment.user_id = request.user.id
                 comment.resume_id = resume_id
+
+                # Upload comment to database
                 comment.save()
 
+                # If we called render, every time the user makes a comment or rating, the page would refresh,
+                # which would take time to load and cause a visual effect that would be annoying after a while
+                # Instead, return JSON data to the JavaScript AJAX function.
+                # Then, we can use JavaScript to update parts of the page without refreshing the whole page.
                 return JsonResponse({"comment": comment.text}, status=200)
         elif request.POST['form_type'] == 'rating_form':
-            print("rating form")
             rating_form = RatingForm(request.POST)
 
             if rating_form.is_valid():
@@ -60,7 +84,6 @@ def details(request, resume_id):
         raise Http404("Resume does not exist")
 
     pdf_path = resume.file.path
-
     with open(pdf_path, 'rb') as pdf_file:
         pdf_content = base64.b64encode(pdf_file.read()).decode()
 
