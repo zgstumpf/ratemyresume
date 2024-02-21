@@ -75,7 +75,9 @@ document.addEventListener("DOMContentLoaded", () => {
       function createPageButtons() {
         const totalPages = Math.ceil(items.length / itemsPerPage);
         const paginationContainer = $('<div class="pagination"></div>');
-        commentSection.after(paginationContainer);
+        const paginationButtonsGroup = $('<div class="page-buttons-group"></div>');
+        paginationContainer.append(paginationButtonsGroup);
+        paginationContainer.appendTo(commentSection);
 
         // Add page buttons
         for (let i = 0; i < totalPages; i++) {
@@ -86,7 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateActiveButtonStates();
             });
 
-            paginationContainer.append(pageButton);
+            //paginationContainer.append(pageButton);
+            paginationButtonsGroup.append(pageButton);
         }
       }
 
