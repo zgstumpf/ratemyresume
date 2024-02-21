@@ -7,28 +7,34 @@
 {% endblock %}
 
 {% block content %}
-    <p>{{ resume.name }}</p>
-    <p>{{ resume.description }}</p>
-    <p>Uploaded {{ resume.created_at}}</p>
-    <p>Last Updated {{ resume.updated_at}}</p>
-
-    <a href="{{ resume.file.url }}" target="_blank">Download</a>
+    <div id="resume-header-info">
+        <p>{{ resume.user }}</p>
+        <p>{{ resume.name }}</p>
+        <p>{{ resume.description }}</p>
+        <p>Uploaded {{ resume.created_at}}</p>
+        <p>Last Updated {{ resume.updated_at}}</p>
+    </div>
+    <div id="viewing-options">
+        <a href="{{ resume.file.url }}" target="_blank">Download</a>
 
 {% if resume.file.name|slice:"-3:" == "pdf" %}
-    <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open PDF in browser</a>
-    <embed src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="60%" height="600px">
+        <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open PDF in new tab</a>
+    </div>
+    <div id="resume-plus-comments" class="row">
+        <embed id="embedded_pdf" class="col" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf">
 {% endif %}
 
-<div id="comment-section">
+        <div id="comment-section" class="col">
 {% for comment in comments %}
-    <div class="card">
-        <div class="card-body">
-        <h6 class="card-subtitle mb-2 text-muted">{{ comment.user }}</h6>
-        <p class="card-text">{{ comment.text }}</p>
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">{{ comment.user }}</h6>
+                     <p class="card-text">{{ comment.text }}</p>
+                </div>
+            </div>
+{% endfor %}
         </div>
     </div>
-{% endfor %}
-</div>
 
 {% for rating in ratings %}
 <p>{{ rating.value }}</p>

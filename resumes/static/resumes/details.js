@@ -70,9 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
             $(item).toggleClass('hidden', index < startIndex || index >= endIndex);
         });
         updateActiveButtonStates();
-      }
+    }
 
-      function createPageButtons() {
+    function createPageButtons() {
         const totalPages = Math.ceil(items.length / itemsPerPage);
         const paginationContainer = $('<div class="pagination"></div>');
         const paginationButtonsGroup = $('<div class="page-buttons-group"></div>');
@@ -88,25 +88,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateActiveButtonStates();
             });
 
-            //paginationContainer.append(pageButton);
             paginationButtonsGroup.append(pageButton);
         }
-      }
+    }
 
-      function updateActiveButtonStates() {
+    function updateActiveButtonStates() {
         const pageButtons = document.querySelectorAll('.pagination button');
         pageButtons.forEach((button, index) => {
-          if (index === currentPage) {
+            if (index === currentPage) {
             button.classList.add('active');
-          } else {
+            } else {
             button.classList.remove('active');
-          }
+            }
         });
-      }
+    }
 
     createPageButtons(); // Call this function to create the page buttons initially
     showPage(currentPage);
-
+    // End code for comment section
 
 });
 // Any JS code after this point will execute before HTML finishes loading
