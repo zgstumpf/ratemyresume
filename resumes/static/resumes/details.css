@@ -11,13 +11,9 @@
     width: 100%
 }
 
-
 #embedded_pdf {
     width:100%;
-}
-
-#resume_plus_comments {
-
+    height:100%
 }
 
 .card {
@@ -26,6 +22,7 @@
     margin-right: auto;
     align-content: center;
 }
+
 .comment-section {
     display: grid;
     gap: 20px;

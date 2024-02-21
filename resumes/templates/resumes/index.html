@@ -14,14 +14,16 @@
     <div class="row">
 {% endif %}
         <div class="col-md-4">
+            <a href="{% url 'details' resume_id=resume.id %}">
             <div class="card">
                 <div class="card-body">
                     <img class="card-img-top" src="{{ resume.image_data }}" alt="First page of resume" width="auto" height="auto">
                     <h5 class="card-title">{{ resume.name }}</h5>
                     <p class="card-text">{{ resume.description }}</p>
-                    <a href="{% url 'details' resume_id=resume.id %}" class="btn btn-primary">View Details</a>
+                    {% comment %} <a href="{% url 'details' resume_id=resume.id %}" class="btn btn-primary">View Details</a> {% endcomment %}
                 </div>
             </div>
+            </a>
         </div>
 {% if forloop.last or forloop.counter0|add:1|divisibleby:4 %}
     </div>

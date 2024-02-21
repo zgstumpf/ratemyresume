@@ -1,0 +1,7 @@
+/* Don't show underlines when hovering over resume cards on home screen */
+.a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: none;
+  }
