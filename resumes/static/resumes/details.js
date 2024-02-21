@@ -57,6 +57,53 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Code for comment section
+    const commentSection = $('#comment-section');
+    const itemsPerPage = 6; // set number of items per page
+    let currentPage = 0;
+    const items = commentSection.find('.card');
+
+    function showPage(page) {
+        const startIndex = page * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        items.each((index, item) => {
+            $(item).toggleClass('hidden', index < startIndex || index >= endIndex);
+        });
+        updateActiveButtonStates();
+      }
+
+      function createPageButtons() {
+        const totalPages = Math.ceil(items.length / itemsPerPage);
+        const paginationContainer = $('<div class="pagination"></div>');
+        commentSection.after(paginationContainer);
+
+        // Add page buttons
+        for (let i = 0; i < totalPages; i++) {
+            const pageButton = $('<button class="pagination">' + (i + 1) + '</button>');
+            pageButton.on('click', function () {
+                currentPage = i;
+                showPage(currentPage);
+                updateActiveButtonStates();
+            });
+
+            paginationContainer.append(pageButton);
+        }
+      }
+
+      function updateActiveButtonStates() {
+        const pageButtons = document.querySelectorAll('.pagination button');
+        pageButtons.forEach((button, index) => {
+          if (index === currentPage) {
+            button.classList.add('active');
+          } else {
+            button.classList.remove('active');
+          }
+        });
+      }
+
+    createPageButtons(); // Call this function to create the page buttons initially
+    showPage(currentPage);
+
 
 });
 // Any JS code after this point will execute before HTML finishes loading

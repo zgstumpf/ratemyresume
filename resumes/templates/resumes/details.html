@@ -19,9 +19,16 @@
     <embed src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="60%" height="600px">
 {% endif %}
 
+<div id="comment-section">
 {% for comment in comments %}
-<p>{{ comment.text }}</p>
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted">{{ comment.user }}</h6>
+        <p class="card-text">{{ comment.text }}</p>
+        </div>
+    </div>
 {% endfor %}
+</div>
 
 {% for rating in ratings %}
 <p>{{ rating.value }}</p>
@@ -55,7 +62,7 @@ as defined in resumes/urls.py, which is resumes/views.py -> details()
 
     {% csrf_token %}
     {{ rating_form.as_p }}
-    
+
     <input type="hidden" name="form_type" value="rating_form">
     <button type="submit">Submit</button>
 </form>
