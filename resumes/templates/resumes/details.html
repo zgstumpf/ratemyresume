@@ -14,52 +14,58 @@
         <p>Uploaded {{ resume.created_at}}</p>
         <p>Last Updated {{ resume.updated_at}}</p>
     </div>
-    <div id="viewing-options">
-        <a href="{{ resume.file.url }}" target="_blank">Download</a>
+    <a href="{{ resume.file.url }}" target="_blank">Download</a>
+    <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open PDF in new tab</a>
 
-{% if resume.file.name|slice:"-3:" == "pdf" %}
-        <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open PDF in new tab</a>
-    </div>
-    <div id="resume-plus-comments" class="row">
-        <embed id="embedded_pdf" class="col" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf">
-{% endif %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8">
+                    <embed id="embedded_pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="800" height="1000">
+                </div>
+                <div class="col-md-4">
+                    <!--
+                    When this form is submitted, a POST request is made to the URL specified in the action attribute
+                    Example: When resume.id == 1, action="details/1/"
+                    This POST request is sent to that URL. The URL forwards the information to the corresponding view
+                    as defined in resumes/urls.py, which is resumes/views.py -> details()
+                    -->
+                    <div id="typeCommentArea">
+                    <form id="commentForm"
+                        method="post"
+                        action="{% url 'details' resume_id=resume.id %}"
+                        enctype="multipart/form-data">
 
-        <div id="comment-section" class="col">
-{% for comment in comments %}
+                        {% csrf_token %}
+                        {{ comment_form.as_p }}
+
+                        <!-- Since there are multiple forms on this page, this hidden input field is used to identify the form
+                        once the form information is sent to the backend. -->
+                        <input type="hidden" name="form_type" value="comment_form">
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+                {% for comment in comments %}
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">{{ comment.user }}</h6>
-                     <p class="card-text">{{ comment.text }}</p>
+                    <p class="card-text">{{ comment.text }}</p>
                 </div>
             </div>
 {% endfor %}
-        </div>
-    </div>
+
+
 
 {% for rating in ratings %}
 <p>{{ rating.value }}</p>
 {% endfor %}
 
 
-<!--
-When this form is submitted, a POST request is made to the URL specified in the action attribute
-Example: When resume.id == 1, action="details/1/"
-This POST request is sent to that URL. The URL forwards the information to the corresponding view
-as defined in resumes/urls.py, which is resumes/views.py -> details()
--->
-<form id="commentForm"
-    method="post"
-    action="{% url 'details' resume_id=resume.id %}"
-    enctype="multipart/form-data">
 
-    {% csrf_token %}
-    {{ comment_form.as_p }}
-
-    <!-- Since there are multiple forms on this page, this hidden input field is used to identify the form
-    once the form information is sent to the backend. -->
-    <input type="hidden" name="form_type" value="comment_form">
-    <button type="submit">Submit</button>
-</form>
 
 <!-- See https://codepen.io/vsync/pen/mdEJMLv for a good slider design -->
 <form id="ratingForm"
