@@ -5,3 +5,11 @@
 a:hover {
     text-decoration: none;
   }
+
+.zoom-box {
+    transition: transform .2s
+}
+
+.zoom-box:hover {
+    transform: scale(1.05);
+  }

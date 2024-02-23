@@ -103,9 +103,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Later, you can change this to profile page
+LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URL = '/'
 
-LOGIN_URL = '/account/login/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

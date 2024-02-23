@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ratemyresume</title>
+    <title>ratemyresume</title>
 
     <!-- External sources  -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -29,10 +29,13 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Home</a>
             </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'user' request.user.id %}">My Resumes</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'upload' %}">Upload</a>
             </li>
-            {% if user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'logout' %}">Log out</a>
             </li>

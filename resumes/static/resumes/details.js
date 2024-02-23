@@ -33,7 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Example: {comment: 'nice'}
                 // Insert data from response into HTML so user sees their data on the page
                 // without need for refresh
-                console.log(response)
+                comment = response.comment
+                $("#scrollable-comments").prepend(`
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="comment-user-header card-subtitle mb-2 text-muted">${comment.user}</p>
+                            <p class="comment-user-header">${comment.created_at}</p>
+                            <p class="card-text">${comment.text}</p>
+                        </div>
+                    </div>
+                `)
             },
             error: function (response) {
                 console.error("Error happened in ajax")
@@ -41,21 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    $('#ratingForm').submit(function (event) {
-        event.preventDefault();
-        var actionUrl = $(this).attr('action');
-        $.ajax({
-            data: $(this).serialize(),
-            type: 'POST',
-            url: actionUrl,
-            success: function (response) {
-                console.log(response)
-            },
-            error: function (response) {
-                console.error("Error happened in ajax")
-            }
-        });
-    });
 
     // Code for comment section
     const commentSection = $('#comment-section');
@@ -106,6 +100,52 @@ document.addEventListener("DOMContentLoaded", () => {
     createPageButtons(); // Call this function to create the page buttons initially
     showPage(currentPage);
     // End code for comment section
+
+
+
+    $('#ratingForm').submit(function (event) {
+        event.preventDefault();
+        var actionUrl = $(this).attr('action');
+        $.ajax({
+            data: $(this).serialize(),
+            type: 'POST',
+            url: actionUrl,
+            success: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.error(response.responseJSON.error)
+            }
+        });
+    });
+
+
+    $(".rating-option").click(function(event) {
+        // Get content, which is 0-10, of the specific rating option clicked.
+        var value = $(this).text();
+        $("#rating_form_value").val(value);
+        $('#ratingForm').submit()
+
+    })
+
+    var avgRating = $('#avgRatingForJS').text();
+    var userRatingCreatedAt = $('#userRatingDateForJS').text()
+
+    var userRating = $('#userRatingForJS').text();
+
+    if (userRating) {
+        // If userRating exists, make the corresponding rating-option look like its always hovered on.
+        $(`.rating-option:contains(${userRating})`).css({
+            // Taken directly from details.css
+            'background-color': '#007bff',
+            'color': 'white',
+            'cursor': 'pointer',
+            'transform': 'scale(1.25)'
+        })
+        // Also, change the text under the rating scale.
+        $('#rating-description').text(`You rated this resume on ${userRatingCreatedAt}`)
+    }
+
 
 });
 // Any JS code after this point will execute before HTML finishes loading

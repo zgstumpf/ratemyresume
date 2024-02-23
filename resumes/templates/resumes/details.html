@@ -7,22 +7,37 @@
 {% endblock %}
 
 {% block content %}
+    {% comment %} These divs are used to store context variables so JavaScript can access them. {% endcomment %}
+    <div id="avgRatingForJS" style="display: none;">{{ avgRating }}</div>
+    <div id="userRatingForJS" style="display: none;">{{ userRating.value }}</div>
+    <div id="userRatingDateForJS" style="display: none;">{{ userRating.created_at }}</div>
+
     <div id="resume-header-info">
-        <p>{{ resume.user }}</p>
         <p>{{ resume.name }}</p>
-        <p>{{ resume.description }}</p>
         <p>Uploaded {{ resume.created_at}}</p>
-        <p>Last Updated {{ resume.updated_at}}</p>
     </div>
-    <a href="{{ resume.file.url }}" target="_blank">Download</a>
-    <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open PDF in new tab</a>
 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-8">
+                    <div id="viewing-options">
+                        <a href="{{ resume.file.url }}" target="_blank">Download</a>
+                        <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a>
+                    </div>
                     <embed id="embedded_pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="800" height="1000">
                 </div>
                 <div class="col-md-4">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <p id="comment-user-name" class="comment-user-header">{{ resume.user }}</p>
+                            <p id="owner-designation" class="comment-user-header">RESUME OWNER</p>
+                            <p class="card-text">{{ resume.description }}</p>
+                        </div>
+                    </div>
+
+                    <div id="owner-comment-separator"></div>
+
                     <!--
                     When this form is submitted, a POST request is made to the URL specified in the action attribute
                     Example: When resume.id == 1, action="details/1/"
@@ -43,20 +58,66 @@
                         <input type="hidden" name="form_type" value="comment_form">
                         <button type="submit">Submit</button>
                     </form>
+
+                    <p class="section-title">Comments</p>
+                    <div id="scrollable-comments">
+                        {% for comment in comments %}
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="comment-user-header card-subtitle mb-2 text-muted">{{ comment.user }}</p>
+                                <p class="comment-user-header">{{ comment.created_at }}</p>
+
+                                <p class="card-text">{{ comment.text }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Used as a general separator -->
+                    <div id="owner-comment-separator"></div>
+
+                    <div id="rating-section">
+                        <p class="section-title">Rate</p>
+
+                        <div id="rating-scale">
+                            <div class="rating-label">Poor</div>
+                            <div class="rating-option">0</div>
+                            <div class="rating-option">1</div>
+                            <div class="rating-option">2</div>
+                            <div class="rating-option">3</div>
+                            <div class="rating-option">4</div>
+                            <div class="rating-option">5</div>
+                            <div class="rating-option">6</div>
+                            <div class="rating-option">7</div>
+                            <div class="rating-option">8</div>
+                            <div class="rating-option">9</div>
+                            <div class="rating-option">10</div>
+                            <div class="rating-label">Excellent</div>
+                        </div>
+
+                        <p id="rating-description">Rate the resume relative to resumes of individuals with a similar education level and years of career experience.</p>
+
+                    </div>
+
+
+                    {% comment %}This form has display: none, so it is invisible and does not affect any elements on the DOM.
+                    When a rating option is clicked, the value from the option is inserted into this form and the form is
+                    submitted automatically.{% endcomment %}
+                    <form id="ratingForm"
+                        method="post"
+                        action="{% url 'details' resume_id=resume.id %}"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label for="rating_form_value">Rating:</label>
+                        <input id="rating_form_value" type="number" name="value" required>
+
+                        <input type="hidden" name="form_type" value="rating_form">
+                        <button type="submit">Submit</button>
+                    </form>
                 </div>
                 </div>
             </div>
         </div>
-
-
-                {% for comment in comments %}
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">{{ comment.user }}</h6>
-                    <p class="card-text">{{ comment.text }}</p>
-                </div>
-            </div>
-{% endfor %}
 
 
 
@@ -64,20 +125,5 @@
 <p>{{ rating.value }}</p>
 {% endfor %}
 
-
-
-
-<!-- See https://codepen.io/vsync/pen/mdEJMLv for a good slider design -->
-<form id="ratingForm"
-    method="post"
-    action="{% url 'details' resume_id=resume.id %}"
-    enctype="multipart/form-data">
-
-    {% csrf_token %}
-    {{ rating_form.as_p }}
-
-    <input type="hidden" name="form_type" value="rating_form">
-    <button type="submit">Submit</button>
-</form>
 
 {% endblock %}

@@ -1,3 +1,7 @@
+#viewing-options a{
+    text-decoration: underline;
+    margin-right: 10px;
+}
 
 .container-fluid {
     margin: 0px 0px;
@@ -12,11 +16,46 @@
     padding-left: 30px;
 }
 
+.comment-user-header {
+    display: inline-block;
+}
+
+#owner-designation {
+    background-color:#007bff;
+    color: white;
+    border-radius: 5px;
+    padding: 0px 5px;
+}
+
+#comment-user-name {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+#owner-comment-separator {
+    border-top: 2px solid black;
+    margin: 10px 0px;
+}
+
+.section-title {
+    font-size: 20px;
+}
+
+#scrollable-comments {
+    /* If max-height was higher, and a resume had a lot of comments, the user wouldn't see
+    the write comment box unless they scrolled down. We want the user to see the write
+    comment box right away. */
+    max-height: 400px;
+
+    overflow-y: scroll;
+}
+
 .card {
     margin: 5px 0;
     margin-left: auto;
     margin-right: auto;
     align-content: center;
+    max-width: 500px;
 }
 
 .pagination {
@@ -54,4 +93,44 @@
 .pagination button.active {
     background-color: #007bff;
     color: white;
+}
+
+#rating-section {
+
+}
+
+#rating-scale {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+.rating-option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 2px;
+    border: 1px solid black;
+    border-radius: 2px;
+    width: 5%;
+    transition: transform .2s
+}
+
+.rating-option:hover {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transform: scale(1.25);
+}
+
+.rating-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 5px;
+}
+
+#ratingForm {
+    display: none;
 }

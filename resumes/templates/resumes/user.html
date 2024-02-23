@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block pageSpecificStaticFiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'resumes/user.css' %}">
+    <script src="{% static 'resumes/user.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{% if isUserHome %}
+<p>This is your homepage</p>
+{% endif%}
+
+<div class="container">
+{% for resume in resumes %}
+    <div class="row">
+        <p>{{ resume.name }}</p>
+        <a href="{% url 'details' resume_id=resume.id %}">Details</a>
+        <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a>
+    </div>
+{% endfor %}
+</div>
+
+{% endblock %}

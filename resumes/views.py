@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.core import serializers
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
 from pdf2image import convert_from_path
 
 import json
@@ -66,7 +67,12 @@ def details(request, resume_id):
                 # which would take time to load and cause a visual effect that would be annoying after a while
                 # Instead, return JSON data to the JavaScript AJAX function.
                 # Then, we can use JavaScript to update parts of the page without refreshing the whole page.
-                return JsonResponse({"comment": comment.text}, status=200)
+                comment_data = {
+                    "user": request.user.username,
+                    "text": comment.text,
+                    "created_at": comment.created_at # date is in wrong format
+                }
+                return JsonResponse({"comment": comment_data}, status=200)
         elif request.POST['form_type'] == 'rating_form':
             rating_form = RatingForm(request.POST)
 
@@ -74,7 +80,11 @@ def details(request, resume_id):
                 rating = rating_form.save(commit=False)
                 rating.user_id = request.user.id
                 rating.resume_id = resume_id
-                rating.save()
+
+                try:
+                    rating.save()
+                except IntegrityError as e:
+                    return JsonResponse({"error": "You have already rated this resume."}, status=400)
 
                 return JsonResponse({"rating": rating.value}, status=200)
 
@@ -89,9 +99,27 @@ def details(request, resume_id):
 
     # '-' before field name makes order_by do descending
     comments = Comment.objects.filter(resume_id=resume_id).order_by('-created_at')
-    ratings = Rating.objects.filter(resume_id=resume_id).order_by('-created_at')
 
-    return render(request, "resumes/details.html", {"resume": resume, "pdf": pdf_content, "comment_form": comment_form, "rating_form": rating_form, "comments": comments, "ratings": ratings})
+    # Get all ratings for the specific resume, and find the average value
+    ratings = Rating.objects.filter(resume_id=resume_id)
+    ratingsValues = [rating.value for rating in ratings]
+    avgRating = round(sum(ratingsValues) / len(ratingsValues),2)
+    # Out of those ratings, find the one that belongs to the signed in user
+    userRating = ratings.filter(user_id=request.user.id).get()
+
+    context = {
+        "resume": resume,
+        "pdf": pdf_content,
+        "comment_form": comment_form,
+        "rating_form": rating_form,
+        "comments": comments,
+        # Only return the avg rating - If we returned all the ratings, anyone could see who gave what rating.
+        "avgRating": avgRating,
+        # Return user's rating so they can see what they rated the resume in the past, and when.
+        "userRating": userRating
+    }
+
+    return render(request, "resumes/details.html", context)
 
 def view_pdf(request, resume_id):
     resume = Resume.objects.get(pk=resume_id)
@@ -121,3 +149,13 @@ def upload(request):
         form = UploadResumeForm()
 
     return render(request, 'resumes/upload.html', {'form': form})
+
+def user(request, user_id):
+    resumes = Resume.objects.filter(user_id=user_id).order_by('-created_at')
+
+    context = {
+        'resumes': resumes,
+        'isUserHome': user_id == request.user.id #True if user searched for themself
+    }
+
+    return render(request, 'resumes/user.html', context)
