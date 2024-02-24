@@ -20,14 +20,14 @@
     display: inline-block;
 }
 
-#owner-designation {
+.owner-designation {
     background-color:#007bff;
     color: white;
     border-radius: 5px;
     padding: 0px 5px;
 }
 
-#comment-user-name {
+.comment-username {
     margin-right: 5px;
     font-weight: bold;
 }
@@ -117,12 +117,21 @@
     transition: transform .2s
 }
 
+/* .rating-option:hover and .rating-option-selected should be the same */
 .rating-option:hover {
     background-color: #007bff;
     color: white;
     cursor: pointer;
     transform: scale(1.25);
 }
+
+.rating-option-selected {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transform: scale(1.25);
+}
+/* ------------------------------------------------------------------- */
 
 .rating-label {
     display: flex;
@@ -133,4 +142,20 @@
 
 #ratingForm {
     display: none;
+}
+
+#submit-comment-button {
+    display: inline-block;
+    padding: 5px;
+
+    /* Border should be same color as its background, since it should only be visible when hovered over
+    We still need to include border so border spacing is consistent when hovered over */
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 4px;
+}
+
+#submit-comment-button:hover {
+    cursor: pointer;
+    background-color: rgb(215, 215, 215);
+    border: 1px solid rgb(150, 150, 150);
 }

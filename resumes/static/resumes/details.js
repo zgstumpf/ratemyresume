@@ -1,6 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Put all JS code in here
     // Make sure page-specific JS functions have different names than site-wide functions.
+    var avgRating = $('#avgRatingForJS').text();
+    var ownerUsernameForJS = $('#ownerUsernameForJS').text();
+    var userRating = $('#userRatingForJS').text();
+    var userRatingUpdatedAt = $('#userRatingDateForJS').text() // TODO: This needs to be updated at
+
+    // This code executes as soon as the page loads. If userRating exists from database,
+    // make the corresponding rating-option look selected.
+    if (userRating) {
+        visuallySelectRatingOption(userRating)
+        // Also, change the text under the rating scale.
+        youRatedThisResumeOn(userRatingUpdatedAt)
+        showRatingScore(avgRating);
+    } else {
+        // User has not rated this resume yet
+        $('#rating-description').text('Rate the resume relative to resumes of individuals with a similar education level and years of career experience.')
+    }
 
 
     $('#commentForm').submit(function (event) {
@@ -31,18 +47,29 @@ document.addEventListener("DOMContentLoaded", () => {
             success: function (response) {
                 // response is the object set in the first parameter of JsonResponse
                 // Example: {comment: 'nice'}
-                // Insert data from response into HTML so user sees their data on the page
-                // without need for refresh
+
+                // Clear write comment field
+                $('#write-comment-input').val('')
+
+                // Insert data from response into comments so user sees their data on the page without need for refresh
                 comment = response.comment
-                $("#scrollable-comments").prepend(`
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="comment-user-header card-subtitle mb-2 text-muted">${comment.user}</p>
-                            <p class="comment-user-header">${comment.created_at}</p>
-                            <p class="card-text">${comment.text}</p>
-                        </div>
+                var commentHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <p class="comment-user-header comment-username">${comment.user}</p>
+                `
+                if (comment.user===ownerUsernameForJS){
+                    commentHTML += `
+                        <p class="comment-user-header owner-designation">RESUME OWNER</p>
+                    `
+                }
+                commentHTML += `
+                        <p class="card-text">${comment.text}</p>
+                        <p class="comment-user-header">${comment.created_at}</p>
                     </div>
-                `)
+                </div>
+                `
+                $("#scrollable-comments").prepend(commentHTML)
             },
             error: function (response) {
                 console.error("Error happened in ajax")
@@ -50,58 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-
-    // Code for comment section
-    const commentSection = $('#comment-section');
-    const itemsPerPage = 6; // set number of items per page
-    let currentPage = 0;
-    const items = commentSection.find('.card');
-
-    function showPage(page) {
-        const startIndex = page * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        items.each((index, item) => {
-            $(item).toggleClass('hidden', index < startIndex || index >= endIndex);
-        });
-        updateActiveButtonStates();
-    }
-
-    function createPageButtons() {
-        const totalPages = Math.ceil(items.length / itemsPerPage);
-        const paginationContainer = $('<div class="pagination"></div>');
-        const paginationButtonsGroup = $('<div class="page-buttons-group"></div>');
-        paginationContainer.append(paginationButtonsGroup);
-        paginationContainer.appendTo(commentSection);
-
-        // Add page buttons
-        for (let i = 0; i < totalPages; i++) {
-            const pageButton = $('<button class="pagination">' + (i + 1) + '</button>');
-            pageButton.on('click', function () {
-                currentPage = i;
-                showPage(currentPage);
-                updateActiveButtonStates();
-            });
-
-            paginationButtonsGroup.append(pageButton);
-        }
-    }
-
-    function updateActiveButtonStates() {
-        const pageButtons = document.querySelectorAll('.pagination button');
-        pageButtons.forEach((button, index) => {
-            if (index === currentPage) {
-            button.classList.add('active');
-            } else {
-            button.classList.remove('active');
-            }
-        });
-    }
-
-    createPageButtons(); // Call this function to create the page buttons initially
-    showPage(currentPage);
-    // End code for comment section
-
-
+    $('#submit-comment-button').click(function() {
+        $('#commentForm').submit()
+    });
 
     $('#ratingForm').submit(function (event) {
         event.preventDefault();
@@ -112,6 +90,9 @@ document.addEventListener("DOMContentLoaded", () => {
             url: actionUrl,
             success: function (response) {
                 console.log(response)
+                visuallySelectRatingOption(response.value)
+                youRatedThisResumeOn(response.updated_at) // Date formatting is inconsistent
+                showRatingScore(avgRating);
             },
             error: function (response) {
                 console.error(response.responseJSON.error)
@@ -119,34 +100,35 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-
     $(".rating-option").click(function(event) {
         // Get content, which is 0-10, of the specific rating option clicked.
         var value = $(this).text();
         $("#rating_form_value").val(value);
         $('#ratingForm').submit()
-
     })
 
-    var avgRating = $('#avgRatingForJS').text();
-    var userRatingCreatedAt = $('#userRatingDateForJS').text()
+    /**
+     * value must be 0-10, corresponding to rating option.
+     */
+    function visuallySelectRatingOption(value){
+        // If existing option(s) is selected, unselect it.
+        $('.rating-option-selected').removeClass("rating-option-selected")
 
-    var userRating = $('#userRatingForJS').text();
+        $(`.rating-option[data-value="${value}"]`).addClass("rating-option-selected")
+    }
 
-    if (userRating) {
-        // If userRating exists, make the corresponding rating-option look like its always hovered on.
-        $(`.rating-option:contains(${userRating})`).css({
-            // Taken directly from details.css
-            'background-color': '#007bff',
-            'color': 'white',
-            'cursor': 'pointer',
-            'transform': 'scale(1.25)'
-        })
-        // Also, change the text under the rating scale.
-        $('#rating-description').text(`You rated this resume on ${userRatingCreatedAt}`)
+    /**
+     * Changes description text under rating scale to say when user last rated resume.
+     */
+    function youRatedThisResumeOn(stringDate) {
+        $('#rating-description').text(`You rated this resume on ${stringDate}`) // No period because date ends in period (ex: ... p.m.)
+    }
+
+    function showRatingScore(avgRating) {
+        $('#rating-score').text(`The average rating is ${avgRating}`)
     }
 
 
 });
-// Any JS code after this point will execute before HTML finishes loading
+// Any JS code after this point may execute before HTML finishes loading
 // You shouldn't put JS code here unless you know what you're doing

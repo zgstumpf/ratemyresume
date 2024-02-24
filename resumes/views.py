@@ -70,23 +70,27 @@ def details(request, resume_id):
                 comment_data = {
                     "user": request.user.username,
                     "text": comment.text,
-                    "created_at": comment.created_at # date is in wrong format
+                    "created_at": comment.created_at # TODO: date is in wrong format
                 }
                 return JsonResponse({"comment": comment_data}, status=200)
         elif request.POST['form_type'] == 'rating_form':
             rating_form = RatingForm(request.POST)
 
             if rating_form.is_valid():
-                rating = rating_form.save(commit=False)
-                rating.user_id = request.user.id
-                rating.resume_id = resume_id
+                # If the user has already rated this resume before, update their rating value.
+                # Else, create a new rating.
+                # This logic enables users to change their rating on a resume, while still being unable
+                # to rate the same resume more than once.
+                # rating is the rating model that was updated or created, created is a bool that will be
+                # True if the user submitted a rating for the first time
+                rating, created = Rating.objects.update_or_create(
+                    user_id=request.user.id,
+                    resume_id=resume_id,
+                    defaults={'value': rating_form.cleaned_data['value']}
+                )
 
-                try:
-                    rating.save()
-                except IntegrityError as e:
-                    return JsonResponse({"error": "You have already rated this resume."}, status=400)
-
-                return JsonResponse({"rating": rating.value}, status=200)
+                return JsonResponse({"value": rating.value, "updated_at": rating.updated_at}, status=200)
+                # After here, you enter details.js to the success block of <$('#ratingForm').submit(function (event)>
 
     try:
         resume = Resume.objects.get(pk=resume_id)
@@ -100,12 +104,16 @@ def details(request, resume_id):
     # '-' before field name makes order_by do descending
     comments = Comment.objects.filter(resume_id=resume_id).order_by('-created_at')
 
+    avgRating = None
+    userRating = None
+
     # Get all ratings for the specific resume, and find the average value
     ratings = Rating.objects.filter(resume_id=resume_id)
-    ratingsValues = [rating.value for rating in ratings]
-    avgRating = round(sum(ratingsValues) / len(ratingsValues),2)
-    # Out of those ratings, find the one that belongs to the signed in user
-    userRating = ratings.filter(user_id=request.user.id).get()
+    if ratings:
+        ratingsValues = [rating.value for rating in ratings]
+        avgRating = round(sum(ratingsValues) / len(ratingsValues),2)
+        # Out of those ratings, find the one that belongs to the signed in user
+        userRating = ratings.filter(user_id=request.user.id).get()
 
     context = {
         "resume": resume,
@@ -115,7 +123,7 @@ def details(request, resume_id):
         "comments": comments,
         # Only return the avg rating - If we returned all the ratings, anyone could see who gave what rating.
         "avgRating": avgRating,
-        # Return user's rating so they can see what they rated the resume in the past, and when.
+        # Return user's rating so they can see what and when they rated the resume in the past
         "userRating": userRating
     }
 
