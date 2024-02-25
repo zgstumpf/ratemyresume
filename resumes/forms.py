@@ -4,10 +4,10 @@ from resumes.models import Resume, Comment, Rating
 class UploadResumeForm(ModelForm):
     class Meta:
         model = Resume
-        fields = ['name', 'description', 'file']
+        fields = ['name', 'file', 'description']
         labels = {
-            'name': 'Give this resume a name',
-            'description': 'Give this resume a description. What areas are you unsure about, what parts do you want others to focus on?',
+            'name': 'If you had to refer to this specific resume, what name would you use?',
+            'description': "Discussion prompt: The message you put here will be displayed at the top of this resume's comment section.",
             'file': 'Upload resume (pdf required)',
         }
 

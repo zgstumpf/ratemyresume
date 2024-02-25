@@ -1,0 +1,8 @@
+label, input {
+    display: block;
+}
+
+/* I may want to apply this to all pages */
+.content {
+    margin: 0% 10%;
+}

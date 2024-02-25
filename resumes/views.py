@@ -167,6 +167,7 @@ def user(request, user_id):
     resumes = Resume.objects.filter(user_id=user_id).order_by('-created_at')
     attachAvgAndNumRatings(resumes)
     attachImagesAsStrings(resumes)
+    attachNumComments(resumes)
 
     context = {
         'resumes': resumes,
@@ -213,4 +214,11 @@ def attachImagesAsStrings(resumes):
         image.save(buffered, format="JPEG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
         resume.imageData = f"data:image/jpeg;base64,{img_str}"
+    return resumes
+
+def attachNumComments(resumes):
+    for resume in resumes:
+        comments = Comment.objects.filter(resume_id=resume.id)
+        numComments = len(comments)
+        resume.numComments = numComments
     return resumes

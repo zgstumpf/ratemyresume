@@ -22,7 +22,8 @@
         <tr>
         <th>Name</th>
         <th>Rating</th>
-        <th>Number Ratings</th>
+        <th>Ratings</th>
+        <th>Comments</th>
         <th>Uploaded</th>
         <th></th> <!-- Abilities column -->
         </tr>
@@ -42,6 +43,7 @@
         <td>--</td>
         {% endif %}
         <td>{{ resume.numRatings }}</td>
+        <td>{{ resume.numComments }}</td>
         <td>{{ resume.created_at }}</td>
         <td><a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a></td>
         </tr>
