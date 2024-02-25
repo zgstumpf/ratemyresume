@@ -165,5 +165,10 @@ def user(request, user_id):
         'resumes': resumes,
         'isUserHome': user_id == request.user.id #True if user searched for themself
     }
+    print('You are now in view resumes/user')
+    print(user_id)
+    print(request.user)
+    print(request.user.id)
+    print(context['isUserHome'])
 
     return render(request, 'resumes/user.html', context)
