@@ -11,8 +11,8 @@ import json
 import base64
 from io import BytesIO
 
-from .models import Resume, Comment, Rating
-from .forms import UploadResumeForm, UploadCommentForm, RatingForm
+from .models import Resume, Comment, Rating, PrivateGroup
+from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm
 
 # View for homepage
 def index(request):
@@ -227,3 +227,31 @@ def attachNumComments(resumes):
         numComments = len(comments)
         resume.numComments = numComments
     return resumes
+
+def creategroup(request):
+    createPrivateGroupForm = CreatePrivateGroupForm()
+    if request.method == 'POST':
+        createPrivateGroupForm = CreatePrivateGroupForm(request.POST)
+        if createPrivateGroupForm.is_valid():
+            # createPrivateGroupForm.owner_id = request.user.id
+            # idk what members looks like - members in form needs to be multiselect anyway
+            cleaned_data = createPrivateGroupForm.cleaned_data
+            name = cleaned_data.get('name')
+            description = cleaned_data.get('description')
+            allowJoinRequests = cleaned_data.get('allowJoinRequests')
+            # Set the owner of the group
+            owner = request.user
+            # Create the PrivateGroup instance and save it
+            newGroup = PrivateGroup.objects.create(
+                owner=owner,
+                name=name,
+                description=description,
+                allowJoinRequests=allowJoinRequests
+            )
+
+            return HttpResponseRedirect(f'/group/{newGroup.id}/') # should redirect to new page
+    return render(request, 'resumes/creategroup.html', {'createPrivateGroupForm': createPrivateGroupForm})
+
+def grouppage(request, group_id):
+    group = PrivateGroup.objects.get(pk=group_id)
+    return render(request, "resumes/grouppage.html", {'group': group})

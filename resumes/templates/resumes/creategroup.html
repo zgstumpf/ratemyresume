@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block pageSpecificStaticFiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'resumes/creategroup.css' %}">
+    <script src="{% static 'resumes/creategroup.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+
+<form id="createGroupForm"
+    method="post"
+    action="{% url 'creategroup' %}"
+    enctype="multipart/form-data">
+    {{createPrivateGroupForm}}
+    {% csrf_token %}
+
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock %}

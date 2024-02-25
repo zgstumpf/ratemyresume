@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from resumes.models import Resume, Comment, Rating
+from resumes.models import Resume, Comment, Rating, PrivateGroup
 
 class UploadResumeForm(ModelForm):
     class Meta:
@@ -26,3 +26,8 @@ class RatingForm(ModelForm):
         labels = {
             'value': 'Rating'
         }
+
+class CreatePrivateGroupForm(ModelForm):
+    class Meta:
+        model = PrivateGroup
+        fields = ['name', 'description', 'members', 'allowJoinRequests']

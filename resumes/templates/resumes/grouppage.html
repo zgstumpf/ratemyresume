@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block pageSpecificStaticFiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'resumes/grouppage.css' %}">
+    <script src="{% static 'resumes/grouppage.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+
+<h1>Group page</h1>
+<p>{{group.name}}</p>
+
+{% endblock %}
