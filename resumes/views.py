@@ -28,6 +28,8 @@ def index(request):
 
     return render(request, "resumes/index.html", context = {"resumes": resumes})
 
+
+
 def details(request, resume_id):
     # request may be sent to this view in multiple ways
     # 1. User searches URL details/<int:resume_id>/
@@ -164,6 +166,7 @@ def user(request, user_id):
     username = user.username
     resumes = Resume.objects.filter(user_id=user_id).order_by('-created_at')
     attachAvgAndNumRatings(resumes)
+    attachImagesAsStrings(resumes)
 
     context = {
         'resumes': resumes,
@@ -177,6 +180,7 @@ def user(request, user_id):
 def attachAvgAndNumRatings(resumes):
     """
     Given a Django queryset of multiple resume objects, returns them with avgRating and numRatings properties for each.
+
     If there are no ratings for the resume: avgRating=None, numRatings=0
     """
     for resume in resumes:
@@ -189,4 +193,24 @@ def attachAvgAndNumRatings(resumes):
             avgRating = None
         resume.avgRating = avgRating
         resume.numRatings = numRatings
+    return resumes
+
+def attachImagesAsStrings(resumes):
+    """
+    SLOW - It is faster to request imageData for each image through AJAX after page has loaded.
+
+    Given a Django queryset of multiple resume objects, returns them with imageData property for each.
+
+    imageData is a base64 string representing the first page of the resume as a JPEG.
+
+    Convert imageData to image in HTML: <img src="{{ resume.imageData }}">
+    """
+    for resume in resumes:
+        path = resume.file.path
+        # Convert PDFs to image
+        image = convert_from_path(path)[0] # 0 means do first page only
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        resume.imageData = f"data:image/jpeg;base64,{img_str}"
     return resumes

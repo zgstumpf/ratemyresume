@@ -1,0 +1,27 @@
+/* remove after testing */
+nav, ul, li, a {
+    /* border: 1px solid black; */
+}
+
+.rmr-navbar {
+    background-color: #007bff;
+    border-bottom: 5px solid darkgray;
+    padding: 0px 20px;
+}
+
+.nav-element {
+    display: inline-block;
+    color: white;
+    padding: 10px 10px 10px 10px;
+    height: 100%;
+    text-decoration-line: none !important;
+}
+
+.nav-element:hover {
+    background-color: white;
+    color: #007bff;
+}
+
+.nav-element-right {
+    float: right;
+}

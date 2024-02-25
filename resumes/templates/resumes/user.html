@@ -8,9 +8,9 @@
 
 {% block content %}
 {% if isUserHome %}
-<p>My resumes</p>
+<p>Hello, {{user}}!</p>
 {% else %}
-<p>{{ thisPageUsername }}'s resumes</p>
+<p>You are viewing {{ thisPageUsername }}'s resumes</p>
 {% endif%}
 
 
@@ -29,7 +29,12 @@
     <tbody>
         {% for resume in resumes %}
         <tr>
-        <td><a href="{% url 'details' resume_id=resume.id %}">{{ resume.name }}</a></td>
+        <td>
+            <a class="resume-name-in-table" href="{% url 'details' resume_id=resume.id %}">{{ resume.name }}
+                <img class="resume-image-preview" src="{{ resume.imageData }}">
+            </a>
+        </td>
+
         <td>{{ resume.avgRating }}</td>
         <td>{{ resume.numRatings }}</td>
         <td>{{ resume.created_at }}</td>
