@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from django.http import JsonResponse
 
+from .forms import SignUpForm
 
 # Can not be named just 'logout'
 def logout_page(request):
