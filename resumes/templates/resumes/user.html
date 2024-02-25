@@ -8,17 +8,38 @@
 
 {% block content %}
 {% if isUserHome %}
-<p>This is your homepage</p>
+<p>My resumes</p>
+{% else %}
+<p>{{ thisPageUsername }}'s resumes</p>
 {% endif%}
 
-<div class="container">
-{% for resume in resumes %}
-    <div class="row">
-        <p>{{ resume.name }}</p>
-        <a href="{% url 'details' resume_id=resume.id %}">Details</a>
-        <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a>
-    </div>
-{% endfor %}
-</div>
+
+
+{% if resumes %}
+<table>
+    <thead>
+        <tr>
+        <th>Name</th>
+        <th>Rating</th>
+        <th>Number Ratings</th>
+        <th>Uploaded</th>
+        <th></th> <!-- Abilities column -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for resume in resumes %}
+        <tr>
+        <td><a href="{% url 'details' resume_id=resume.id %}">{{ resume.name }}</a></td>
+        <td>{{ resume.avgRating }}</td>
+        <td>{{ resume.numRatings }}</td>
+        <td>{{ resume.created_at }}</td>
+        <td><a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>{{ thisPageUsername }} has no resumes</p>
+{% endif %}
 
 {% endblock %}

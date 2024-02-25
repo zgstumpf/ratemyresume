@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.core import serializers
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db import IntegrityError
 from pdf2image import convert_from_path
 
@@ -159,16 +160,33 @@ def upload(request):
     return render(request, 'resumes/upload.html', {'form': form})
 
 def user(request, user_id):
+    user = User.objects.get(pk=user_id)
+    username = user.username
     resumes = Resume.objects.filter(user_id=user_id).order_by('-created_at')
+    attachAvgAndNumRatings(resumes)
 
     context = {
         'resumes': resumes,
-        'isUserHome': user_id == request.user.id #True if user searched for themself
+        'isUserHome': user_id == request.user.id, #True if user searched for themself
+        'thisPageUsername': username
     }
-    print('You are now in view resumes/user')
-    print(user_id)
-    print(request.user)
-    print(request.user.id)
-    print(context['isUserHome'])
 
     return render(request, 'resumes/user.html', context)
+
+
+def attachAvgAndNumRatings(resumes):
+    """
+    Given a Django queryset of multiple resume objects, returns them with avgRating and numRatings properties for each.
+    If there are no ratings for the resume: avgRating=None, numRatings=0
+    """
+    for resume in resumes:
+        ratings = Rating.objects.filter(resume_id=resume.id)
+        numRatings = len(ratings)
+        if numRatings > 0:
+            ratingsValues = [rating.value for rating in ratings]
+            avgRating = round(sum(ratingsValues) / len(ratingsValues),2)
+        else:
+            avgRating = None
+        resume.avgRating = avgRating
+        resume.numRatings = numRatings
+    return resumes
