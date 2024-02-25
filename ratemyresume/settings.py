@@ -102,9 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Later, you can change this to profile page
-LOGIN_URL = '/account/login/'
-LOGIN_REDIRECT_URL = '/'
+# URL user is sent to when they are not logged in and try to access a view with the login_required() decorator
+LOGIN_URL = '/login/'
 
 LOGOUT_REDIRECT_URL = '/'
 

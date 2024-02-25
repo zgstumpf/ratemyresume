@@ -22,11 +22,10 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('account/', include('django.contrib.auth.urls')),
+    path('login/', views.login_page, name='login'),
     path('logout/', views.logout_page, name='logout'),
-
     # Includes home page
-    path('', include('resumes.urls'))
+    path('', include('resumes.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
