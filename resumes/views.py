@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -116,7 +117,11 @@ def details(request, resume_id):
         ratingsValues = [rating.value for rating in ratings]
         avgRating = round(sum(ratingsValues) / len(ratingsValues),2)
         # Out of those ratings, find the one that belongs to the signed in user
-        userRating = ratings.filter(user_id=request.user.id).get()
+        try:
+            userRating = ratings.filter(user_id=request.user.id).get()
+        except ObjectDoesNotExist:
+            userRating = None
+
 
     context = {
         "resume": resume,

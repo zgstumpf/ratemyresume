@@ -9,6 +9,11 @@
 {% block content %}
     <h1>Upload Resume</h1>
 
+    <div class="warning-box">
+        <span class="warning-symbol">&#9888;</span>
+        <p class="warning-text">Before uploading a resume, please remove any identifying information such as your name, email, phone number, and address.</p>
+    </div>
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
