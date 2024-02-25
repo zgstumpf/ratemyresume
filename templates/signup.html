@@ -10,13 +10,7 @@
 <h1>Create an account</h1>
 <form id="signupForm" method="post" action="{% url 'signup' %}">
     {% csrf_token %}
-    <label for="username_id"><b>Username</b></label>
-    <input id="username_id" type="text" placeholder="Username" name="username" required>
-
-    <label for="password_id"><b>Password</b></label>
-    <input id="password_id" type="password" placeholder="Password" name="password" required>
-
-    <!-- <input type="submit" value="login"> -->
+    {{ signUpForm }}
     <input type="hidden" name="next" value="{{ next }}">
     <button type="submit">Sign up</button>
 </form>

@@ -24,18 +24,18 @@ def login_page(request):
     return render(request, 'login.html')
 
 def signup(request):
+    signUpForm = SignUpForm()
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        try:
-            # Add user to database
+        signUpForm = SignUpForm(request.POST)
+        if signUpForm.is_valid():
+            username = signUpForm.cleaned_data['username']
+            password = signUpForm.cleaned_data['password']
+
             user = User.objects.create_user(username=username, password=password)
-        except IntegrityError:
-            return JsonResponse({"error": "Username is taken"}, status=400)
 
-        user = authenticate(request, username=username, password=password)
-        login(request, user)
-        # Because this POST request is made with AJAX, we can't call redirect() here
-        return JsonResponse({'success': True, "redirectURL": f'/user/{user.id}/'}, status=200)
+            user = authenticate(request, username=username, password=password)
+            login(request, user)
+            # If POST was made with AJAX, we would use return JsonResponse({'success': True, "redirectURL": f'/user/{user.id}/'}, status=200)
+            return redirect(f'/user/{user.id}/')
 
-    return render(request, 'signup.html')
+    return render(request, 'signup.html', {"signUpForm": signUpForm})
