@@ -16,6 +16,7 @@
 
 
 {% if resumes %}
+<div class="table-container">
 <table>
     <thead>
         <tr>
@@ -35,7 +36,11 @@
             </a>
         </td>
 
-        <td>{{ resume.avgRating }}</td>
+        {% if resume.avgRating %}
+        <td>{{ resume.avgRating }} / 10</td>
+        {% else %}
+        <td>--</td>
+        {% endif %}
         <td>{{ resume.numRatings }}</td>
         <td>{{ resume.created_at }}</td>
         <td><a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a></td>
@@ -43,6 +48,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <p>{{ thisPageUsername }} has no resumes</p>
 {% endif %}

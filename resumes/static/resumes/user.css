@@ -1,9 +1,20 @@
-th, td {
-    border-bottom: 1px solid rgb(205, 205, 205);
+/* For any elements to be aligned with table, they must have margin-left:10%; */
+p {
+    margin-left: 10%;
+}
+
+.table-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 table {
-    width: 100%;
+    width: 80%;
+}
+
+th, td {
+    border-bottom: 1px solid rgb(205, 205, 205);
 }
 
 .resume-image-preview {
