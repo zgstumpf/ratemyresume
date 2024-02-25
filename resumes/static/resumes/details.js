@@ -37,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
             data: $(this).serialize(), // Give AJAX the form data
             type: 'POST', // Submitting form will always be 'POST'
             url: actionUrl, // URL for AJAX to send data to
+            headers: {'X-CSRFToken': getCsrf()},
+            crossDomain: false,
 
             // Since we control the view connected to the URL, we determine if we the AJAX call
             // is a success or error.
@@ -88,6 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
             data: $(this).serialize(),
             type: 'POST',
             url: actionUrl,
+            headers: {'X-CSRFToken': getCsrf()},
+            crossDomain: false,
             success: function (response) {
                 console.log(response)
                 visuallySelectRatingOption(response.value)

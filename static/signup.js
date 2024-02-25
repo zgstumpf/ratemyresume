@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
             data: $(this).serialize(),
             type: 'POST',
             url: actionUrl,
+            headers: {'X-CSRFToken': getCsrf()},
+            crossDomain: false,
             success: function (response) {
                 window.location.href = response.redirectURL
             },
