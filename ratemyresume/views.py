@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from django.http import JsonResponse
@@ -13,15 +14,18 @@ def logout_page(request):
 
 
 def login_page(request):
+    authenticationForm = AuthenticationForm()
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect(f'/user/{user.id}/')  # Redirect to home page after successful login
+        authenticationForm = AuthenticationForm(request, data=request.POST)
+        if authenticationForm.is_valid():
+            username = authenticationForm.cleaned_data['username']
+            password = authenticationForm.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(f'/user/{user.id}/')
 
-    return render(request, 'login.html')
+    return render(request, 'login.html', {"authenticationForm": authenticationForm})
 
 def signup(request):
     signUpForm = SignUpForm()
