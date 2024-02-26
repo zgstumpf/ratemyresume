@@ -55,4 +55,8 @@
 <p>{{ thisPageUsername }} has no resumes</p>
 {% endif %}
 
+{% for groupInvite in groupInvites %}
+<a href="{% url 'acceptinvite' groupInvite.id%}">Accept invitation to {{groupInvite.group.name}}</a>
+{% endfor %}
+
 {% endblock %}

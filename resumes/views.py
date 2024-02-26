@@ -11,8 +11,8 @@ import json
 import base64
 from io import BytesIO
 
-from .models import Resume, Comment, Rating, PrivateGroup
-from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm
+from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite
+from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm, GroupInviteForm
 
 # View for homepage
 def index(request):
@@ -173,11 +173,13 @@ def user(request, user_id):
     attachAvgAndNumRatings(resumes)
     attachImagesAsStrings(resumes)
     attachNumComments(resumes)
+    groupInvites = GroupInvite.objects.filter(invitee=user).order_by('-created_at') # later may want this in own view
 
     context = {
         'resumes': resumes,
         'isUserHome': user_id == request.user.id, #True if user searched for themself
-        'thisPageUsername': username
+        'thisPageUsername': username,
+        'groupInvites': groupInvites, # later may want this in own view
     }
 
     return render(request, 'resumes/user.html', context)
@@ -254,4 +256,37 @@ def creategroup(request):
 
 def grouppage(request, group_id):
     group = PrivateGroup.objects.get(pk=group_id)
-    return render(request, "resumes/grouppage.html", {'group': group})
+    return render(request, "resumes/grouppage.html", {'group': group, 'isOwner': group.owner == request.user})
+
+def groups(request):
+    groups = PrivateGroup.objects.order_by("created_at")
+    return render(request, 'resumes/groups.html', {'groups': groups})
+
+def sendinvite(request, group_id):
+    groupInviteForm = GroupInviteForm()
+    if request.method == 'POST':
+        groupInviteForm = GroupInviteForm(request.POST)
+        if groupInviteForm.is_valid():
+            cleaned_data = groupInviteForm.cleaned_data
+            invitee = cleaned_data.get('invitee')
+            text = cleaned_data.get('text')
+            sender = request.user
+            group = PrivateGroup.objects.get(pk=group_id)
+            newGroupInvite = GroupInvite.objects.create(
+                invitee=invitee,
+                text=text,
+                sender=sender,
+                group=group
+            )
+            # Clear groupInviteForm to let user invite another user
+            groupInviteForm = GroupInviteForm()
+
+    return render(request, 'resumes/invite.html', {'groupInviteForm': groupInviteForm, 'group_id':group_id})
+
+def acceptinvite(request, invite_id):
+    invite = GroupInvite.objects.get(pk=invite_id)
+    if invite.invitee == request.user:
+        #group = PrivateGroup.objects.get(pk=invite.group)
+        invite.group.members.add(request.user)
+        #may be equivalent, but I need to implement add_member function
+        #invite.group.add_member(request.user)

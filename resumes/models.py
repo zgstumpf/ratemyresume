@@ -70,12 +70,23 @@ class UserPrivateGroupMembership(models.Model):
     class Meta:
         unique_together = ('user', 'group')
 
+# This is how users request to join a group if they haven't been invited
 class JoinRequest(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(PrivateGroup, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     text = models.CharField(max_length=2000, blank=True)
+
+# This is how owners invite users to join a group
+class GroupInvite(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # sender is basically same thing as owner
+    sender = models.ForeignKey(User, related_name='sender_user', on_delete=models.CASCADE)
+    group = models.ForeignKey(PrivateGroup, on_delete=models.CASCADE)
+    invitee = models.ForeignKey(User, related_name='invitee_user', on_delete=models.CASCADE)
+    text = models.CharField(max_length=2000, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 # Stores messages posted in private group homepages
 class PrivateGroupBoardComment(models.Model):

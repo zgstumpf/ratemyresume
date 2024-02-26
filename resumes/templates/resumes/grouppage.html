@@ -9,7 +9,14 @@
 {% block content %}
 
 
-<h1>Group page</h1>
+<h1>Private Group Page</h1>
 <p>{{group.name}}</p>
+
+{% if isOwner %}
+<p>You are the owner of this group</p>
+<a href="{% url 'sendinvite' group.id %}">Invite user</a>
+{% endif %}
+
+
 
 {% endblock %}

@@ -10,6 +10,9 @@ urlpatterns = [
     path('upload/', views.upload, name='upload'),
     path('user/<int:user_id>/', views.user, name='user'),
     path('creategroup', views.creategroup, name='creategroup'),
-    path('group/<str:group_id>/', views.grouppage, name='groupage'),
+    path('group/<str:group_id>/', views.grouppage, name='grouppage'),
+    path('groups/', views.groups, name='groups'),
+    path('invite/<str:group_id>/', views.sendinvite, name='sendinvite'),
+    path('acceptinvite/<str:invite_id>/', views.acceptinvite, name='acceptinvite')
 
 ]
