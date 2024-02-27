@@ -266,8 +266,8 @@ def grouppage(request, group_id):
         joinRequests = JoinRequest.objects.filter(group=group, user=request.user)
         groupInvites = GroupInvite.objects.filter(group=group, invitee=request.user)
 
-    #joinRequestsPending = joinRequests.filter(action__isnull=True)
-    #joinRequestsHistory = joinRequests.filter(action__isnull=False)
+    joinRequestsPending = joinRequests.filter(action__isnull=True)
+    joinRequestsHistory = joinRequests.filter(action__isnull=False)
     groupInvitesPending = groupInvites.exclude(action__isnull=False)
     groupInvitesHistory = groupInvites.exclude(action__isnull=True)
 
@@ -276,8 +276,8 @@ def grouppage(request, group_id):
         'isOwner': requestingUserIsOwner,
         'isMember': requestingUserIsMember,
         'joinRequests': joinRequests,
-        #'joinRequestsPending': joinRequestsPending,
-        #'joinRequestsHistory': ,joinRequestsHistory
+        'joinRequestsPending': joinRequestsPending,
+        'joinRequestsHistory': joinRequestsHistory,
         'groupInvitesPending': groupInvitesPending,
         'groupInvitesHistory': groupInvitesHistory
     }
@@ -337,27 +337,38 @@ def sendrequest(request, group_id):
     group = PrivateGroup.objects.get(pk=group_id)
 
     # Members of a group can not request to join the group
-    if not group.members.filter(pk=request.user.id).exists():
-        # should use ajax for this - sendrequest should just be a button and text input on the group page,
-        # no need for separate form page for one text box
+    # old logic: not group.members.filter(pk=request.user.id).exists():
+    if not request.user in group.members.all() and not JoinRequest.objects.filter(group=group, user=request.user).exclude(action__isnull=False).exists():
         JoinRequest.objects.create(
             user=request.user,
             group=group,
         )
         return JsonResponse({"message": "sent request"}, status=200) # ajax
-    return JsonResponse({"error": "You are already a member of this group."}, status=400)
+    return JsonResponse({"error": "You are already a member of this group, or you have a join request to this group pending."}, status=400)
     # add error handling
 
 def acceptrequest(request, joinRequest_id):
     joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
     group = joinRequest.group
+    # Do not confuse request with joinRequest here!
     if request.user == group.owner:
         group.members.add(joinRequest.user)
+        joinRequest.action = 'accepted'
+        joinRequest.action_at = timezone.now()
+        joinRequest.save()
         return JsonResponse({"message": "Accepted"}, status=200) # ajax
+    else:
+        return JsonResponse({"error": "unauthorized"}, status=401) # TODO: is there a better way to do this?
+
 
 def rejectrequest(request, joinRequest_id):
     joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
     group = joinRequest.group
+    # Do not confuse request with joinRequest here!
     if request.user == group.owner:
-        joinRequest.delete() # later mark as rejected instead
+        joinRequest.action = 'rejected'
+        joinRequest.action_at = timezone.now()
+        joinRequest.save()
         return JsonResponse({"message": "Join request successfully rejected"}, status=200) # ajax
+    else:
+        return JsonResponse({"error": "unauthorized"}, status=401) # TODO: is there a better way to do this?

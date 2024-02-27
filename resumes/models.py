@@ -75,6 +75,12 @@ class JoinRequest(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(PrivateGroup, on_delete=models.CASCADE)
+
+    actionChoices = models.TextChoices('actionChoices', 'accepted rejected')
+    action = models.CharField(choices=actionChoices, max_length=8, null=True)
+
+    action_at = models.DateTimeField(null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
 # This is how owners invite users to join a group

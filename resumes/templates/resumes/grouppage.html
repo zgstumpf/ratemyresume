@@ -27,8 +27,8 @@
 {% endif %}
 
 
-<p>Join Requests</p>
-{% for joinRequest in joinRequests %}
+<h3>Join Requests</h3>
+{% for joinRequest in joinRequestsPending %}
 <p>{{joinRequest.user.username}}</p>
     {% if isOwner %}
         <form action="{% url 'acceptrequest' joinRequest.id %}" method="post">
@@ -41,7 +41,14 @@
         </form>
     {% endif %}
 {% endfor %}
+<br>
 
+<h3>Join Requests History</h3>
+{% for joinRequest in joinRequestsHistory %}
+<p>{{ joinRequest.user }} - {{ joinRequest.action}} - {{joinRequest.action_at}}</p>
+{% endfor %}
+
+<br>
 <h3>Pending Invitations</h3>
 {% for groupInvite in groupInvitesPending %}
     <p>{{groupInvite.invitee}}</p>
@@ -57,7 +64,7 @@
             </form>
         {% endif %}
 {% endfor %}
-
+<br>
 <h3>Invitations History</h3>
 {% for groupInvite in groupInvitesHistory %}
 <p>{{groupInvite.invitee}} - {{groupInvite.action}} - {{groupInvite.action_at}}</p>
@@ -67,9 +74,7 @@
 <br>
 <p>Members</p>
 {% for member in group.members.all %}
-
 <a href="{% url 'user' member.id %}">{{member.username}}</a>
-
 {% endfor %}
 
 
