@@ -55,8 +55,16 @@
 <p>{{ thisPageUsername }} has no resumes</p>
 {% endif %}
 
+<!-- need to make sure this is just the user's group invites -->
 {% for groupInvite in groupInvites %}
-<a href="{% url 'acceptinvite' groupInvite.id%}">Accept invitation to {{groupInvite.group.name}}</a>
+<form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Accept Invitation to {{groupInvite.group.name}}</button>
+</form>
+<form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Reject</button>
+</form>
 {% endfor %}
 
 {% endblock %}

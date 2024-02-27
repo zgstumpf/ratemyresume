@@ -30,9 +30,9 @@ class RatingForm(ModelForm):
 class CreatePrivateGroupForm(ModelForm):
     class Meta:
         model = PrivateGroup
-        fields = ['name', 'description', 'members', 'allowJoinRequests']
+        fields = ['name', 'description', 'allowJoinRequests']
 
 class GroupInviteForm(ModelForm):
     class Meta:
         model = GroupInvite
-        fields = ['invitee', 'text']
+        fields = ['invitee']

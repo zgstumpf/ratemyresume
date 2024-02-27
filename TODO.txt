@@ -1,0 +1,3 @@
+move rating area to top of resume page - see web visual studio marketplace extensions for inspiration
+
+profile page so user knows who they are

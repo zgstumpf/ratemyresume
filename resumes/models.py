@@ -76,7 +76,6 @@ class JoinRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(PrivateGroup, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    text = models.CharField(max_length=2000, blank=True)
 
 # This is how owners invite users to join a group
 class GroupInvite(models.Model):
@@ -85,7 +84,13 @@ class GroupInvite(models.Model):
     sender = models.ForeignKey(User, related_name='sender_user', on_delete=models.CASCADE)
     group = models.ForeignKey(PrivateGroup, on_delete=models.CASCADE)
     invitee = models.ForeignKey(User, related_name='invitee_user', on_delete=models.CASCADE)
-    text = models.CharField(max_length=2000, blank=True)
+
+    # I followed Django docs, but feel like there must be a  a better way to do this
+    actionChoices = models.TextChoices('actionChoices', 'accepted rejected')
+    action = models.CharField(choices=actionChoices, max_length=8, null=True)
+
+    action_at = models.DateTimeField(null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
 # Stores messages posted in private group homepages

@@ -1,8 +1,3 @@
-/* remove after testing */
-nav, ul, li, a {
-    /* border: 1px solid black; */
-}
-
 .rmr-navbar {
     background-color: #007bff;
     border-bottom: 5px solid darkgray;
@@ -26,4 +21,20 @@ nav, ul, li, a {
 
 .nav-element-right {
     float: right;
+}
+
+/* This will be the universal table for the site */
+.table-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+}
+
+.table-container > table {
+    width: 80%;
+}
+
+.table-container th, td {
+    border-bottom: 1px solid rgb(205, 205, 205);
 }

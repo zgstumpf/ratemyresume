@@ -13,10 +13,64 @@
 <p>{{group.name}}</p>
 
 {% if isOwner %}
-<p>You are the owner of this group</p>
-<a href="{% url 'sendinvite' group.id %}">Invite user</a>
+    <p>You are the owner of this group</p>
+    <a href="{% url 'sendinvite' group.id %}">Invite user</a>
+
+{% else %}
+    <p>This group is owned by {{ group.owner.username }}</p>
+    {% if not isMember %}
+    <form action="{% url 'sendrequest' group.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Request to join</button>
+    </form>
+    {% endif %}
 {% endif %}
 
+
+<p>Join Requests</p>
+{% for joinRequest in joinRequests %}
+<p>{{joinRequest.user.username}}</p>
+    {% if isOwner %}
+        <form action="{% url 'acceptrequest' joinRequest.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Accept</button>
+        </form>
+        <form action="{% url 'rejectrequest' joinRequest.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Reject</button>
+        </form>
+    {% endif %}
+{% endfor %}
+
+<h3>Pending Invitations</h3>
+{% for groupInvite in groupInvitesPending %}
+    <p>{{groupInvite.invitee}}</p>
+        {% if not isOwner %}
+            <p>You have been invited to this group</p>
+            <form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Accept</button>
+            </form>
+            <form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Reject</button>
+            </form>
+        {% endif %}
+{% endfor %}
+
+<h3>Invitations History</h3>
+{% for groupInvite in groupInvitesHistory %}
+<p>{{groupInvite.invitee}} - {{groupInvite.action}} - {{groupInvite.action_at}}</p>
+{% endfor %}
+
+
+<br>
+<p>Members</p>
+{% for member in group.members.all %}
+
+<a href="{% url 'user' member.id %}">{{member.username}}</a>
+
+{% endfor %}
 
 
 {% endblock %}

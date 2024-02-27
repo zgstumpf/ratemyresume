@@ -10,9 +10,9 @@
 <p>Private Group Explorer</p>
 {% for group in groups %}
 <a href="{% url 'grouppage' group.id %}"><p>{{group.name}}</p></a>
-<p>{{group.description}}</p>
-<p>{{group.owner}}</p>
-<p>{{group.created_at}}</p>
+<p>Description: {{group.description}}</p>
+<p>Owner: {{group.owner}}</p>
+<p>Created At: {{group.created_at}}</p>
 <br>
 {% endfor %}
 

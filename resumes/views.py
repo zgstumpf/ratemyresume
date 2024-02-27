@@ -5,13 +5,14 @@ from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpRespo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.utils import timezone
 from pdf2image import convert_from_path
 
 import json
 import base64
 from io import BytesIO
 
-from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite
+from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite, JoinRequest
 from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm, GroupInviteForm
 
 # View for homepage
@@ -173,7 +174,7 @@ def user(request, user_id):
     attachAvgAndNumRatings(resumes)
     attachImagesAsStrings(resumes)
     attachNumComments(resumes)
-    groupInvites = GroupInvite.objects.filter(invitee=user).order_by('-created_at') # later may want this in own view
+    groupInvites = GroupInvite.objects.filter(invitee=user).exclude(action__isnull=False).order_by('-created_at') # later may want this in own view
 
     context = {
         'resumes': resumes,
@@ -256,7 +257,32 @@ def creategroup(request):
 
 def grouppage(request, group_id):
     group = PrivateGroup.objects.get(pk=group_id)
-    return render(request, "resumes/grouppage.html", {'group': group, 'isOwner': group.owner == request.user})
+    requestingUserIsOwner = group.owner == request.user
+    requestingUserIsMember = request.user in group.members.all()
+    if requestingUserIsOwner:
+        joinRequests = JoinRequest.objects.filter(group=group)
+        groupInvites = GroupInvite.objects.filter(group=group)
+    else:
+        joinRequests = JoinRequest.objects.filter(group=group, user=request.user)
+        groupInvites = GroupInvite.objects.filter(group=group, invitee=request.user)
+
+    #joinRequestsPending = joinRequests.filter(action__isnull=True)
+    #joinRequestsHistory = joinRequests.filter(action__isnull=False)
+    groupInvitesPending = groupInvites.exclude(action__isnull=False)
+    groupInvitesHistory = groupInvites.exclude(action__isnull=True)
+
+    context = {
+        'group': group,
+        'isOwner': requestingUserIsOwner,
+        'isMember': requestingUserIsMember,
+        'joinRequests': joinRequests,
+        #'joinRequestsPending': joinRequestsPending,
+        #'joinRequestsHistory': ,joinRequestsHistory
+        'groupInvitesPending': groupInvitesPending,
+        'groupInvitesHistory': groupInvitesHistory
+    }
+
+    return render(request, "resumes/grouppage.html", context)
 
 def groups(request):
     groups = PrivateGroup.objects.order_by("created_at")
@@ -269,24 +295,69 @@ def sendinvite(request, group_id):
         if groupInviteForm.is_valid():
             cleaned_data = groupInviteForm.cleaned_data
             invitee = cleaned_data.get('invitee')
-            text = cleaned_data.get('text')
             sender = request.user
             group = PrivateGroup.objects.get(pk=group_id)
-            newGroupInvite = GroupInvite.objects.create(
-                invitee=invitee,
-                text=text,
-                sender=sender,
-                group=group
-            )
-            # Clear groupInviteForm to let user invite another user
-            groupInviteForm = GroupInviteForm()
+
+            # Can't send invites to members, can't send invites to users who have pending invites.
+            if not invitee in group.members.all() and not GroupInvite.objects.filter(group=group, invitee=invitee).exclude(action__isnull=False).exists():
+                GroupInvite.objects.create(
+                    invitee=invitee,
+                    sender=sender,
+                    group=group
+                )
+                # Clear groupInviteForm to let user invite another user
+                groupInviteForm = GroupInviteForm()
+            else:
+                # TODO: Later separate these error messages
+                groupInviteForm.add_error('invitee', "This use is already in your group, or an invitation to this user already exists for your group.")
 
     return render(request, 'resumes/invite.html', {'groupInviteForm': groupInviteForm, 'group_id':group_id})
 
 def acceptinvite(request, invite_id):
     invite = GroupInvite.objects.get(pk=invite_id)
-    if invite.invitee == request.user:
-        #group = PrivateGroup.objects.get(pk=invite.group)
-        invite.group.members.add(request.user)
-        #may be equivalent, but I need to implement add_member function
-        #invite.group.add_member(request.user)
+    if request.user == invite.invitee:
+        invite.group.members.add(invite.invitee)
+        invite.action = 'accepted'
+        invite.action_at = timezone.now()
+        invite.save()
+        return HttpResponseRedirect(f"/group/{invite.group.id}/")
+
+def rejectinvite(request, invite_id):
+    invite = GroupInvite.objects.get(pk=invite_id)
+    if request.user == invite.invitee:
+        invite.action = 'rejected'
+        invite.action_at = timezone.now()
+        invite.save()
+        return HttpResponseRedirect(f"/group/{invite.group.id}/") # may want to consider ajax so user doesnt need page refresh
+    pass
+
+def sendrequest(request, group_id):
+    # Why not just skip this line and plug group_id=group_id into the create()?
+    # - Because doing that, Django would not validate that group_id links to an existing group.
+    group = PrivateGroup.objects.get(pk=group_id)
+
+    # Members of a group can not request to join the group
+    if not group.members.filter(pk=request.user.id).exists():
+        # should use ajax for this - sendrequest should just be a button and text input on the group page,
+        # no need for separate form page for one text box
+        JoinRequest.objects.create(
+            user=request.user,
+            group=group,
+        )
+        return JsonResponse({"message": "sent request"}, status=200) # ajax
+    return JsonResponse({"error": "You are already a member of this group."}, status=400)
+    # add error handling
+
+def acceptrequest(request, joinRequest_id):
+    joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
+    group = joinRequest.group
+    if request.user == group.owner:
+        group.members.add(joinRequest.user)
+        return JsonResponse({"message": "Accepted"}, status=200) # ajax
+
+def rejectrequest(request, joinRequest_id):
+    joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
+    group = joinRequest.group
+    if request.user == group.owner:
+        joinRequest.delete() # later mark as rejected instead
+        return JsonResponse({"message": "Join request successfully rejected"}, status=200) # ajax
