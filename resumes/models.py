@@ -15,6 +15,9 @@ class PrivateGroup(models.Model):
     allowJoinRequests = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.name
+
 # We will use this class to eventually implement promotion feature if owner is deleted
 class UserPrivateGroupMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
