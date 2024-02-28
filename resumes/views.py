@@ -149,7 +149,7 @@ def view_pdf(request, resume_id):
 def upload(request):
     if request.method == 'POST':
         # Create a form instance and populate it with data from the request (binding):
-        form = UploadResumeForm(request.POST, request.FILES)
+        form = UploadResumeForm(request.POST, request.FILES, request=request)
 
         # Check if the form is valid and call cleaning functions:
         if form.is_valid():
@@ -163,7 +163,7 @@ def upload(request):
 
     # If this is a GET (or any other method) create the default form.
     else:
-        form = UploadResumeForm()
+        form = UploadResumeForm(request=request)
 
     return render(request, 'resumes/upload.html', {'form': form})
 
