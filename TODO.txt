@@ -3,3 +3,5 @@ move rating area to top of resume page - see web visual studio marketplace exten
 profile page so user knows who they are
 
 try auto code security scanning: https://owasp.org/www-community/Free_for_Open_Source_Application_Security_Tools
+
+convert all model choices to class enums so they can be used outside of models.py

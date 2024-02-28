@@ -4,7 +4,7 @@ from resumes.models import Resume, Comment, Rating, PrivateGroup, GroupInvite
 class UploadResumeForm(ModelForm):
     class Meta:
         model = Resume
-        fields = ['file', 'name', 'description']
+        fields = ['file', 'name', 'description', 'visibility']
         labels = {
             'file': 'Upload resume (pdf required)',
             'name': 'If you had to refer to this specific resume, what name would you use?',
