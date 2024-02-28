@@ -12,7 +12,7 @@ import json
 import base64
 from io import BytesIO
 
-from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite, JoinRequest
+from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite, JoinRequest, ResumeGroupViewingPermissions
 from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm, GroupInviteForm
 
 # View for homepage
@@ -149,7 +149,7 @@ def view_pdf(request, resume_id):
 def upload(request):
     if request.method == 'POST':
         # Create a form instance and populate it with data from the request (binding):
-        form = UploadResumeForm(request.POST, request.FILES)
+        form = UploadResumeForm(request.POST, request.FILES, request=request)
 
         # Check if the form is valid and call cleaning functions:
         if form.is_valid():
@@ -157,13 +157,16 @@ def upload(request):
             resume.user_id = request.user.id
             resume.save()
 
+            if resume.visibility == 'shared_with_specific_groups':
+                for group in form.cleaned_data['groupsSharedWith']:
+                    ResumeGroupViewingPermissions.objects.create(resume=resume, group=group)
 
             # redirect to a new URL:
             return HttpResponseRedirect(f'/details/{resume.id}/')
 
     # If this is a GET (or any other method) create the default form.
     else:
-        form = UploadResumeForm()
+        form = UploadResumeForm(request=request)
 
     return render(request, 'resumes/upload.html', {'form': form})
 
