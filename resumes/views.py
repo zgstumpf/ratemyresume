@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpRespo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.db.models import Count
 from django.utils import timezone
 from pdf2image import convert_from_path
 
@@ -12,7 +13,7 @@ import json
 import base64
 from io import BytesIO
 
-from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite, JoinRequest, ResumeGroupViewingPermissions
+from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite, JoinRequest, ResumeGroupViewingPermissions, UserPrivateGroupMembership
 from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm, GroupInviteForm
 
 # View for homepage
@@ -186,6 +187,11 @@ def user(request, user_id):
         'groupInvites': groupInvites, # later may want this in own view
     }
 
+    #testing
+    if request.user != user:
+        getResumesUserPermittedToView(request.user, user)
+        #getMutualGroups(request.user, user)
+
     return render(request, 'resumes/user.html', context)
 
 
@@ -253,6 +259,12 @@ def creategroup(request):
                 name=name,
                 description=description,
                 allowJoinRequests=allowJoinRequests
+            )
+
+            # Owners are also technically members - This is helpful when determining mutual groups between users
+            UserPrivateGroupMembership.objects.create(
+                user = owner,
+                group = newGroup
             )
 
             return HttpResponseRedirect(f'/group/{newGroup.id}/') # should redirect to new page
@@ -375,3 +387,45 @@ def rejectrequest(request, joinRequest_id):
         return JsonResponse({"message": "Join request successfully rejected"}, status=200) # ajax
     else:
         return JsonResponse({"error": "unauthorized"}, status=401) # TODO: is there a better way to do this?
+
+def getResumesUserPermittedToView(requestingUser, resumeOwner):
+    """
+    requestingUser and resumeOwner are Django User models
+
+    Returns all resumes from resumeOwner that requestingUser is permitted to view
+    """
+    nonHiddenResumes = Resume.objects.filter(user=resumeOwner).exclude(visibility='hidden')
+    print("Owner's resumes that are not hidden:")
+    print(nonHiddenResumes)
+    visibleToMyGroupsResumes = nonHiddenResumes.filter(visibility='visible_to_my_groups')
+
+    visibleToSpecificGroupsResumes = nonHiddenResumes.filter(visibility='shared_with_specific_groups')
+
+
+    print('Resumes that are marked as visible to my groups:')
+    print(visibleToMyGroupsResumes)
+    if len(getMutualGroups(requestingUser, resumeOwner)) > 0:
+        mutualGroupResumes = nonHiddenResumes.filter(visibility='visible_to_my_groups')
+    print('Resumes I can see because we are in mutual groups:')
+    print(mutualGroupResumes)
+
+    # get user resumes that have visibility shared_with_specific_groups
+    # for each resume, get group_ids for that resume from resumeviewingpermissions
+    # if group_id in requestingUser.privategroups.all().values('group_id'), return it
+    sharedWithSpecificGroupsResumes = nonHiddenResumes.filter(visibility='shared_with_specific_groups')
+
+    viewingPermissionsForOwnerResumesSharedWithSpecificGroups = ResumeGroupViewingPermissions.objects.filter(resume__user=resumeOwner, resume__visibility='shared_with_specific_groups')
+    requestingUserGroupIds = UserPrivateGroupMembership.objects.filter(user = requestingUser).values_list('group_id', flat=True)
+    permittedResumeIds = ResumeGroupViewingPermissions.objects.filter(group_id__in=requestingUserGroupIds).values_list('resume_id', flat=True)
+    resumesRequestingUserCanSee = sharedWithSpecificGroupsResumes.filter(id__in=permittedResumeIds)
+    print("These are the resumes you can see because user shared them with your group")
+    print(resumesRequestingUserCanSee)
+
+
+def getMutualGroups(user1, user2):
+    mutualGroupIds = UserPrivateGroupMembership.objects.filter(user_id__in=[user1.id, user2.id]) \
+        .values('group_id') \
+        .annotate(num_users=Count('user_id', distinct=True)) \
+        .filter(num_users=2) \
+        .values_list('group_id', flat=True)
+    return mutualGroupIds

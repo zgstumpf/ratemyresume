@@ -1,0 +1,173 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="561px" height="691px" viewBox="-0.5 -0.5 561 691" content="&lt;mxfile&gt;&lt;diagram id=&quot;YALV3mtLrIS-PKYtHsCx&quot; name=&quot;Page-1&quot;&gt;3ZhZc9s2EIB/jcZP9ZCiDuvRlp00M63tiZ1J8wiJKxIdkGABUJT667u4eIh2Itsq48mDZWCxABa73+LgKFpmu4+CFOmfPAY2GgfxbhRdj8bjiyjEXy3YW8F8MreCRNDYisJG8ED/BScMnLSkMciOouKcKVp0hWue57BWHRkRglddtQ1n3VkLkkBP8LAmrC/9SmOVumVNg0b+O9Ak9TOHgWvJiFd2ApmSmFctUXQzipaCc2VL2W4JTPvO+8X2+/BMa22YgFwd02HqzFB7vzaIcamumvMc/12lKmNYC7EIO6r+wnJwPnW1b62Wax3gwFf2vpIrsbedJr76zVRDX206mlqn5z0ImoEC4YTWYm3ms2t2IslLsXZaY4cJEQk4rUntb+QUOM4h9qgigBFFt93RiSMmqfUap2LB+fVpH7upt4SVbtBPZpp/SpDKoKttBdDT4F8pQZxJoyHLDHRppe1KOM0Tr65SoMIpe2APIyl4mccQO7dVKVXwUBDjkArTshtYZyMIBbvv+7XvMddh7Cl3WT1x1apJkdBzn7bSYxa83ccXr+e4DXJwvph+n2WsHALZ4nva4fsHdL8O5Ekf5PlAIE96IF//TfJE87ilUPVDwBjuyNrzuM0VWrhmvIwHgXHRZTFcHAnjxQlgnPX89MWk6YF7vFPKjF2uFUecrvSSKZ4zf5AVsHsuqaI8R5UVV4pnLYVLRhPdoPiB63ipGM1hWZ98wWn8GUU/TO7of8ptf+oPdUgNkMTzfhIvBkrieQ9ObQKOabTqM+cnnyXhwVkSBQMeJuHklwNu0QcujAYibtEjTkDGt9C54qiUaApTYuRbKumKMqq0QaZPcJbSOIb87N2hORkUzdkvh6bl8IDN6UBs+slbcNJNDaYBUnoeuzjKFN9t7jaemfs5glhI5HOpbcpjPYsuZfiTcw03zd0VPytVSZjvY5dg7vT1jX5pbHBZQtW7g356LPSLU0A/PT5I9PkoyQLWdEPXT8fq01OxyvVQfFMHx/bTEUS/4dUMI/DuQzUbHxmqMDxFrPr3i0f7zNVPBPuCLUBkVEr0nzRmoVWtYPIqN29aG8G7r7c3n+sg6TFMown47d2ta9YxqFIQ0OvR6ATENJvA2mhKktVBPR+NZwwdcbXC4WeJMrE4lLQGq6hZdlkwTmKT0vrzE2sfatFlfwQM3VWz5g6xRYk7jIbzN1QmmQbDmVEvCWkumZ7Nfi1QKZUtz71gLnuWHjeXzYe3zoiPHeP+w/1ymPX62V1bbydobwRGN26UH28eHvHfx893X+5fYO1A1pHWKeINMV5qbWMvC/Jbti/inqUMNupE786L7m5WvwZbu9l4/sRu9prrFlabT6+mrfX9Orr5Dw==&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <path d="M 170 60 L 52.96 154.01" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 48.87 157.3 L 52.14 150.19 L 52.96 154.01 L 56.52 155.64 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="110" y="0" width="120" height="60" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 30px; margin-left: 111px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                I request to see a user's resumes by going to their user page
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="170" y="34" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    I request to see a u...
+                </text>
+            </switch>
+        </g>
+        <path d="M 66 226 L 69.26 253.68" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 69.87 258.89 L 65.58 252.35 L 69.26 253.68 L 72.53 251.53 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 30 170 C 6 170 0 190 19.2 194 C 0 202.8 21.6 222 37.2 214 C 48 230 84 230 96 214 C 120 214 120 198 105 190 C 120 174 96 158 75 166 C 60 154 36 154 30 170 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 190px; margin-left: 1px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Django view
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="60" y="194" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Django view
+                </text>
+            </switch>
+        </g>
+        <ellipse cx="255" cy="7.5" rx="7.5" ry="7.5" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <path d="M 255 15 L 255 40 M 255 20 L 240 20 M 255 20 L 270 20 M 255 40 L 240 60 M 255 40 L 270 60" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 67px; margin-left: 255px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: nowrap;">
+                                User
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="255" y="79" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    User
+                </text>
+            </switch>
+        </g>
+        <path d="M 70 320 L 70 353.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 70 358.88 L 66.5 351.88 L 70 353.63 L 73.5 351.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="10" y="260" width="120" height="60" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 290px; margin-left: 11px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                get all resumes
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="70" y="294" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    get all resumes
+                </text>
+            </switch>
+        </g>
+        <path d="M 70 420 L 70 453.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 70 458.88 L 66.5 451.88 L 70 453.63 L 73.5 451.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="10" y="360" width="120" height="60" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 390px; margin-left: 11px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                remove resumes that have visibility = 'hidden'
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="70" y="394" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    remove resumes that...
+                </text>
+            </switch>
+        </g>
+        <path d="M 70 550 L 70 573.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 70 578.88 L 66.5 571.88 L 70 573.63 L 73.5 571.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="10" y="460" width="120" height="90" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 505px; margin-left: 11px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                if resume has visiblity = 'show to my groups', and i am not in a mutual group as the user, remove it
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="70" y="509" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    if resume has visibl...
+                </text>
+            </switch>
+        </g>
+        <rect x="10" y="580" width="120" height="110" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 635px; margin-left: 11px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                if resume has visibility = 'show to specific groups', and I am not in any of the groups mentioned, remove it
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="70" y="639" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    if resume has visibi...
+                </text>
+            </switch>
+        </g>
+        <rect x="290" y="170" width="270" height="260" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 268px; height: 1px; padding-top: 300px; margin-left: 292px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Test viewing permissions with resume owner = OWNER and viewer as NONOWNER, where OWNER and NONOWNER are in the same group.
+                                <br/>
+                                <br/>
+                                NONOWNER will upload multiple resumes:
+                                <br/>
+                                1+ with visibility public -&gt; OWNER should see this resume
+                                <br/>
+                                1+ with visibility hidden -&gt; OWNER should not see this resume
+                                <br/>
+                                1+ with visibility share to my groups -&gt; OWNER should see this resume
+                                <br/>
+                                1+ with visibility share with specific groups, and shared with TEST GROUP -&gt; OWNER should see
+                                <br/>
+                                1+ with visibility share with specific groups, and shared with a group OWNER is not in -&gt; OWNER should not see
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="292" y="304" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px">
+                    Test viewing permissions with resume owner =...
+                </text>
+            </switch>
+        </g>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">
+                Text is not SVG - cannot display
+            </text>
+        </a>
+    </switch>
+</svg>
