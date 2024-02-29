@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
@@ -174,7 +174,7 @@ def upload(request):
 def user(request, user_id):
     user = User.objects.get(pk=user_id)
     username = user.username
-    
+
     resumes = getResumesUserPermittedToView(request.user, user)
     attachAvgAndNumRatings(resumes)
     attachImagesAsStrings(resumes)
@@ -329,21 +329,30 @@ def sendinvite(request, group_id):
 
 def acceptinvite(request, invite_id):
     invite = GroupInvite.objects.get(pk=invite_id)
-    if request.user == invite.invitee:
-        invite.group.members.add(invite.invitee)
-        invite.action = 'accepted'
-        invite.action_at = timezone.now()
-        invite.save()
-        return HttpResponseRedirect(f"/group/{invite.group.id}/")
+
+    if request.user != invite.invitee:
+        return HttpResponseForbidden("You are not permitted to perform this action.")
+
+    invite.group.members.add(invite.invitee)
+    invite.action = 'accepted'
+    invite.action_at = timezone.now()
+    invite.save()
+
+    return HttpResponseRedirect(f"/group/{invite.group.id}/") #TODO: convert to ajax
+
 
 def rejectinvite(request, invite_id):
     invite = GroupInvite.objects.get(pk=invite_id)
-    if request.user == invite.invitee:
-        invite.action = 'rejected'
-        invite.action_at = timezone.now()
-        invite.save()
-        return HttpResponseRedirect(f"/group/{invite.group.id}/") # may want to consider ajax so user doesnt need page refresh
-    pass
+
+    if request.user != invite.invitee:
+        return HttpResponseForbidden("You are not permitted to perform this action.")
+
+    invite.action = 'rejected'
+    invite.action_at = timezone.now()
+    invite.save()
+
+    return HttpResponseRedirect(f"/group/{invite.group.id}/") # TODO: convert to ajax 
+
 
 def sendrequest(request, group_id):
     # Why not just skip this line and plug group_id=group_id into the create()?
@@ -400,6 +409,13 @@ def getResumesUserPermittedToView(requestingUser: User, resumeOwner: User):
         publicResumes = resumeOwnerResumes.filter(visibility='public')
         if publicResumes.exists():
             resumesForUser = resumesForUser.union(publicResumes)
+
+        if not requestingUser.is_authenticated:
+            return resumesForUser.order_by('-created_at')
+
+        resumesForSignedInUsers = resumeOwnerResumes.filter(visibility='signed_in_users')
+        if resumesForSignedInUsers.exists():
+            resumesForUser = resumesForUser.union(resumesForSignedInUsers)
 
         mutualGroupResumes = Resume.objects.none()
         if hasMutualGroups(requestingUser, resumeOwner):

@@ -75,7 +75,8 @@ class Resume(models.Model):
     ratingsEnabled = models.BooleanField(default=True)
     commentsEnabled = models.BooleanField(default=True)
 
-    visibilityChoices = models.TextChoices('visibilityChoices', 'public visible_to_my_groups shared_with_specific_groups hidden')
+    # Don't change the choices - they are hardcoded everywhere TODO: change choices to class so they are reusable
+    visibilityChoices = models.TextChoices('visibilityChoices', 'public signed_in_users visible_to_my_groups shared_with_specific_groups hidden')
     visibility = models.CharField(choices=visibilityChoices, max_length=27)
 
     groupsSharedWith = models.ManyToManyField(PrivateGroup, through='ResumeGroupViewingPermissions')
