@@ -174,11 +174,15 @@ def upload(request):
 def user(request, user_id):
     user = User.objects.get(pk=user_id)
     username = user.username
-    resumes = Resume.objects.filter(user_id=user_id).order_by('-created_at')
+    
+    resumes = getResumesUserPermittedToView(request.user, user)
     attachAvgAndNumRatings(resumes)
     attachImagesAsStrings(resumes)
     attachNumComments(resumes)
-    groupInvites = GroupInvite.objects.filter(invitee=user).exclude(action__isnull=False).order_by('-created_at') # later may want this in own view
+
+    groupInvites = GroupInvite.objects.none()
+    if request.user == user:
+        groupInvites = GroupInvite.objects.filter(invitee=user).exclude(action__isnull=False).order_by('-created_at') # later may want this in own view
 
     context = {
         'resumes': resumes,
@@ -186,13 +190,6 @@ def user(request, user_id):
         'thisPageUsername': username,
         'groupInvites': groupInvites, # later may want this in own view
     }
-
-    #testing
-    if request.user != user:
-        getResumesUserPermittedToView(request.user, user)
-        #getMutualGroups(request.user, user)
-
-    print(hasMutualGroups(request.user, user))
 
     return render(request, 'resumes/user.html', context)
 
@@ -396,26 +393,30 @@ def getResumesUserPermittedToView(requestingUser: User, resumeOwner: User):
     """
     resumeOwnerResumes = Resume.objects.filter(user=resumeOwner)
     if requestingUser == resumeOwner:
-        return resumeOwnerResumes
+        return resumeOwnerResumes.order_by('-created_at')
     else:
-        nonHiddenResumes = resumeOwnerResumes.exclude(visibility='hidden')
+        resumesForUser = Resume.objects.none()
 
-        mutualGroupResumes = nonHiddenResumes.none()
+        publicResumes = resumeOwnerResumes.filter(visibility='public')
+        if publicResumes.exists():
+            resumesForUser = resumesForUser.union(publicResumes)
+
+        mutualGroupResumes = Resume.objects.none()
         if hasMutualGroups(requestingUser, resumeOwner):
-            mutualGroupResumes = nonHiddenResumes.filter(visibility='visible_to_my_groups')
+            mutualGroupResumes = resumeOwnerResumes.filter(visibility='visible_to_my_groups')
 
         if mutualGroupResumes.exists():
-            nonHiddenResumes.union(mutualGroupResumes)
+            resumesForUser = resumesForUser.union(mutualGroupResumes)
 
-        sharedWithSpecificGroupsResumes = nonHiddenResumes.filter(visibility='shared_with_specific_groups')
+        sharedWithSpecificGroupsResumes = resumeOwnerResumes.filter(visibility='shared_with_specific_groups')
         requestingUserGroupIds = UserPrivateGroupMembership.objects.filter(user = requestingUser).values_list('group_id', flat=True)
         permittedResumeIds = ResumeGroupViewingPermissions.objects.filter(group_id__in=requestingUserGroupIds).values_list('resume_id', flat=True)
         resumesRequestingUserCanSee = sharedWithSpecificGroupsResumes.filter(id__in=permittedResumeIds)
 
         if resumesRequestingUserCanSee.exists():
-            nonHiddenResumes.union(resumesRequestingUserCanSee)
+            resumesForUser = resumesForUser.union(resumesRequestingUserCanSee)
 
-        return nonHiddenResumes
+        return resumesForUser.order_by('-created_at')
 
 
 def hasMutualGroups(user1: User, user2: User):
@@ -424,10 +425,3 @@ def hasMutualGroups(user1: User, user2: User):
         .annotate(num_users=Count('user_id', distinct=True)) \
         .filter(num_users=2) \
         .exists()
-
-def getMutualGroups(user1, user2):
-    return UserPrivateGroupMembership.objects.filter(user_id__in=[user1.id, user2.id]) \
-        .values('group_id') \
-        .annotate(num_users=Count('user_id', distinct=True)) \
-        .filter(num_users=2) \
-        .values_list('group_id', flat=True)
