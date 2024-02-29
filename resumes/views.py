@@ -192,6 +192,8 @@ def user(request, user_id):
         getResumesUserPermittedToView(request.user, user)
         #getMutualGroups(request.user, user)
 
+    print(hasMutualGroups(request.user, user))
+
     return render(request, 'resumes/user.html', context)
 
 
@@ -388,44 +390,44 @@ def rejectrequest(request, joinRequest_id):
     else:
         return JsonResponse({"error": "unauthorized"}, status=401) # TODO: is there a better way to do this?
 
-def getResumesUserPermittedToView(requestingUser, resumeOwner):
+def getResumesUserPermittedToView(requestingUser: User, resumeOwner: User):
     """
-    requestingUser and resumeOwner are Django User models
-
     Returns all resumes from resumeOwner that requestingUser is permitted to view
     """
-    nonHiddenResumes = Resume.objects.filter(user=resumeOwner).exclude(visibility='hidden')
-    print("Owner's resumes that are not hidden:")
-    print(nonHiddenResumes)
-    visibleToMyGroupsResumes = nonHiddenResumes.filter(visibility='visible_to_my_groups')
+    resumeOwnerResumes = Resume.objects.filter(user=resumeOwner)
+    if requestingUser == resumeOwner:
+        return resumeOwnerResumes
+    else:
+        nonHiddenResumes = resumeOwnerResumes.exclude(visibility='hidden')
 
-    visibleToSpecificGroupsResumes = nonHiddenResumes.filter(visibility='shared_with_specific_groups')
+        mutualGroupResumes = nonHiddenResumes.none()
+        if hasMutualGroups(requestingUser, resumeOwner):
+            mutualGroupResumes = nonHiddenResumes.filter(visibility='visible_to_my_groups')
+
+        if mutualGroupResumes.exists():
+            nonHiddenResumes.union(mutualGroupResumes)
+
+        sharedWithSpecificGroupsResumes = nonHiddenResumes.filter(visibility='shared_with_specific_groups')
+        requestingUserGroupIds = UserPrivateGroupMembership.objects.filter(user = requestingUser).values_list('group_id', flat=True)
+        permittedResumeIds = ResumeGroupViewingPermissions.objects.filter(group_id__in=requestingUserGroupIds).values_list('resume_id', flat=True)
+        resumesRequestingUserCanSee = sharedWithSpecificGroupsResumes.filter(id__in=permittedResumeIds)
+
+        if resumesRequestingUserCanSee.exists():
+            nonHiddenResumes.union(resumesRequestingUserCanSee)
+
+        return nonHiddenResumes
 
 
-    print('Resumes that are marked as visible to my groups:')
-    print(visibleToMyGroupsResumes)
-    if len(getMutualGroups(requestingUser, resumeOwner)) > 0:
-        mutualGroupResumes = nonHiddenResumes.filter(visibility='visible_to_my_groups')
-    print('Resumes I can see because we are in mutual groups:')
-    print(mutualGroupResumes)
-
-    # get user resumes that have visibility shared_with_specific_groups
-    # for each resume, get group_ids for that resume from resumeviewingpermissions
-    # if group_id in requestingUser.privategroups.all().values('group_id'), return it
-    sharedWithSpecificGroupsResumes = nonHiddenResumes.filter(visibility='shared_with_specific_groups')
-
-    viewingPermissionsForOwnerResumesSharedWithSpecificGroups = ResumeGroupViewingPermissions.objects.filter(resume__user=resumeOwner, resume__visibility='shared_with_specific_groups')
-    requestingUserGroupIds = UserPrivateGroupMembership.objects.filter(user = requestingUser).values_list('group_id', flat=True)
-    permittedResumeIds = ResumeGroupViewingPermissions.objects.filter(group_id__in=requestingUserGroupIds).values_list('resume_id', flat=True)
-    resumesRequestingUserCanSee = sharedWithSpecificGroupsResumes.filter(id__in=permittedResumeIds)
-    print("These are the resumes you can see because user shared them with your group")
-    print(resumesRequestingUserCanSee)
-
+def hasMutualGroups(user1: User, user2: User):
+    return UserPrivateGroupMembership.objects.filter(user__in=[user1, user2]) \
+        .values('group_id') \
+        .annotate(num_users=Count('user_id', distinct=True)) \
+        .filter(num_users=2) \
+        .exists()
 
 def getMutualGroups(user1, user2):
-    mutualGroupIds = UserPrivateGroupMembership.objects.filter(user_id__in=[user1.id, user2.id]) \
+    return UserPrivateGroupMembership.objects.filter(user_id__in=[user1.id, user2.id]) \
         .values('group_id') \
         .annotate(num_users=Count('user_id', distinct=True)) \
         .filter(num_users=2) \
         .values_list('group_id', flat=True)
-    return mutualGroupIds
