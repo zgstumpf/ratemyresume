@@ -10,7 +10,7 @@ from .forms import SignUpForm
 # Can not be named just 'logout'
 def logout_page(request):
     logout(request)
-    return render(request, "resumes/index.html")
+    return redirect('/')
 
 
 def login_page(request):

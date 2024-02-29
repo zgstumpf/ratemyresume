@@ -1,11 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.db import IntegrityError
-from django.db.models import Count
+from django.db.models import Count, QuerySet
 from django.utils import timezone
 from pdf2image import convert_from_path
 
@@ -18,7 +18,13 @@ from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivat
 
 # View for homepage
 def index(request):
+    print('entered index view')
     resumes = Resume.objects.order_by("created_at")
+
+    # TODO: may want to think about a more efficient way to do this.
+    for resume in resumes:
+        if not isUserPermittedToViewResume(request.user, resume):
+            resumes = resumes.exclude(pk=resume.pk)
 
     for resume in resumes:
         path = resume.file.path
@@ -42,6 +48,10 @@ def details(request, resume_id):
     #    (example) request: <WSGIRequest: POST '/details/1/'>
     # request is type: <class 'django.core.handlers.wsgi.WSGIRequest'>
     # You can use dir(request) to print all properties/methods of this class
+    resume = get_object_or_404(Resume, pk=resume_id)
+
+    if not isUserPermittedToViewResume(request.user, resume):
+        return HttpResponseForbidden()
 
     # Initialize empty comment and rating forms
     comment_form = UploadCommentForm()
@@ -97,11 +107,6 @@ def details(request, resume_id):
 
                 return JsonResponse({"value": rating.value, "updated_at": rating.updated_at}, status=200)
                 # After here, you enter details.js to the success block of <$('#ratingForm').submit(function (event)>
-
-    try:
-        resume = Resume.objects.get(pk=resume_id)
-    except Resume.DoesNotExist:
-        raise Http404("Resume does not exist")
 
     pdf_path = resume.file.path
     with open(pdf_path, 'rb') as pdf_file:
@@ -351,7 +356,7 @@ def rejectinvite(request, invite_id):
     invite.action_at = timezone.now()
     invite.save()
 
-    return HttpResponseRedirect(f"/group/{invite.group.id}/") # TODO: convert to ajax 
+    return HttpResponseRedirect(f"/group/{invite.group.id}/") # TODO: convert to ajax
 
 
 def sendrequest(request, group_id):
@@ -398,7 +403,7 @@ def rejectrequest(request, joinRequest_id):
 
 def getResumesUserPermittedToView(requestingUser: User, resumeOwner: User):
     """
-    Returns all resumes from resumeOwner that requestingUser is permitted to view
+    Returns all resumes, most recent first, from resumeOwner that requestingUser is permitted to view
     """
     resumeOwnerResumes = Resume.objects.filter(user=resumeOwner)
     if requestingUser == resumeOwner:
@@ -420,24 +425,68 @@ def getResumesUserPermittedToView(requestingUser: User, resumeOwner: User):
         mutualGroupResumes = Resume.objects.none()
         if hasMutualGroups(requestingUser, resumeOwner):
             mutualGroupResumes = resumeOwnerResumes.filter(visibility='visible_to_my_groups')
-
         if mutualGroupResumes.exists():
             resumesForUser = resumesForUser.union(mutualGroupResumes)
 
-        sharedWithSpecificGroupsResumes = resumeOwnerResumes.filter(visibility='shared_with_specific_groups')
-        requestingUserGroupIds = UserPrivateGroupMembership.objects.filter(user = requestingUser).values_list('group_id', flat=True)
-        permittedResumeIds = ResumeGroupViewingPermissions.objects.filter(group_id__in=requestingUserGroupIds).values_list('resume_id', flat=True)
-        resumesRequestingUserCanSee = sharedWithSpecificGroupsResumes.filter(id__in=permittedResumeIds)
-
-        if resumesRequestingUserCanSee.exists():
-            resumesForUser = resumesForUser.union(resumesRequestingUserCanSee)
+        specificGroupResumes = resumeOwnerResumes.filter(visibility='shared_with_specific_groups',
+                                                                id__in=getPermittedSpecificGroupResumeIds(requestingUser))
+        if specificGroupResumes.exists():
+            resumesForUser = resumesForUser.union(specificGroupResumes)
 
         return resumesForUser.order_by('-created_at')
 
+def isUserPermittedToViewResume(user: User, resume: Resume):
+    """
+    Returns True if user is permitted to view resume, False otherwise.
+
+    Make sure user and resume exist before calling this function.
+    """
+    if resume.visibility == 'public':
+        return True
+
+    # If the resume owner is logged in, they can see their own resume.
+    if user == resume.user:
+        return True
+
+    if resume.visibility == 'signed_in_users' and user.is_authenticated() :
+        return True
+
+    if resume.visibility == 'visible_to_my_groups' and hasMutualGroups(user, resume.user):
+        return True
+
+    if resume.visibility == 'shared_with_specific_groups' and resume.id in getPermittedSpecificGroupResumeIds(user):
+        print('resume visibility is shared with specific groups, and the user is in a group permitted by this resume.')
+        return True
+
+    # Only other visibility setting is 'hidden'
+    return False
+
 
 def hasMutualGroups(user1: User, user2: User):
+    if not isinstance(user, User):
+        return False
+
     return UserPrivateGroupMembership.objects.filter(user__in=[user1, user2]) \
         .values('group_id') \
         .annotate(num_users=Count('user_id', distinct=True)) \
         .filter(num_users=2) \
         .exists()
+
+def getPermittedSpecificGroupResumeIds(user: User):
+    """
+    Returns Django QuerySet of UUID objects, where each UUID is a resume_id user is permitted to view because user is in a group
+    the resume owner has selected to share the resume with.
+
+    This function does not return all resume_ids user is permitted to view, just the resume_ids the resume owner has specifically
+    allowed user to view due to group membership.
+    """
+    if not isinstance(user, User):
+        return ResumeGroupViewingPermissions.objects.none()
+
+    # Get list of group_ids of groups the user is in
+    userGroupIds = UserPrivateGroupMembership.objects.filter(user=user).values_list('group_id', flat=True)
+    # Look through the ResumeGroupViewingPermissions table. Retrieve resume_id if that resume is associated with a group_id from above list.
+    # The ResumeGroupViewingPermissions table only stores resume_ids of resumes that have visibility set to 'shared_with_specific_groups'
+    permittedResumeIds = ResumeGroupViewingPermissions.objects.filter(group_id__in=userGroupIds).values_list('resume_id', flat=True)
+    print(type(permittedResumeIds)) # TODO: should I return an empty of this class instead of ResumeGroupViewingPermissions class if user is anonymous
+    return permittedResumeIds

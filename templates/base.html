@@ -32,8 +32,10 @@
         <a class="nav-element" href="{% url 'groups' %}">Private Groups</a>
         <a class="nav-element nav-element-right" href="{% url 'logout' %}">Log out</a>
         {% else %}
-        <a class="nav-element nav-element-right" href="{% url 'login' %}">Log in</a>
+        <!-- TODO: I mention Sign up first, but it appears after Log in, likely due to CSS right align property. Can you fix for
+        convenience? -->
         <a class="nav-element nav-element-right" href="{% url 'signup' %}">Sign up</a>
+        <a class="nav-element nav-element-right" href="{% url 'login' %}">Log in</a>
         {% endif %}
 
     </nav>
