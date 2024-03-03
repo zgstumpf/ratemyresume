@@ -9,16 +9,18 @@ class UploadResumeForm(ModelForm):
     groupsSharedWith = forms.ModelMultipleChoiceField(queryset=None, label='Share with the following groups:', required=False)
     class Meta:
         model = Resume
-        fields = ['file', 'name', 'description', 'visibility', 'groupsSharedWith']
+        fields = ['file', 'name', 'description', 'commentsEnabled', 'visibility', 'groupsSharedWith']
         labels = {
             'file': 'Upload resume (pdf required)',
             'name': 'If you had to refer to this specific resume, what name would you use?',
-            'description': "Discussion prompt: The message you put here will be displayed at the top of this resume's comment section.",
+            'description': "The description you put here will be displayed at the top of this resume's page:",
+            'commentsEnabled': 'Allow comments'
         }
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
+        self.fields['commentsEnabled'].widget = 
         # User can only select groups they are a member of
         self.fields['groupsSharedWith'].widget = forms.CheckboxSelectMultiple()
         self.fields['groupsSharedWith'].queryset = PrivateGroup.objects.filter(members=request.user)

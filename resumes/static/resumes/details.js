@@ -51,27 +51,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Example: {comment: 'nice'}
 
                 // Clear write comment field
-                $('#write-comment-input').val('')
+                $('.write-comment-input').val('')
 
                 // Insert data from response into comments so user sees their data on the page without need for refresh
                 comment = response.comment
                 var commentHTML = `
-                <div class="card">
-                    <div class="card-body">
+                <div class="comment">
                         <p class="comment-user-header comment-username">${comment.user}</p>
                 `
                 if (comment.user===ownerUsernameForJS){
                     commentHTML += `
-                        <p class="comment-user-header owner-designation">RESUME OWNER</p>
+                        <p class="comment-user-header owner-designation">Resume Owner</p>
                     `
                 }
                 commentHTML += `
-                        <p class="card-text">${comment.text}</p>
                         <p class="comment-user-header">${comment.created_at}</p>
-                    </div>
+                        <p>${comment.text}</p>
                 </div>
                 `
-                $("#scrollable-comments").prepend(commentHTML)
+
+                $("#comment-section").prepend(commentHTML)
             },
             error: function (response) {
                 console.error("Error happened in ajax")

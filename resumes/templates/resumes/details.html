@@ -4,6 +4,12 @@
 {% block pageSpecificStaticFiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'resumes/details.css' %}">
     <script src="{% static 'resumes/details.js' %}"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Style+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Style+Script&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -13,121 +19,116 @@
     <div id="userRatingDateForJS" style="display: none;">{{ userRating.updated_at }}</div>
     <div id="ownerUsernameForJS" style="display: none;">{{ resume.user }}</div>
 
-    <div id="resume-header-info">
-        <p>{{ resume.name }}</p>
-        <p>Uploaded {{ resume.created_at}}</p>
+
+    <h1 class="page-header"> {{ resume.name }}</h1>
+    <div class="resume-info">
+        <div class="resume-info-top-line">
+            <a href="{% url 'user' resume.user.id %}" class="username-link resume-info-top-line-element">{{ resume.user }}</a>
+            <span class="resume-info-top-line-element">
+                <img src="{% static 'resumes/svg/star.svg' %}" alt="Star icon">{{ avgRating }} ({{ numRatings }})
+            </span>
+            <span class="resume-info-top-line-element">
+                <img src="{% static 'resumes/svg/comment.svg' %}" alt="Comment icon">{{ numComments }}
+            </span>
+        </div>
+        <p class="resume-description">{{ resume.description }}</p>
+        <span>Uploaded {{ resume.created_at}}</span>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-8">
-                <div id="viewing-options">
-                    <a href="{{ resume.file.url }}" target="_blank">Download</a>
-                    <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a>
-                </div>
-                <embed id="embedded_pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="800" height="1000">
-            </div>
-            <div class="col-md-4">
 
-                <div class="card">
-                    <div class="card-body">
-                        <p class="comment-user-header comment-username">{{ resume.user }}</p>
-                        <p class="comment-user-header owner-designation">RESUME OWNER</p>
-                        <p class="card-text">{{ resume.description }}</p>
-                    </div>
-                </div>
+    <h2 class="cursive-header">Resume</h2>
 
-                <div id="owner-comment-separator"></div>
-
-                <!--
-                When this form is submitted, a POST request is made to the URL specified in the action attribute
-                Example: When resume.id == 1, action="details/1/"
-                This POST request is sent to that URL. The URL forwards the information to the corresponding view
-                as defined in resumes/urls.py, which is resumes/views.py -> details()
-                -->
-                <div id="writeCommentArea">
-                    <form id="commentForm"
-                        method="post"
-                        action="{% url 'details' resume_id=resume.id %}"
-                        enctype="multipart/form-data">
-                        <!-- Since there are multiple forms on this page, this hidden input field is used to identify the form
-                        once the form information is sent to the backend. -->
-                        <input type="hidden" name="form_type" value="comment_form">
-                        {% csrf_token %}
-
-                        <textarea id="write-comment-input" rows="3" cols="40" name="text" placeholder="Type a comment" maxlength="2000"></textarea>
-
-                    </form>
-
-                    <div id="submit-comment-button" title="Send comment">
-                        <svg id="submit-comment-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send-arrow-down-fill" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M15.854.146a.5.5 0 0 1 .11.54L13.026 8.03A4.5 4.5 0 0 0 8 12.5c0 .5 0 1.5-.773.36l-1.59-2.498L.644 7.184l-.002-.001-.41-.261a.5.5 0 0 1 .083-.886l.452-.18.001-.001L15.314.035a.5.5 0 0 1 .54.111M6.637 10.07l7.494-7.494.471-1.178-1.178.471L5.93 9.363l.338.215a.5.5 0 0 1 .154.154z"/>
-                            <path fill-rule="evenodd" d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-1.646a.5.5 0 0 1-.722-.016l-1.149-1.25a.5.5 0 1 1 .737-.676l.28.305V11a.5.5 0 0 1 1 0v1.793l.396-.397a.5.5 0 0 1 .708.708z"/>
-                        </svg>
-                    </div>
-                </div>
+    {% comment %} Ideally, the width and the height should be set so no scrollbars appear on the embed element for a 1 page. resume {% endcomment %}
+    <embed id="embedded-pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="850" height="1050">
+    <div id="viewing-options">
+        <a href="{{ resume.file.url }}" target="_blank">Download</a>
+        <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a>
+    </div>
 
 
+    <h2 class="cursive-header">Rate</h2>
+    <div class="section-separator"></div>
+    <div id="rating-section">
 
-                <p class="section-title">Comments</p>
-                <div id="scrollable-comments">
-                    {% for comment in comments %}
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="comment-user-header comment-username">{{ comment.user }}</p>
-                            {% if comment.user == resume.user %}
-                            <p class="comment-user-header owner-designation">RESUME OWNER</p>
-                            {% endif %}
-                            <p class="card-text">{{ comment.text }}</p>
-                            <p class="comment-user-header">{{ comment.created_at }}</p>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
+        <div id="rating-scale">
+            <div class="rating-label rating-label-left">Poor</div>
+            <div class="rating-option" data-value="0">0</div>
+            <div class="rating-option" data-value="1">1</div>
+            <div class="rating-option" data-value="2">2</div>
+            <div class="rating-option" data-value="3">3</div>
+            <div class="rating-option" data-value="4">4</div>
+            <div class="rating-option" data-value="5">5</div>
+            <div class="rating-option" data-value="6">6</div>
+            <div class="rating-option" data-value="7">7</div>
+            <div class="rating-option" data-value="8">8</div>
+            <div class="rating-option" data-value="9">9</div>
+            <div class="rating-option" data-value="10">10</div>
+            <div class="rating-label rating-label-right">Excellent</div>
+        </div>
 
-                <!-- Used as a general separator -->
-                <div id="owner-comment-separator"></div>
+        <p id="rating-description"></p>
+        <p id="rating-score"></p>
 
-                <div id="rating-section">
-                    <p class="section-title">Rate</p>
+        {% comment %}This form has display: none, so it is invisible and does not affect any elements on the DOM.
+        When a rating option is clicked, the value from the option is inserted into this form and the form is
+        submitted automatically.{% endcomment %}
+        <form id="ratingForm"
+            method="post"
+            action="{% url 'details' resume_id=resume.id %}"
+            enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="rating_form_value">Rating:</label>
+            <input id="rating_form_value" type="number" name="value" required>
 
-                    <div id="rating-scale">
-                        <div class="rating-label">Poor</div>
-                        <div class="rating-option" data-value="0">0</div>
-                        <div class="rating-option" data-value="1">1</div>
-                        <div class="rating-option" data-value="2">2</div>
-                        <div class="rating-option" data-value="3">3</div>
-                        <div class="rating-option" data-value="4">4</div>
-                        <div class="rating-option" data-value="5">5</div>
-                        <div class="rating-option" data-value="6">6</div>
-                        <div class="rating-option" data-value="7">7</div>
-                        <div class="rating-option" data-value="8">8</div>
-                        <div class="rating-option" data-value="9">9</div>
-                        <div class="rating-option" data-value="10">10</div>
-                        <div class="rating-label">Excellent</div>
-                    </div>
-
-                    <p id="rating-description"></p>
-                    <p id="rating-score"></p>
-                </div>
+            <input type="hidden" name="form_type" value="rating_form">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 
 
-                {% comment %}This form has display: none, so it is invisible and does not affect any elements on the DOM.
-                When a rating option is clicked, the value from the option is inserted into this form and the form is
-                submitted automatically.{% endcomment %}
-                <form id="ratingForm"
-                    method="post"
-                    action="{% url 'details' resume_id=resume.id %}"
-                    enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <label for="rating_form_value">Rating:</label>
-                    <input id="rating_form_value" type="number" name="value" required>
+    <h2 class="cursive-header style-script-regular">Comments</h2>
+    <div class="section-separator"></div>
+    <!--
+    When this form is submitted, a POST request is made to the URL specified in the action attribute
+    Example: When resume.id == 1, action="details/1/"
+    This POST request is sent to that URL. The URL forwards the information to the corresponding view
+    as defined in resumes/urls.py, which is resumes/views.py -> details()
+    -->
+    <div id="write-comment-area">
+        <form id="commentForm"
+            method="post"
+            action="{% url 'details' resume_id=resume.id %}"
+            enctype="multipart/form-data">
+            <!-- Since there are multiple forms on this page, this hidden input field is used to identify the form
+            once the form information is sent to the backend. -->
+            <input type="hidden" name="form_type" value="comment_form">
+            {% csrf_token %}
 
-                    <input type="hidden" name="form_type" value="rating_form">
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
+            <textarea class="write-comment-input" name="text" placeholder="Write a comment" maxlength="2000"></textarea>
+
+        </form>
+
+        <div id="submit-comment-button" title="Send comment">
+            <svg id="submit-comment-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send-arrow-down-fill" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15.854.146a.5.5 0 0 1 .11.54L13.026 8.03A4.5 4.5 0 0 0 8 12.5c0 .5 0 1.5-.773.36l-1.59-2.498L.644 7.184l-.002-.001-.41-.261a.5.5 0 0 1 .083-.886l.452-.18.001-.001L15.314.035a.5.5 0 0 1 .54.111M6.637 10.07l7.494-7.494.471-1.178-1.178.471L5.93 9.363l.338.215a.5.5 0 0 1 .154.154z"/>
+                <path fill-rule="evenodd" d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-1.646a.5.5 0 0 1-.722-.016l-1.149-1.25a.5.5 0 1 1 .737-.676l.28.305V11a.5.5 0 0 1 1 0v1.793l.396-.397a.5.5 0 0 1 .708.708z"/>
+            </svg>
+            Send
         </div>
     </div>
+
+    <div id="comment-section">
+        {% for comment in comments %}
+        <div class="comment">
+            <a href="{% url 'user' comment.user.id %}" class="comment-user-header comment-username username-link">{{ comment.user }}</a>
+            {% if comment.user == resume.user %}
+            <p class="comment-user-header owner-designation">Resume Owner</p>
+            {% endif %}
+            <p class="comment-user-header">{{ comment.created_at }}</p>
+            <p>{{ comment.text }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
 
 {% endblock %}

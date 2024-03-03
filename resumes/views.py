@@ -112,23 +112,27 @@ def details(request, resume_id):
     with open(pdf_path, 'rb') as pdf_file:
         pdf_content = base64.b64encode(pdf_file.read()).decode()
 
-    # '-' before field name makes order_by do descending
-    comments = Comment.objects.filter(resume_id=resume_id).order_by('-created_at')
-
-    avgRating = None
-    userRating = None
-
-    # Get all ratings for the specific resume, and find the average value
-    ratings = Rating.objects.filter(resume_id=resume_id)
-    if ratings:
+    # This ratings code is copied from attachAvgAndNumRatings because passing a single object to that function
+    # didn't work. TODO: Refactor.
+    ratings = Rating.objects.filter(resume_id=resume.id)
+    numRatings = len(ratings)
+    if numRatings > 0:
         ratingsValues = [rating.value for rating in ratings]
         avgRating = round(sum(ratingsValues) / len(ratingsValues),2)
-        # Out of those ratings, find the one that belongs to the signed in user
-        try:
-            userRating = ratings.filter(user_id=request.user.id).get()
-        except ObjectDoesNotExist:
-            userRating = None
+    else:
+        avgRating = None
 
+
+    userRating = None
+    try:
+        userRating = Rating.objects.get(resume=resume_id, user=request.user)
+    except ObjectDoesNotExist:
+        userRating = None
+        
+
+    # '-' before field name makes order_by do descending
+    comments = Comment.objects.filter(resume_id=resume_id).order_by('-created_at')
+    numComments = len(comments)
 
     context = {
         "resume": resume,
@@ -136,19 +140,26 @@ def details(request, resume_id):
         "comment_form": comment_form,
         "rating_form": rating_form,
         "comments": comments,
-        # Only return the avg rating - If we returned all the ratings, anyone could see who gave what rating.
+        "numComments": numComments,
         "avgRating": avgRating,
+        "numRatings": numRatings,
         # Return user's rating so they can see what and when they rated the resume in the past
         "userRating": userRating
     }
 
     return render(request, "resumes/details.html", context)
 
+# TODO: ADD PERMISSION CHECKING
 def view_pdf(request, resume_id):
-    resume = Resume.objects.get(pk=resume_id)
+    resume = get_object_or_404(Resume, pk=resume_id)
+
+    if not isUserPermittedToViewResume(request.user, resume):
+        return HttpResponseForbidden()
+
     with open(resume.file.path, 'rb') as file:
         response = HttpResponse(file.read(), content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename=' + resume.file.name
+
     return response
 
 @login_required

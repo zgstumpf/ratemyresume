@@ -1,0 +1,15 @@
+Colors
+------
+Primary: #007BFF
+Secondary: #cccdcf
+Text: #222222
+Background: #F7F7F7
+
+
+Fonts
+Regular Google Fonts, Inter
+Decorative: Google Fonts, Style Script
+
+Navbar
+------
+Position: fixed
