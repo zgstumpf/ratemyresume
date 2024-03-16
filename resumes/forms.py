@@ -20,8 +20,7 @@ class UploadResumeForm(ModelForm):
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-        self.fields['commentsEnabled'].widget = 
-        # User can only select groups they are a member of
+       # User can only select groups they are a member of
         self.fields['groupsSharedWith'].widget = forms.CheckboxSelectMultiple()
         self.fields['groupsSharedWith'].queryset = PrivateGroup.objects.filter(members=request.user)
         # Sets label of option to name of group - __str__() is defined in PrivateGroup model and is set to return name
