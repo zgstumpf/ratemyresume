@@ -9,15 +9,15 @@
 {% block content %}
 
 
-<h1>Private Group Page</h1>
-<p>{{group.name}}</p>
+<h1 class="page-header">
+    <img src="{% static 'resumes/svg/group.svg' %}" alt="Group icon" height="40px" width="40px" style="margin-right: 10px;">
+    {{group.name}}
+</h1>
 
+<p>Owner: <a href="{% url 'user' group.owner.id %}" class="username-link">{{ group.owner.username }}</a></p>
 {% if isOwner %}
-    <p>You are the owner of this group</p>
     <a href="{% url 'sendinvite' group.id %}">Invite user</a>
-
 {% else %}
-    <p>This group is owned by {{ group.owner.username }}</p>
     {% if not isMember %}
     <form action="{% url 'sendrequest' group.id %}" method="post">
         {% csrf_token %}
@@ -26,56 +26,188 @@
     {% endif %}
 {% endif %}
 
-
-<h3>Join Requests</h3>
-{% for joinRequest in joinRequestsPending %}
-<p>{{joinRequest.user.username}}</p>
-    {% if isOwner %}
-        <form action="{% url 'acceptrequest' joinRequest.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Accept</button>
-        </form>
-        <form action="{% url 'rejectrequest' joinRequest.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Reject</button>
-        </form>
-    {% endif %}
-{% endfor %}
-<br>
-
-<h3>Join Requests History</h3>
-{% for joinRequest in joinRequestsHistory %}
-<p>{{ joinRequest.user }} - {{ joinRequest.action}} - {{joinRequest.action_at}}</p>
-{% endfor %}
-
-<br>
-<h3>Pending Invitations</h3>
-{% for groupInvite in groupInvitesPending %}
-    <p>{{groupInvite.invitee}}</p>
-        {% if not isOwner %}
-            <p>You have been invited to this group</p>
-            <form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Accept</button>
-            </form>
-            <form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Reject</button>
-            </form>
+<div class="area">
+    <div id="members-header" class="area-header">
+        <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
+        Members
+    </div>
+    <div id="members-data" style="display:none">
+        {% if group.members.all %}
+        <table class="datatables" style="width: 100%">
+            <thead>
+                <tr>
+                    <th></th> <!-- Username column -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in group.members.all %}
+                <tr>
+                    <td>
+                        <a href="{% url 'user' member.id %}" class="username-link">{{member.username}}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No members</p>
         {% endif %}
-{% endfor %}
-<br>
-<h3>Invitations History</h3>
-{% for groupInvite in groupInvitesHistory %}
-<p>{{groupInvite.invitee}} - {{groupInvite.action}} - {{groupInvite.action_at}}</p>
-{% endfor %}
-
+    </div>
+</div>
 
 <br>
-<p>Members</p>
-{% for member in group.members.all %}
-<a href="{% url 'user' member.id %}">{{member.username}}</a>
-{% endfor %}
 
+<div class="area">
+<div id="join-request-header" class="area-header">
+    <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
+    Join Requests
+</div>
+<div id="join-request-data" style="display: none">
+    {% if joinRequestsPending %}
+        <table class="datatables" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Sent</th>
+                    <th></th> <!-- Action column -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for joinRequest in joinRequestsPending %}
+                <tr>
+                    <td>{{ joinRequest.user.username }}</td>
+                    <td>{{ joinRequest.created_at }}</td>
+                    <td>
+                        {% if isOwner %}
+                        <form action="{% url 'acceptrequest' joinRequest.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Accept</button>
+                        </form>
+                        <form action="{% url 'rejectrequest' joinRequest.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Reject</button>
+                        </form>
+                    {% endif %}
+                    </td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <p>No pending join requests</p>
+    {% endif %}
+
+    <div class="area">
+        <div id="join-request-history-header" class="area-header" style="font-style: italic;">
+            <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
+            History
+        </div>
+        <div id="join-request-history-data" style="display: none">
+            {% if joinRequestsHistory %}
+            <table class="datatables" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Sent</th>
+                        <th>Action</th>
+                        <th>Action At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for joinRequest in joinRequestsHistory %}
+                    <tr>
+                        <td>{{ joinRequest.user }}</td>
+                        <td>{{ joinRequest.created_at }}</td>
+                        <td>{{ joinRequest.action}}</td>
+                        <td>{{ joinRequest.action_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No join request history</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+
+<br>
+
+<div class="area">
+    <div id="invitation-header" class="area-header">
+        <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
+        Invitations
+    </div>
+    <div id="invitation-data" style="display: none">
+        {% if groupInvitesPending %}
+            <table class="datatables" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Sent</th>
+                        <th></th> <!-- Abilities column -->
+                    </tr>
+                </thead>
+                <tbody>
+            {% for groupInvite in groupInvitesPending %}
+            <tr>
+                <td>{{groupInvite.invitee}}</td>
+                <td>{{groupInvite.created_at}}</td>
+                <td>
+                    {% if not isOwner %}
+                        <p>You have been invited to this group</p>
+                        <form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Accept</button>
+                        </form>
+                        <form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Reject</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        {% else %}
+        <p>No pending invites</p>
+        {% endif %}
+
+        <div class="area">
+            <div id="invitation-history-header" class="area-header" style="font-style: italic;">
+                <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
+                History
+            </div>
+            <div id="invitation-history-data" style="display: none">
+            {% if groupInvitesHistory %}
+            <table class="datatables" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Sent</th>
+                        <th>Action</th>
+                        <th>Action At</th>
+                    </tr>
+                </thead>
+                <tbody>
+            {% for groupInvite in groupInvitesHistory %}
+            <tr>
+                <td>{{groupInvite.invitee}}</td>
+                <td>{{groupInvite.created_at}}</td>
+                <td>{{groupInvite.action}}</td>
+                <td>{{groupInvite.action_at}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+            {% else %}
+            <p>No invitation history</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 {% endblock %}

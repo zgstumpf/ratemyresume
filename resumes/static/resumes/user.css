@@ -7,6 +7,8 @@
     width: 100%;
     display: flex;
     justify-content: left;
+    /* Some spacing between table and 'Upload new' link */
+    margin-top: 10px;
 }
 
 /* table {

@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
 
     {% load static %}
     {% comment %} Site-wide static files {% endcomment %}
@@ -27,10 +29,9 @@
         <a class="nav-element" href="{% url 'index' %}">Explore</a> <!-- Later these 2 will link to separate pages-->
 
         {% if user.is_authenticated %}
-        <a class="nav-element" href="{% url 'user' request.user.id %}">My Resumes</a>
-        <a class="nav-element" href="{% url 'upload' %}">Upload</a>
         <a class="nav-element" href="{% url 'groups' %}">Private Groups</a>
         <a class="nav-element nav-element-right" href="{% url 'logout' %}">Log out</a>
+        <a class="nav-element nav-element-right" href="{% url 'user' request.user.id %}">Home</a>
         {% else %}
         <!-- TODO: I mention Sign up first, but it appears after Log in, likely due to CSS right align property. Can you fix for
         convenience? -->

@@ -1,0 +1,16 @@
+.area {
+    border: 1px solid #cccdcf;
+    border-radius: 5px;
+}
+
+.area-header {
+    background-color: #cccdcf;
+}
+.area-header:hover{
+    cursor: pointer;
+}
+
+/* Fixes bug where if a datatables table has only usernames that looked like numbers, datatables would align text right. */
+table.dataTable th.dt-type-numeric,table.dataTable th.dt-type-date,table.dataTable td.dt-type-numeric,table.dataTable td.dt-type-date {
+    text-align: left;
+}
