@@ -128,7 +128,7 @@ def details(request, resume_id):
         userRating = Rating.objects.get(resume=resume_id, user=request.user)
     except ObjectDoesNotExist:
         userRating = None
-        
+
 
     # '-' before field name makes order_by do descending
     comments = Comment.objects.filter(resume_id=resume_id).order_by('-created_at')

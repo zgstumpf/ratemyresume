@@ -1,3 +1,18 @@
+body {
+    /* Default font for entire website - move this to base.css eventually */
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "slnt" 0;
+
+    /* Default background color - slightly off white */
+    background-color: #F7F7F7;
+
+    /* Default text color - slightly off black */
+    color: #222222;
+}
+
 .rmr-navbar {
     background-color: #007bff;
     border-bottom: 5px solid darkgray;
@@ -23,6 +38,28 @@
     float: right;
 }
 
+.content {
+    margin: 0 10%;
+}
+
+.page-header {
+    font-size: 35px;
+    font-weight: bold;
+
+    /* border-bottom: 1px solid #cccdcf; */
+    margin-bottom: 20px;
+    margin-top: 35px;
+}
+
+.sub-header {
+    font-weight: 400;
+    font-style: normal;
+
+    border-bottom: 1px solid #cccdcf;
+    margin-bottom: 20px;
+    margin-top: 35px;
+}
+
 /* This will be the universal table for the site */
 .table-container {
     width: 100%;
@@ -37,4 +74,16 @@
 
 .table-container th, td {
     border-bottom: 1px solid rgb(205, 205, 205);
+}
+
+.blue-btn {
+    background-color: #007bff;
+    color:#F7F7F7;
+    /* Override default border-width */
+    border-width: 0px;
+    border-radius: 5px;
+}
+
+.blue-btn:hover {
+    background-color: #016ada;
 }

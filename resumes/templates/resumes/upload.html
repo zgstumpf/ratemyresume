@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Upload Resume</h1>
+    <h1 class="page-header">Upload Resume</h1>
 
     <div class="warning-box">
         <span class="warning-symbol">&#9888;</span>
@@ -16,8 +16,41 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
+
+        {% comment %}width: fit-content ensures the default browser error message when a required file input is _blank
+        is centered with the content instead of centered in the middle of the page since form-fields expand to fit the page{% endcomment%}
+        <div class="form-field" style='width: fit-content;'>
+            <label for="{{ form.file.id_for_label }}">Upload resume (pdf required)</label>
+            {{ form.file }}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.name.id_for_label }}">If you had to refer to this specific resume, what name would you use?</label>
+            {{ form.name }}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.description.id_for_label }}">The description you put here will be displayed at the top of this resume's page:</label>
+            {{ form.description }}
+        </div>
+
+        <div class="form-field-thin">
+            <div class="checkbox">
+                {{ form.commentsEnabled }}
+                <label for="{{ form.commentsEnabled.id_for_label }}">Allow comments</label>
+            </div>
+        </div>
+
+        <div class="form-field">
+            <label for="{{ forms.visibility.id_for_label }}">Visibility</label>
+            {{ form.visibility }}
+
+            <div class="checkbox">
+                {{ form.groupsSharedWith }}
+            </div>
+        </div>
+
+        <button type="submit" class="blue-btn">Submit</button>
     </form>
 
 {% endblock %}

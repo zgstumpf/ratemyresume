@@ -10,12 +10,6 @@ class UploadResumeForm(ModelForm):
     class Meta:
         model = Resume
         fields = ['file', 'name', 'description', 'commentsEnabled', 'visibility', 'groupsSharedWith']
-        labels = {
-            'file': 'Upload resume (pdf required)',
-            'name': 'If you had to refer to this specific resume, what name would you use?',
-            'description': "The description you put here will be displayed at the top of this resume's page:",
-            'commentsEnabled': 'Allow comments'
-        }
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)

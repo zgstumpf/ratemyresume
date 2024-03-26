@@ -1,17 +1,17 @@
 /* For any elements to be aligned with table, they must have margin-left:10%; */
-p {
+/* p {
     margin-left: 10%;
-}
+} */
 
 .table-container {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: left;
 }
 
-table {
+/* table {
     width: 80%;
-}
+} */
 
 th, td {
     border-bottom: 1px solid rgb(205, 205, 205);

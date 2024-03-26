@@ -8,13 +8,14 @@
 
 {% block content %}
 {% if isUserHome %}
-<p>Hello, {{user}}!</p>
+    <h1 class="page-header">Hello, {{user}}!</h1>
 {% else %}
-<p>You are viewing {{ thisPageUsername }}'s resumes</p>
+    <h1 class="page-header">{{ thisPageUsername }}'s resumes</h1>
 {% endif%}
 
 
 
+<h2 class="sub-header">Resumes</h2>
 {% if resumes %}
 <div class="table-container">
 <table>
@@ -55,16 +56,23 @@
 <p>{{ thisPageUsername }} has no resumes</p>
 {% endif %}
 
+{% if isUserHome %}
+<h2 class="sub-header">Group Invites</h2>
 <!-- need to make sure this is just the user's group invites -->
-{% for groupInvite in groupInvites %}
-<form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Accept Invitation to {{groupInvite.group.name}}</button>
-</form>
-<form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Reject</button>
-</form>
-{% endfor %}
+    {% if groupInvites %}
+        {% for groupInvite in groupInvites %}
+            <form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Accept Invitation to {{groupInvite.group.name}}</button>
+            </form>
+            <form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Reject</button>
+            </form>
+        {% endfor %}
+    {% else %}
+        <p>No pending invitations</p>
+    {% endif %}
+{% endif %}
 
 {% endblock %}
