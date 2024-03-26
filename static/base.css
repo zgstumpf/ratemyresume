@@ -87,3 +87,7 @@ body {
 .blue-btn:hover {
     background-color: #016ada;
 }
+
+.error-msg {
+    color: red;
+}

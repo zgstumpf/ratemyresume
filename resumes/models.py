@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, FileExtensionValidator
 
 import uuid
 
@@ -68,7 +68,7 @@ class Resume(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=150, blank=True)
-    file = models.FileField(upload_to='resumes/files/')
+    file = models.FileField(upload_to='resumes/files/', validators=[FileExtensionValidator(allowed_extensions=["pdf"])])
     description = models.CharField(max_length=1000, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -126,4 +126,3 @@ class Rating(models.Model):
 #     grad_yr = models.
 #     bio = models.CharField(max_length=100)
 #     university =
-    

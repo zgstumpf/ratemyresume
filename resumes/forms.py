@@ -26,7 +26,7 @@ class UploadResumeForm(ModelForm):
         groupsSharedWith = cleaned_data.get('groupsSharedWith')
 
         if visibility == 'shared_with_specific_groups' and not groupsSharedWith:
-            raise ValidationError("If you chose to share with specific groups, you must select at least one group to share with.")
+            self.add_error('visibility', "If you chose to share with specific groups, you must select at least one group to share with.")
 
         return cleaned_data
 
