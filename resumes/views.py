@@ -185,6 +185,7 @@ def upload(request):
     else:
         form = UploadResumeForm(request=request)
 
+    # TODO: Fix if returning an errored form, file upload is cleared.
     return render(request, 'resumes/upload.html', {'form': form})
 
 def user(request, user_id):
