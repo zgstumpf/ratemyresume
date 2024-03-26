@@ -50,3 +50,9 @@ input {
 .form-field-thin {
     margin-bottom: 10px;
 }
+
+.file-field {
+    padding: 5px 10px;
+    border: 1px solid #cccdcf;
+    border-radius: 5px;
+}

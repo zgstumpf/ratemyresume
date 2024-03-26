@@ -67,7 +67,7 @@ class PrivateGroupBoardComment(models.Model):
 class Resume(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=150, blank=True)
+    name = models.CharField(max_length=150)
     file = models.FileField(upload_to='resumes/files/', validators=[FileExtensionValidator(allowed_extensions=["pdf"])])
     description = models.CharField(max_length=1000, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

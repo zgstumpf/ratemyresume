@@ -88,6 +88,11 @@ body {
     background-color: #016ada;
 }
 
+/* For forms */
 .error-msg {
     color: red;
+}
+.required-text {
+    color: red;
+    font-style: italic;
 }
