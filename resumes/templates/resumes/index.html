@@ -4,38 +4,24 @@
 {% block pageSpecificStaticFiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'resumes/index.css' %}">
     <script src="{% static 'resumes/index.js' %}"></script>
+    <script src="{% static 'resume_card.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-    <h1>Welcome to ratemyresume</h1>
+<h1>Welcome to ratemyresume</h1>
 
 {% if not user.is_authenticated %}
-<h1>some promotional content for the site here</h1>
+    <h1>some promotional content for the site here</h1>
 {% endif %}
 
 {% if resumes %}
-{% for resume in resumes %}
-{% if forloop.counter0|divisibleby:4 %}
-    <div class="row">
-{% endif %}
-        <div class="col-md-3">
-            <a href="{% url 'details' resume_id=resume.id %}">
-            <div class="zoom-box card">
-                <div class="card-body">
-                    <img class="card-img-top" src="{{ resume.image_data }}" alt="First page of resume" width="auto" height="auto">
-                    <h5 class="card-title">{{ resume.name }}</h5>
-                    <p class="card-text">{{ resume.description }}</p>
-                    {% comment %} <a href="{% url 'details' resume_id=resume.id %}" class="btn btn-primary">View Details</a> {% endcomment %}
-                </div>
-            </div>
-            </a>
-        </div>
-{% if forloop.last or forloop.counter0|add:1|divisibleby:4 %}
-    </div>
-{% endif %}
-{% endfor %}
+    {% for resume in resumes %}
+        {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=hasUserRated created_at=resume.created_at %}
+    {% endfor %}
 {% else %}
 <!-- Why does it say no resumes are available when I log out? -->
     <p>No resumes are available.</p>
 {% endif %}
+
+
 {% endblock %}

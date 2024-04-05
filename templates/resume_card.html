@@ -1,0 +1,30 @@
+{% comment %}
+Usage:
+In head:
+<script src="{% static 'resume_card.js' %}"></script>
+
+(Surround with brackets {})
+% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=hasUserRated created_at=resume.created_at %
+{% endcomment %}
+
+{% load static %} {% comment %} load static is required due to checkmark svg {% endcomment %}
+
+<div class="resume-card" data-detailsurl="{% url 'details' resume_id %}">
+    <div class="resume-id" style="display:none" data-url="{% url 'get_resume_preview_image' resume_id %}"></div>
+    <div class="resume-image-skeleton"></div>
+
+    {% if hasUserRated %}
+    <div class="resume-card-rated-checkmark">
+        <img src="{% static 'svg/checkmark.svg' %}" alt="Checkmark icon" title="You have rated this resume" height="40px" width="40px">
+    </div>
+    {% endif %}
+
+    <!-- There is still the problem of text clipping out of the card or entering a second line if the resume name or username is too long -->
+    <!-- If you ever figure out best way to fix this, the title attribute will let the user see the full value even if text is shortened to fit -->
+    <div class="resume-card-name" title="{{ resume_name }}">{{ resume_name }}</div>
+    <div class="resume-card-text">
+        <a href="{% url 'user' user_id %}" class="username-link">{{ user }}</a>
+    </div>
+
+    <div class="resume-card-text">{{ created_at }}</div>
+</div>
