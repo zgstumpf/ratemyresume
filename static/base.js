@@ -27,3 +27,21 @@ function getCsrf() {
     }
     return cookieValue;
 }
+
+/**
+ * Returns HTML for a green popup message box that appears in the top left, with a close button that removes
+ * the box when clicked.
+ */
+function popupMsg(text){
+    $("body").prepend(`
+    <div class="popup-msg">
+        ${text}
+        <span class="close-btn" onclick="removePopupMsg(this)">&times;</span>
+    </div>
+    <script>
+        function removePopupMsg(btn) {
+            $(btn).closest('.popup-msg').remove();
+        }
+    </script>
+    `)
+}

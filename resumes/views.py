@@ -249,11 +249,40 @@ def attachImagesAsStrings(resumes):
         resume.imageData = f"data:image/jpeg;base64,{img_str}"
     return resumes
 
+def get_resume_preview_image(request, resume_id):
+    try:
+        resume = Resume.objects.get(pk=resume_id)
+
+        if not isUserPermittedToViewResume(request.user, resume):
+            return JsonResponse({"error": f"Unauthorized to view preview for resume {resume_id}"}, status=401)
+
+        path = resume.file.path
+        # Convert PDFs to image
+        image = convert_from_path(path)[0] # 0 means do first page only
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        imageData = f"data:image/jpeg;base64,{img_str}"
+        return JsonResponse({"image": imageData}, status=200)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": f"Resume {resume_id} does not exist"}, status=404)
+    except:
+        return JsonResponse({"error": f"Unexpected error occured while getting preview image for resume {resume_id}"}, status=500)
+
 def attachNumComments(resumes):
     for resume in resumes:
         comments = Comment.objects.filter(resume_id=resume.id)
         numComments = len(comments)
         resume.numComments = numComments
+    return resumes
+
+def attach_has_user_rated(user, resumes):
+    """
+    Adds property hasUserRated to each resume
+    """
+    for resume in resumes:
+        userRating = Rating.objects.filter(resume_id=resume.id, user_id=user.id)
+        resume.hasUserRated = True if userRating else False
     return resumes
 
 def creategroup(request):
@@ -287,7 +316,7 @@ def creategroup(request):
     return render(request, 'resumes/creategroup.html', {'createPrivateGroupForm': createPrivateGroupForm})
 
 def grouppage(request, group_id):
-    group = PrivateGroup.objects.get(pk=group_id)
+    group = get_object_or_404(PrivateGroup, pk=group_id)
     requestingUserIsOwner = group.owner == request.user
     requestingUserIsMember = request.user in group.members.all()
     if requestingUserIsOwner:
@@ -302,6 +331,16 @@ def grouppage(request, group_id):
     groupInvitesPending = groupInvites.exclude(action__isnull=False)
     groupInvitesHistory = groupInvites.exclude(action__isnull=True)
 
+    # call getResumesUserPermittedToView for all members of group, where each group member is parameter resume owner
+    # first priority: resumes that have been specifically shared with the group
+    # second priority: resumes "shared with my groups"
+    # third: public resumes and resumes for signed in users
+    resumes = Resume.objects.none()
+    for member in group.members.all():
+        resumes = resumes.union(getResumesUserPermittedToView(request.user, member))
+
+    resumes = attach_has_user_rated(request.user, resumes)
+
     context = {
         'group': group,
         'isOwner': requestingUserIsOwner,
@@ -310,7 +349,8 @@ def grouppage(request, group_id):
         'joinRequestsPending': joinRequestsPending,
         'joinRequestsHistory': joinRequestsHistory,
         'groupInvitesPending': groupInvitesPending,
-        'groupInvitesHistory': groupInvitesHistory
+        'groupInvitesHistory': groupInvitesHistory,
+        'resumes': resumes
     }
 
     return render(request, "resumes/grouppage.html", context)
@@ -357,7 +397,6 @@ def acceptinvite(request, invite_id):
 
     return HttpResponseRedirect(f"/group/{invite.group.id}/") #TODO: convert to ajax
 
-
 def rejectinvite(request, invite_id):
     invite = GroupInvite.objects.get(pk=invite_id)
 
@@ -370,22 +409,31 @@ def rejectinvite(request, invite_id):
 
     return HttpResponseRedirect(f"/group/{invite.group.id}/") # TODO: convert to ajax
 
-
 def sendrequest(request, group_id):
+    """
+    Uses AJAX. Activated when user clicks 'Request to join' button on a group page.
+    """
+    if request.method != 'POST':
+        return HttpResponse('Method Not Allowed', status=405)
+
     # Why not just skip this line and plug group_id=group_id into the create()?
     # - Because doing that, Django would not validate that group_id links to an existing group.
-    group = PrivateGroup.objects.get(pk=group_id)
+    group = get_object_or_404(PrivateGroup, pk=group_id)
 
     # Members of a group can not request to join the group
-    # old logic: not group.members.filter(pk=request.user.id).exists():
-    if not request.user in group.members.all() and not JoinRequest.objects.filter(group=group, user=request.user).exclude(action__isnull=False).exists():
-        JoinRequest.objects.create(
-            user=request.user,
-            group=group,
-        )
-        return JsonResponse({"message": "sent request"}, status=200) # ajax
-    return JsonResponse({"error": "You are already a member of this group, or you have a join request to this group pending."}, status=400)
-    # add error handling
+    if request.user in group.members.all():
+        return JsonResponse({"error": "You are already a member of this group"}, status=400)
+
+    # Find the user's join requests for the group. Remove join requests that have been acted upon.
+    # If any are left, it means the user already has pending join request.
+    if JoinRequest.objects.filter(group=group, user=request.user).exclude(action__isnull=False).exists():
+        return JsonResponse({"error": "You already have a pending join request."}, status=400)
+
+    JoinRequest.objects.create(
+        user=request.user,
+        group=group,
+    )
+    return JsonResponse({"message": "sent request"}, status=200)
 
 def acceptrequest(request, joinRequest_id):
     joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
@@ -399,7 +447,6 @@ def acceptrequest(request, joinRequest_id):
         return JsonResponse({"message": "Accepted"}, status=200) # ajax
     else:
         return JsonResponse({"error": "unauthorized"}, status=401) # TODO: is there a better way to do this?
-
 
 def rejectrequest(request, joinRequest_id):
     joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
@@ -462,20 +509,20 @@ def isUserPermittedToViewResume(user: User, resume: Resume):
 
     if resume.visibility == 'signed_in_users' and user.is_authenticated() :
         return True
+    # No need to check if user is authenticated past here - if the user is not authenticated, the user object passed
+    # to the following functions will cause the function to return false
 
     if resume.visibility == 'visible_to_my_groups' and hasMutualGroups(user, resume.user):
         return True
 
     if resume.visibility == 'shared_with_specific_groups' and resume.id in getPermittedSpecificGroupResumeIds(user):
-        print('resume visibility is shared with specific groups, and the user is in a group permitted by this resume.')
         return True
 
     # Only other visibility setting is 'hidden'
     return False
 
-
 def hasMutualGroups(user1: User, user2: User):
-    if not isinstance(user, User):
+    if not isinstance(user1, User) or not isinstance(user2, User):
         return False
 
     return UserPrivateGroupMembership.objects.filter(user__in=[user1, user2]) \

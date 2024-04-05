@@ -1,0 +1,11 @@
+.options {
+    margin-bottom: 20px;
+}
+
+.options > * {
+    display: inline;
+}
+
+#search {
+    margin-right: 20px;
+}

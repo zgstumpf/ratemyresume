@@ -11,25 +11,28 @@
 
 <h1 class="page-header">
     <img src="{% static 'resumes/svg/group.svg' %}" alt="Group icon" height="40px" width="40px" style="margin-right: 10px;">
-    {{group.name}}
+    {{ group.name }}
 </h1>
 
 <p>Owner: <a href="{% url 'user' group.owner.id %}" class="username-link">{{ group.owner.username }}</a></p>
+<p>Created {{ group.created_at }}</p>
 {% if isOwner %}
-    <a href="{% url 'sendinvite' group.id %}">Invite user</a>
-{% else %}
-    {% if not isMember %}
-    <form action="{% url 'sendrequest' group.id %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Request to join</button>
-    </form>
-    {% endif %}
+<a href="{% url 'sendinvite' group.id %}">Invite user</a>
+{% elif not isMember and not joinRequestsPending %}
+<form id="send-request-form" action="{% url 'sendrequest' group.id %}" method="post">
+    {% csrf_token %}
+    <button class="blue-btn" type="submit">Request to join</button>
+    <div id="send-request-form-error" class="error-msg"></div>
+</form>
 {% endif %}
+
+<br>
 
 <div class="area">
     <div id="members-header" class="area-header">
         <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
-        Members
+        <span class="header-name">Members</span>
+        <span class="header-quick-info">{{ group.members.all.count }}</span>
     </div>
     <div id="members-data" style="display:none">
         {% if group.members.all %}
@@ -58,79 +61,84 @@
 <br>
 
 <div class="area">
-<div id="join-request-header" class="area-header">
-    <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
-    Join Requests
-</div>
-<div id="join-request-data" style="display: none">
-    {% if joinRequestsPending %}
-        <table class="datatables" style="width: 100%">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Sent</th>
-                    <th></th> <!-- Action column -->
-                </tr>
-            </thead>
-            <tbody>
-                {% for joinRequest in joinRequestsPending %}
-                <tr>
-                    <td>{{ joinRequest.user.username }}</td>
-                    <td>{{ joinRequest.created_at }}</td>
-                    <td>
-                        {% if isOwner %}
-                        <form action="{% url 'acceptrequest' joinRequest.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit">Accept</button>
-                        </form>
-                        <form action="{% url 'rejectrequest' joinRequest.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit">Reject</button>
-                        </form>
-                    {% endif %}
-                    </td>
-                </tr>
-
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-    <p>No pending join requests</p>
-    {% endif %}
-
-    <div class="area">
-        <div id="join-request-history-header" class="area-header" style="font-style: italic;">
-            <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
-            History
-        </div>
-        <div id="join-request-history-data" style="display: none">
-            {% if joinRequestsHistory %}
-            <table class="datatables" style="width:100%">
+    <div id="join-request-header" class="area-header">
+        <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
+        <span class="header-name">Join Requests</span>
+        {% if isOwner and joinRequestsPending %}
+        <span class="header-quick-info">{{ joinRequestsPending.count }} requests need your action</span>
+        {% elif not isMember and joinRequestsPending %}
+        <span class="header-quick-info">You have requested to join this group</span>
+        {% endif %}
+    </div>
+    <div id="join-request-data" style="display: none">
+        {% if joinRequestsPending %}
+            <table class="datatables" style="width: 100%">
                 <thead>
                     <tr>
                         <th>User</th>
                         <th>Sent</th>
-                        <th>Action</th>
-                        <th>Action At</th>
+                        <th></th> <!-- Action column -->
                     </tr>
                 </thead>
                 <tbody>
-                    {% for joinRequest in joinRequestsHistory %}
+                    {% for joinRequest in joinRequestsPending %}
                     <tr>
-                        <td>{{ joinRequest.user }}</td>
+                        <td>{{ joinRequest.user.username }}</td>
                         <td>{{ joinRequest.created_at }}</td>
-                        <td>{{ joinRequest.action}}</td>
-                        <td>{{ joinRequest.action_at }}</td>
+                        <td>
+                            {% if isOwner %}
+                            <form action="{% url 'acceptrequest' joinRequest.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit">Accept</button>
+                            </form>
+                            <form action="{% url 'rejectrequest' joinRequest.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit">Reject</button>
+                            </form>
+                        {% endif %}
+                        </td>
                     </tr>
+
                     {% endfor %}
                 </tbody>
             </table>
-            {% else %}
-            <p>No join request history</p>
-            {% endif %}
+        {% else %}
+        <p>No pending join requests</p>
+        {% endif %}
+
+        <div class="area">
+            <div id="join-request-history-header" class="area-header" style="font-style: italic;">
+                <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
+                History
+            </div>
+            <div id="join-request-history-data" style="display: none">
+                {% if joinRequestsHistory %}
+                <table class="datatables" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Sent</th>
+                            <th>Action</th>
+                            <th>Action At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for joinRequest in joinRequestsHistory %}
+                        <tr>
+                            <td>{{ joinRequest.user }}</td>
+                            <td>{{ joinRequest.created_at }}</td>
+                            <td>{{ joinRequest.action}}</td>
+                            <td>{{ joinRequest.action_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No join request history</p>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 <br>
@@ -138,7 +146,12 @@
 <div class="area">
     <div id="invitation-header" class="area-header">
         <img src="{% static 'resumes/svg/expand.svg' %}" alt="Expand icon">
-        Invitations
+        <span class="header-name">Invitations</span>
+        {% if isOwner and groupInvitesPending %}
+        <span class="header-quick-info">{{ groupInvitesPending.count }} invitations have not been accepted or rejected yet</span>
+        {% elif not isMember and groupInvitesPending %}
+        <span class="header-quick-info">You have been invited to join this group!</span>
+        {% endif %}
     </div>
     <div id="invitation-data" style="display: none">
         {% if groupInvitesPending %}
@@ -182,32 +195,58 @@
                 History
             </div>
             <div id="invitation-history-data" style="display: none">
-            {% if groupInvitesHistory %}
-            <table class="datatables" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Sent</th>
-                        <th>Action</th>
-                        <th>Action At</th>
-                    </tr>
-                </thead>
-                <tbody>
-            {% for groupInvite in groupInvitesHistory %}
-            <tr>
-                <td>{{groupInvite.invitee}}</td>
-                <td>{{groupInvite.created_at}}</td>
-                <td>{{groupInvite.action}}</td>
-                <td>{{groupInvite.action_at}}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-            </table>
-            {% else %}
-            <p>No invitation history</p>
-            {% endif %}
+                {% if groupInvitesHistory %}
+                <table class="datatables" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Sent</th>
+                            <th>Action</th>
+                            <th>Action At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                {% for groupInvite in groupInvitesHistory %}
+                        <tr>
+                            <td>{{groupInvite.invitee}}</td>
+                            <td>{{groupInvite.created_at}}</td>
+                            <td>{{groupInvite.action}}</td>
+                            <td>{{groupInvite.action_at}}</td>
+                        </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No invitation history</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Here will be group activity, including resumes and (later) board messages. -->
+<!-- This will be the new resume card that will be used throughout the website -->
+<div class="resume-card-container">
+{% for resume in resumes %}
+    <div class="resume-card" data-detailsurl="{% url 'details' resume.id %}">
+        <div class="resume-id" style="display:none" data-url="{% url 'get_resume_preview_image' resume.id %}"></div>
+        <div class="resume-image-skeleton"></div>
+
+        {% if resume.hasUserRated %}
+        <div class="resume-card-rated-checkmark">
+            <img src="{% static 'resumes/svg/checkmark.svg' %}" alt="Checkmark icon" title="You have rated this resume" height="40px" width="40px">
+        </div>
+        {% endif %}
+
+        <!-- There is still the problem of text clipping out of the card or entering a second line if the resume name or username is too long -->
+        <!-- If you ever figure out best way to fix this, the title attribute will let the user see the full value even if text is shortened to fit -->
+        <div class="resume-card-name" title="{{ resume.name }}">{{ resume.name }}</div>
+        <div class="resume-card-text">
+            <a href="{% url 'user' resume.user.id %}" class="username-link">{{ resume.user }}</a>
+        </div>
+
+        <div class="resume-card-text">{{ resume.created_at }}</div>
+    </div>
+{% endfor %}
+</div>
 {% endblock %}

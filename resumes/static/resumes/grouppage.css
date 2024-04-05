@@ -14,3 +14,14 @@
 table.dataTable th.dt-type-numeric,table.dataTable th.dt-type-date,table.dataTable td.dt-type-numeric,table.dataTable td.dt-type-date {
     text-align: left;
 }
+
+.header-name {
+    /* Override default display of inline for span elements */
+    display: inline-block;
+    /* Make each header name occupy the same width so that each header quick info is aligned */
+    width: 110px;
+}
+
+.header-quick-info {
+    font-style: italic;
+}

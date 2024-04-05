@@ -16,7 +16,10 @@
 
 
 <h2 class="sub-header">Resumes</h2>
+
+{% if isUserHome %}
 <a href="{% url 'upload' %}">Upload a new resume</a>
+{% endif %}
 
 {% if resumes %}
 <div class="table-container">
@@ -55,7 +58,7 @@
 </table>
 </div>
 {% else %}
-<p>{{ thisPageUsername }} has no resumes</p>
+<p>No resumes</p>
 {% endif %}
 
 {% if isUserHome %}

@@ -7,13 +7,27 @@
 {% endblock %}
 
 {% block content %}
-<p>Private Group Explorer</p>
+<h1 class="page-header">Groups</h1>
+<div class="page-description">Share resumes with friends.</div>
+
+
+<div class="options">
+    <form id="search" method="GET" action="">
+        <input type="text" name="query" placeholder="Search... (TODO)">
+        <button class="darkblue-btn" type="submit">Search</button>
+    </form>
+
+    <a class="darkblue-btn" href="{% url 'creategroup' %}">Create a group</a>
+</div>
+
+
 {% for group in groups %}
-<a href="{% url 'grouppage' group.id %}"><p>{{group.name}}</p></a>
-<p>Description: {{group.description}}</p>
-<p>Owner: {{group.owner}}</p>
-<p>Created At: {{group.created_at}}</p>
-<br>
+<div class="group-card" data-url="{% url 'grouppage' group.id %}">
+    <div class="group-card-name">{{group.name}}</div>
+    <div class="card-subheader"><a href="{% url 'user' group.owner.id %}" class="username-link">{{ group.owner }}</a></div>
+    <p class="card-subheader">{{group.description}}</p>
+    <div class="card-subheader">{{ group.members.count }} {% if group.members.count == 1 %}member{% else %}members{% endif %}</div>
+</div>
 {% endfor %}
 
 {% endblock %}
