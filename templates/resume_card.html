@@ -5,7 +5,7 @@ In head:
 script src="% static 'resume_card.js' %"
 
 (Surround with brackets {})
-% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=hasUserRated created_at=resume.created_at %
+% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at %
 {% endcomment %}
 
 <div class="resume-card" data-detailsurl="{% url 'details' resume_id %}">

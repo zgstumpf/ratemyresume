@@ -15,9 +15,11 @@
 {% endif %}
 
 {% if resumes %}
-    {% for resume in resumes %}
-        {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=hasUserRated created_at=resume.created_at %}
-    {% endfor %}
+    <div class="resume-card-container">
+        {% for resume in resumes %}
+            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at %}
+        {% endfor %}
+    </div>
 {% else %}
 <!-- Why does it say no resumes are available when I log out? -->
     <p>No resumes are available.</p>

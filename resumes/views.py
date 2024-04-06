@@ -18,7 +18,6 @@ from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivat
 
 # View for homepage
 def index(request):
-    print('entered index view')
     resumes = Resume.objects.order_by("created_at")
 
     # TODO: may want to think about a more efficient way to do this.
@@ -26,14 +25,7 @@ def index(request):
         if not isUserPermittedToViewResume(request.user, resume):
             resumes = resumes.exclude(pk=resume.pk)
 
-    for resume in resumes:
-        path = resume.file.path
-        # Convert PDFs to image
-        image = convert_from_path(path)[0]
-        buffered = BytesIO()
-        image.save(buffered, format="JPEG")
-        img_str = base64.b64encode(buffered.getvalue()).decode()
-        resume.image_data = f"data:image/jpeg;base64,{img_str}"
+    resumes = attach_has_user_rated(request.user, resumes)
 
     return render(request, "resumes/index.html", context = {"resumes": resumes})
 
