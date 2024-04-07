@@ -4,12 +4,6 @@
 {% block pageSpecificStaticFiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'resumes/details.css' %}">
     <script src="{% static 'resumes/details.js' %}"></script>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Style+Script&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Style+Script&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -36,7 +30,7 @@
     </div>
 
 
-    <h2 class="cursive-header">Resume</h2>
+    <h2 class="sub-header">Resume</h2>
 
     {% comment %} Ideally, the width and the height should be set so no scrollbars appear on the embed element for a 1 page. resume {% endcomment %}
     <embed id="embedded-pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="850" height="1050">
@@ -46,7 +40,7 @@
     </div>
 
 
-    <h2 class="cursive-header">Rate</h2>
+    <h2 class="sub-header">Rate</h2>
     <div class="section-separator"></div>
     <div id="rating-section">
 
@@ -86,7 +80,7 @@
     </div>
 
 
-    <h2 class="cursive-header style-script-regular">Comments</h2>
+    <h2 class="sub-header">Comments</h2>
     <div class="section-separator"></div>
     <!--
     When this form is submitted, a POST request is made to the URL specified in the action attribute

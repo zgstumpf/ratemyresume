@@ -8,15 +8,41 @@
 {% endblock %}
 
 {% block content %}
-<h1>Welcome to ratemyresume</h1>
 
 {% if not user.is_authenticated %}
-    <h1>some promotional content for the site here</h1>
+    <div>TODO: some promotional content for the site here</div>
 {% endif %}
 
-{% if resumes %}
+<h1 class="page-header">Resumes</h1>
+
+<h2 class="sub-header">New</h2>
+{% if new_resumes %}
     <div class="resume-card-container">
-        {% for resume in resumes %}
+        {% for resume in new_resumes %}
+            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at %}
+        {% endfor %}
+    </div>
+{% else %}
+<!-- Why does it say no resumes are available when I log out? -->
+    <p>No resumes are available.</p>
+{% endif %}
+
+<h2 class="sub-header">Highest Rated</h2>
+{% if highest_rated_resumes %}
+    <div class="resume-card-container">
+        {% for resume in highest_rated_resumes %}
+            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at %}
+        {% endfor %}
+    </div>
+{% else %}
+<!-- Why does it say no resumes are available when I log out? -->
+    <p>No resumes are available.</p>
+{% endif %}
+
+<h2 class="sub-header">Unrated</h2>
+{% if unrated_resumes %}
+    <div class="resume-card-container">
+        {% for resume in unrated_resumes %}
             {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at %}
         {% endfor %}
     </div>

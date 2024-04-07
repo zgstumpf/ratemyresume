@@ -5,29 +5,75 @@ from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpRespo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, AnonymousUser
 from django.db import IntegrityError
-from django.db.models import Count, QuerySet
+from django.db.models import Count, QuerySet, OuterRef, Subquery, Avg
 from django.utils import timezone
 from pdf2image import convert_from_path
 
 import json
 import base64
 from io import BytesIO
+from datetime import timedelta
 
 from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite, JoinRequest, ResumeGroupViewingPermissions, UserPrivateGroupMembership
 from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm, GroupInviteForm
 
 # View for homepage
 def index(request):
-    resumes = Resume.objects.order_by("created_at")
+    # resumes = Resume.objects.order_by("created_at")
 
-    # TODO: may want to think about a more efficient way to do this.
-    for resume in resumes:
-        if not isUserPermittedToViewResume(request.user, resume):
-            resumes = resumes.exclude(pk=resume.pk)
+    # # TODO: may want to think about a more efficient way to do this.
+    # for resume in resumes:
+    #     if not isUserPermittedToViewResume(request.user, resume):
+    #         resumes = resumes.exclude(pk=resume.pk)
 
-    resumes = attach_has_user_rated(request.user, resumes)
+    # resumes = attach_has_user_rated(request.user, resumes)
 
-    return render(request, "resumes/index.html", context = {"resumes": resumes})
+    # new_resumes = Resume.objects.none()
+    # for resume in resumes:
+    #     # Resume is "new" if it was uploaded in last 72 hrs
+    #     if resume.created_at >= timezone.now() - timedelta(hours=72):
+    #         new_resumes = new_resumes.union(resume)
+
+    new_resumes = Resume.objects.filter(created_at__gte = timezone.now() - timedelta(hours=72))
+    new_resumes = [r for r in new_resumes if isUserPermittedToViewResume(request.user, r)]
+    new_resumes = attach_has_user_rated(request.user, new_resumes)
+
+
+    unrated_resumes = Resume.objects.annotate( # add field has_rating to resume
+        has_rating=Subquery(
+            # Get id of outer query (the resume), then find the first rating with that resume id
+            # We only need the first one because we just need to check if we can even find one in the first place
+            # If we can't, has_rating will be None, and we will filter it away in the next step
+            Rating.objects.filter(resume_id=OuterRef('id')).values('id')[:1]
+        )
+    ).filter(has_rating__isnull=True
+    # Unrated resumes should be separate than new ones, since most new resumes will be unrated anyway
+    # Unrated resumes are the ones that have been left unrated for a while
+    ).exclude(created_at__gte = timezone.now() - timedelta(hours=72))
+    unrated_resumes = [r for r in unrated_resumes if isUserPermittedToViewResume(request.user, r)]
+    unrated_resumes = attach_has_user_rated(request.user, unrated_resumes)
+
+
+    highest_rated_resumes = Resume.objects.annotate(
+        ratings=Subquery(
+            Rating.objects.filter(resume_id=OuterRef('id')).values('value')
+        )
+    ).exclude(ratings__isnull=True
+    ).annotate(avg_rating=Avg('ratings')
+    ).order_by('-avg_rating'
+    # Get 30 highest rated so there is a cutoff, which will be needed if we ever do pagination
+    )[:30]
+    highest_rated_resumes = [r for r in highest_rated_resumes if isUserPermittedToViewResume(request.user, r)]
+    highest_rated_resumes = attach_has_user_rated(request.user, highest_rated_resumes)
+
+
+    context = {
+        "new_resumes": new_resumes,
+        "unrated_resumes": unrated_resumes,
+        "highest_rated_resumes": highest_rated_resumes
+    }
+
+    return render(request, "resumes/index.html", context)
 
 
 
