@@ -16,8 +16,6 @@ body {
     background-color: #007bff;
     border-bottom: 5px solid darkgray;
     padding: 0px 20px;
-    /* Don't let page elements get too close to navbar */
-    margin-bottom: 20px;
 }
 
 .nav-element {
@@ -38,7 +36,8 @@ body {
 }
 
 .content {
-    margin: 0 10%;
+    /* Don't let page elements get too close to navbar, don't let elements get too close to the sides. */
+    margin: 20px 10% 0px 10%;
 }
 
 .page-header {

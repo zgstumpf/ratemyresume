@@ -12,4 +12,104 @@ a:hover {
 
 .zoom-box:hover {
     transform: scale(1.05);
-  }
+}
+
+.hero {
+  padding: 30px 15% 30px 15%;
+}
+
+.hero-title {
+    font-size: 35px;
+    font-weight: 700;
+
+    margin-bottom: 15px;
+}
+
+.gradient-blue {
+  background: linear-gradient(to right, #1a87fc 0%, #0066d3 100%);
+  display: inline-block; /* Without this, gradient would apply to full width of page */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-lightblue {
+  background: linear-gradient(to right, #63c3fb 0%, #1b93e9 100%);
+  display: inline-block; /* Without this, gradient would apply to full width of page */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-orange {
+  background: linear-gradient(to right, #fc8f1a 0%, #d34300 100%);
+  display: inline-block; /* Without this, gradient would apply to full width of page */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-purple {
+  background: linear-gradient(to right, #a219c4 0%, #580073 100%);
+  display: inline-block; /* Without this, gradient would apply to full width of page */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-text{
+  font-size: 18px;
+  max-width: 500px;
+}
+
+.hero-btn {
+  display: inline-block; /* Enables margin to take effect */
+  margin-top: 20px;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.typewriter {
+  font-family: monospace; /* Must be monospace for effect to work */
+  color:#0000;
+  background:
+    linear-gradient(-90deg,#000000 5px,#0000 0) 10px 0,
+    linear-gradient(#000000 0 0) 0 0;
+  background-size:calc(var(--chars)*1ch) 200%;
+  -webkit-background-clip:padding-box,text;
+  background-clip:padding-box,text;
+  background-repeat:no-repeat;
+  animation:
+    b .7s infinite steps(1),
+    t calc(var(--chars)*.3s) steps(var(--chars)) forwards infinite;
+}
+@keyframes t{
+  from {background-size:0 200%}
+}
+@keyframes b{
+  50% {background-position:0 -100%,0 0}
+}
+
+.hero-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-btn.darkblue-btn.btn-lg {
+  font: 400 20px Arial !important; /* This is overly complicated due to a bug - see index.css darkblue-btn for more info */
+}
+
+
+.btn-alt-option {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.bg-lightgray {
+  background-color: #e0e0e0;
+}

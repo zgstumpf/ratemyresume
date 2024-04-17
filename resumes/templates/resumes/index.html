@@ -7,11 +7,49 @@
     <script src="{% static 'resume_card.js' %}"></script>
 {% endblock %}
 
-{% block content %}
-
 {% if not user.is_authenticated %}
-    <div>TODO: some promotional content for the site here</div>
+    {% block heros %}
+
+        <div class="hero">
+            <div class="hero-title gradient-blue">Get a rating from 0 to 10 for your resume.</div>
+            <div class="hero-text">Real people, not robots, rate your resume.</div>
+            <a class="hero-btn darkblue-btn" href="{% url 'upload' %}">Upload resume</a>
+        </div>
+
+        <div class="hero">
+            <div class="hero-title gradient-orange">Get a rating <span class="italic">fast</span>.</div>
+            <div class="hero-text">Many other resume-rating websites make you wait in line for a professional to review. Here, any user can rate your resume.</div>
+        </div>
+
+        <div class="hero">
+            {% comment %}Must set style="chars:n" where n is number of characters in span. Use extra spaces to make animation wait
+            before restarting. {% endcomment %}
+            <div class="hero-title">See <span class="typewriter" style="--chars:15">comments.      </span></div>
+            <div class="hero-text">Use feedback from other users to edit your resume.</div>
+        </div>
+
+        <div class="hero">
+            <div class="hero-title gradient-lightblue">Join a group.</div>
+            <div class="hero-text">Get rated by people that share your background and goals, and find inspiration in their resumes.</div>
+            <a class="hero-btn darkblue-btn" href="{% url 'groups' %}">Explore groups</a>
+        </div>
+
+        <div class="hero">
+            <div class="hero-title gradient-purple">Control who sees your resume.</div>
+            <div class="hero-text">You can fine-tune the privacy settings of each resume you upload.</div>
+        </div>
+
+        <div class="hero hero-center bg-lightgray">
+            <div class="hero-title">Completely free.</div>
+            <div class="hero-text">No credit card required and no free-trial tricks.</div>
+            <a class="hero-btn darkblue-btn btn-lg" href="{% url 'signup' %}">Create an account</a>
+            <a class="btn-alt-option" href="{% url 'login' %}">I already have an account</a>
+        </div>
+
+    {% endblock %}
 {% endif %}
+
+{% block content %}
 
 <h1 class="page-header">Resumes</h1>
 
