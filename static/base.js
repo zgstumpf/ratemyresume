@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // Any JS code after this point will execute before HTML finishes loading
 // You shouldn't put JS code here unless you know what you're doing
 function toggleNavbar() {
-    console.log("navbar toggled")
-
     var navbar = document.getElementById("rmr-navbar");
     if (navbar.className === "rmr-navbar") {
       navbar.className += " responsive";
