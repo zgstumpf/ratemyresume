@@ -14,21 +14,21 @@ body {
 
 .rmr-navbar {
     background-color: #007bff;
-    border-bottom: 5px solid darkgray;
+    border-bottom: 2px solid darkgray;
     padding: 0px 20px;
 }
 
 .nav-element {
     display: inline-block;
-    color: white;
+    color: #e2e2e2;
     padding: 10px 10px 10px 10px;
     height: 100%;
     text-decoration-line: none !important;
 }
 
 .nav-element:hover {
-    background-color: white;
-    color: #007bff;
+    /* background-color: white; */
+    color: white;
 }
 
 .nav-element-right {
