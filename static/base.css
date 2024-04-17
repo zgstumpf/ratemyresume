@@ -17,6 +17,7 @@ body {
     border-bottom: 2px solid darkgray;
     padding: 0px 20px;
     overflow: hidden;
+    position: relative;
 }
 
 .nav-element {
@@ -54,7 +55,7 @@ body {
   .rmr-navbar.responsive {position: relative;}
   .rmr-navbar.responsive a.icon {
     position: absolute;
-    right: 0;
+    right: 17px; /* Bad code - quick fix to problem of icon shifting position when navbar toggled */
     top: 0;
   }
   .rmr-navbar.responsive a {
