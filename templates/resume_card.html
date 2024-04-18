@@ -5,24 +5,28 @@ In head:
 script src="% static 'resume_card.js' %"
 
 (Surround with brackets {})
-% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at %
+% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating %
 {% endcomment %}
 
 <div class="resume-card" data-detailsurl="{% url 'details' resume_id %}">
     <div class="resume-id" style="display:none" data-url="{% url 'get_resume_preview_image' resume_id %}"></div>
     <div class="resume-image-skeleton"></div>
 
+    {% if avgRating %}
+        <div class="resume-card-avgrating">{{ avgRating }}</div>
+    {% endif %}
+
     {% if hasUserRated %}
-    <div class="resume-card-rated-checkmark" >
-        <svg width="40px" height="40px" alt="Checkmark icon" viewBox="-1.4 -1.4 16.80 16.80" role="img" focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="#000000">
-            <title>You have rated this resume</title>
-            <g id="SVGRepo_bgCarrier" stroke-width="0" transform="translate(0,0), scale(1)"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.08399999999999999"></g>
-            <g id="SVGRepo_iconCarrier">
-                <path fill="#43a047" d="M1.00000001 7.71134025l3.83505154 3.8041237 8.16494844-8.16494844-.86597938-.86597938L4.83505155 9.7835052 1.86597939 6.81443303z"></path>
-            </g>
-        </svg>
-    </div>
+        <div class="resume-card-rated-checkmark" >
+            <svg width="40px" height="40px" alt="Checkmark icon" viewBox="-1.4 -1.4 16.80 16.80" role="img" focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                <title>You have rated this resume</title>
+                <g id="SVGRepo_bgCarrier" stroke-width="0" transform="translate(0,0), scale(1)"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.08399999999999999"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <path fill="#43a047" d="M1.00000001 7.71134025l3.83505154 3.8041237 8.16494844-8.16494844-.86597938-.86597938L4.83505155 9.7835052 1.86597939 6.81443303z"></path>
+                </g>
+            </svg>
+        </div>
     {% endif %}
 
     <!-- There is still the problem of text clipping out of the card or entering a second line if the resume name or username is too long -->

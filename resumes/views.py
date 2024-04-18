@@ -36,6 +36,7 @@ def index(request):
 
     new_resumes = Resume.objects.filter(created_at__gte = timezone.now() - timedelta(hours=72))
     new_resumes = [r for r in new_resumes if isUserPermittedToViewResume(request.user, r)]
+    new_resumes = attachAvgAndNumRatings(new_resumes)
     new_resumes = attach_has_user_rated(request.user, new_resumes)
 
 
@@ -51,6 +52,7 @@ def index(request):
     # Unrated resumes are the ones that have been left unrated for a while
     ).exclude(created_at__gte = timezone.now() - timedelta(hours=72))
     unrated_resumes = [r for r in unrated_resumes if isUserPermittedToViewResume(request.user, r)]
+    unrated_resumes = attachAvgAndNumRatings(unrated_resumes)
     unrated_resumes = attach_has_user_rated(request.user, unrated_resumes)
 
 
@@ -60,10 +62,11 @@ def index(request):
         )
     ).exclude(ratings__isnull=True
     ).annotate(avg_rating=Avg('ratings')
-    ).order_by('-avg_rating'
-    # Get 30 highest rated so there is a cutoff, which will be needed if we ever do pagination
-    )[:30]
+    ).order_by('-avg_rating')
     highest_rated_resumes = [r for r in highest_rated_resumes if isUserPermittedToViewResume(request.user, r)]
+    # Get 30 highest rated so there is a cutoff, which will be needed if we ever do pagination
+    highest_rated_resumes = highest_rated_resumes[:30]
+    highest_rated_resumes = attachAvgAndNumRatings(highest_rated_resumes)
     highest_rated_resumes = attach_has_user_rated(request.user, highest_rated_resumes)
 
 
@@ -260,7 +263,7 @@ def attachAvgAndNumRatings(resumes):
         numRatings = len(ratings)
         if numRatings > 0:
             ratingsValues = [rating.value for rating in ratings]
-            avgRating = round(sum(ratingsValues) / len(ratingsValues),2)
+            avgRating = round(sum(ratingsValues) / len(ratingsValues), 1)
         else:
             avgRating = None
         resume.avgRating = avgRating
