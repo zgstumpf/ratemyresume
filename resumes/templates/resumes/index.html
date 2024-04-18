@@ -57,7 +57,7 @@
 {% if new_resumes %}
     <div class="resume-card-container">
         {% for resume in new_resumes %}
-            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating %}
+            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings%}
         {% endfor %}
     </div>
 {% else %}
@@ -69,7 +69,7 @@
 {% if highest_rated_resumes %}
     <div class="resume-card-container">
         {% for resume in highest_rated_resumes %}
-            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating %}
+            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings%}
         {% endfor %}
     </div>
 {% else %}

@@ -196,7 +196,7 @@ button.darkblue-btn {
 .resume-card-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin: 10px 0px;
 }
 
@@ -204,6 +204,7 @@ button.darkblue-btn {
     padding: 5px;
     border: 1px solid #cccdcf;
     border-radius: 5px;
+    margin: 5px;
     box-shadow: 0 0 3px #ccc;
     position: relative; /* Enables rated checkmark to have absolute position */
     flex-basis: calc(33.33% - 10px);
@@ -216,7 +217,7 @@ button.darkblue-btn {
 
 .resume-card:hover {
     cursor: pointer;
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 /* Media query for smaller viewports */
@@ -234,6 +235,7 @@ button.darkblue-btn {
   }
 
 .resume-image-skeleton {
+    position: relative;
     height: 200px;
     overflow: hidden; /* Do not let image expand out of its container */
     background-color:#cccdcf;
@@ -264,12 +266,18 @@ button.darkblue-btn {
     position:absolute;
     top: 5%;
     right: 5%;
+
+    padding: 2px 4px 2px 4px;
+    border-radius: 2px;
+
 }
 
 .resume-card-rated-checkmark {
-    position:absolute;
-    top: 30%;
-    right: 50%;
+    /* Center in middle of parent element */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .group-card {
