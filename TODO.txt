@@ -13,3 +13,6 @@ convert all model choices to class enums so they can be used outside of models.p
 figure out foreign key issues when trying to delete DB records
 
 image previews must be delivered via ajax to reduce loading time
+
+Bug: When navbar becomes toggled for small screen, nav elements originally floated to right appear in wrong order on dropdown list.
+Bug: Toggling responsive navbar causes hamburger icon to shift a few pixels due to relative/absolute positioning
