@@ -22,15 +22,14 @@ body {
 
 .nav-element {
     display: inline-block;
-    color: #e2e2e2;
+    color: white;
     padding: 10px 10px 10px 10px;
     height: 100%;
     text-decoration-line: none !important;
 }
 
 .nav-element:hover {
-    /* background-color: white; */
-    color: white;
+    color: lightgrey;
 }
 
 .nav-element-right {

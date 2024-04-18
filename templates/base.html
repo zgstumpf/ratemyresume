@@ -35,14 +35,14 @@
         <a class="nav-element" href="{% url 'index' %}">Explore</a> <!-- Later these 2 will link to separate pages-->
 
         {% if user.is_authenticated %}
-        <a class="nav-element" href="{% url 'groups' %}">Groups</a>
-        <a class="nav-element nav-element-right" href="{% url 'logout' %}">Log out</a>
-        <a class="nav-element nav-element-right" href="{% url 'user' request.user.id %}">Home</a>
+            <a class="nav-element" href="{% url 'groups' %}">Groups</a>
+            <a class="nav-element nav-element-right" href="{% url 'logout' %}">Log out</a>
+            <a class="nav-element nav-element-right" href="{% url 'user' request.user.id %}">Home</a>
         {% else %}
-        <!-- TODO: MUST BE FIXED! I mention Sign up first, but it appears after Log in, likely due to CSS right align property. Can you fix for
-        convenience? -->
-        <a class="nav-element nav-element-right" href="{% url 'signup' %}">Sign up</a>
-        <a class="nav-element nav-element-right" href="{% url 'login' %}">Log in</a>
+            <!-- TODO: MUST BE FIXED! I mention Sign up first, but it appears after Log in, likely due to CSS right align property. Can you fix for
+            convenience? -->
+            <a class="nav-element nav-element-right" href="{% url 'signup' %}">Sign up</a>
+            <a class="nav-element nav-element-right" href="{% url 'login' %}">Log in</a>
         {% endif %}
 
         <a href="javascript:void(0);" class="nav-element icon" onclick="toggleNavbar()">
@@ -57,6 +57,10 @@
             </svg>
         </a>
     </nav>
+
+
+    {% comment %}Heros have their own block so they are not affected by the CSS styling of the content block, specifically
+    the 10% right and left margin.{% endcomment%}
 
     {% block heros %}
     {% endblock %}
