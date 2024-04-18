@@ -39,15 +39,23 @@
         <a class="nav-element nav-element-right" href="{% url 'logout' %}">Log out</a>
         <a class="nav-element nav-element-right" href="{% url 'user' request.user.id %}">Home</a>
         {% else %}
-        <!-- TODO: I mention Sign up first, but it appears after Log in, likely due to CSS right align property. Can you fix for
+        <!-- TODO: MUST BE FIXED! I mention Sign up first, but it appears after Log in, likely due to CSS right align property. Can you fix for
         convenience? -->
         <a class="nav-element nav-element-right" href="{% url 'signup' %}">Sign up</a>
         <a class="nav-element nav-element-right" href="{% url 'login' %}">Log in</a>
         {% endif %}
 
         <a href="javascript:void(0);" class="nav-element icon" onclick="toggleNavbar()">
-            <!-- <span>icon</span> -->
-            <svg width="25px" height="25px" fill="#000000" viewBox="0 0 52 52" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M50,12.5H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path><path d="M50,28H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path><path d="M50,43.5H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path></g></svg>        </a>
+            <svg width="25px" height="25px" fill="#000000" viewBox="0 0 52 52" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <path d="M50,12.5H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path>
+                    <path d="M50,28H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path>
+                    <path d="M50,43.5H2a2,2,0,0,1,0-4H50a2,2,0,0,1,0,4Z"></path>
+                </g>
+            </svg>
+        </a>
     </nav>
 
     {% block heros %}
