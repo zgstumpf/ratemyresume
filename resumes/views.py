@@ -163,7 +163,7 @@ def details(request, resume_id):
 
     userRating = None
     try:
-        userRating = Rating.objects.get(resume=resume_id, user=request.user)
+        userRating = Rating.objects.get(resume=resume_id, user=request.user.id)
     except ObjectDoesNotExist:
         userRating = None
 
