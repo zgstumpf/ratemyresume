@@ -5,7 +5,8 @@ from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpRespo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, AnonymousUser
 from django.db import IntegrityError
-from django.db.models import Count, QuerySet, OuterRef, Subquery, Avg
+from django.db.models import Q, Count, QuerySet, OuterRef, Subquery, Avg
+from django.template.loader import render_to_string
 from django.utils import timezone
 from pdf2image import convert_from_path
 
@@ -590,3 +591,31 @@ def getPermittedSpecificGroupResumeIds(user: User):
     permittedResumeIds = ResumeGroupViewingPermissions.objects.filter(group_id__in=userGroupIds).values_list('resume_id', flat=True)
     print(type(permittedResumeIds)) # TODO: should I return an empty of this class instead of ResumeGroupViewingPermissions class if user is anonymous
     return permittedResumeIds
+
+def resumeSearch(request):
+    query = request.GET.get('query', '')
+
+    resumes = Resume.objects.filter(Q(name__contains=query) | Q(description__contains=query))
+
+    resumes = attach_has_user_rated(request.user, resumes)
+    resumes = attachAvgAndNumRatings(resumes)
+
+    #% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings%
+    resume_html_list = []
+    for resume in resumes:
+        resume_html = render_to_string('resume_card.html', {
+            'resume_id': resume.id,
+            'user_id': resume.user.id,
+            'user': resume.user,
+            'resume_name': resume.name,
+            'hasUserRated': resume.hasUserRated,
+            'created_at': resume.created_at,
+            'avgRating': resume.avgRating,
+            'numRatings': resume.numRatings
+        }).replace('\n', '')
+        resume_html_list.append(resume_html)
+
+    print(resume_html_list)
+
+    return JsonResponse({"results": resume_html_list}, status=200)
+

@@ -53,6 +53,18 @@
 
 <h1 class="page-header">Resumes</h1>
 
+<div class="options">
+    <form id="search" method="GET" action="{% url 'resumeSearch' %}">
+        <input id="search-bar" class="search-bar" type="text" name="query" placeholder="Search... (TODO)">
+        <button class="darkblue-btn search-btn" type="submit">Search</button>
+    </form>
+
+    <a class="darkblue-btn" href="{% url 'upload' %}">Upload a resume</a>
+</div>
+
+<h2 id="results-header" class="sub-header"></h2>
+<div id="results-resumes"></div>
+
 <h2 class="sub-header">New</h2>
 {% if new_resumes %}
     <div class="resume-card-container">

@@ -307,3 +307,31 @@ button.darkblue-btn {
     font-size: 20px;
     margin-bottom: 20px;
 }
+
+.options {
+    margin-bottom: 20px;
+}
+
+.options > * {
+    display: inline;
+}
+
+.search-bar {
+    width: 50%;
+    padding-left: 10px;
+
+    border: 1px solid black;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+
+    margin-right: 10px;
+}
+
+.search-bar:focus {
+    outline: none;
+}
+
+.search-btn {
+    margin-right: 10px;
+}
