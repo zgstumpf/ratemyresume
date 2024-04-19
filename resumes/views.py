@@ -597,6 +597,9 @@ def resumeSearch(request):
 
     resumes = Resume.objects.filter(Q(name__contains=query) | Q(description__contains=query))
 
+    # Search results can't show resumes the user isn't allowed to see
+    resumes = [r for r in resumes if isUserPermittedToViewResume(request.user, r)]
+
     resumes = attach_has_user_rated(request.user, resumes)
     resumes = attachAvgAndNumRatings(resumes)
 
