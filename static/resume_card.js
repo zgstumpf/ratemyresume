@@ -87,7 +87,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function applyCard() {
-    
-}
-
