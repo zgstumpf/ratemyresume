@@ -55,8 +55,8 @@
 
 <div class="options">
     <form id="search" method="GET" action="{% url 'resumeSearch' %}">
-        <input id="search-bar" class="search-bar" type="text" name="query" placeholder="Search... (TODO)">
-        <button class="darkblue-btn search-btn" type="submit">Search</button>
+        <input id="search-bar" class="search-bar" type="text" name="query" placeholder="Search">
+        <button class="darkblue-btn search-btn" type="submit">Search resumes</button>
     </form>
 
     <a class="darkblue-btn" href="{% url 'upload' %}">Upload a resume</a>
@@ -65,40 +65,34 @@
 <h2 id="results-header" class="sub-header"></h2>
 <div id="results-resumes"></div>
 
-<h2 class="sub-header">New</h2>
+
 {% if new_resumes %}
+<h2 class="sub-header">New</h2>
     <div class="resume-card-container">
         {% for resume in new_resumes %}
-            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings%}
+            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
         {% endfor %}
     </div>
-{% else %}
-<!-- Why does it say no resumes are available when I log out? -->
-    <p>No resumes are available.</p>
 {% endif %}
 
-<h2 class="sub-header">Highest Rated</h2>
+
 {% if highest_rated_resumes %}
+<h2 class="sub-header">Highest Rated</h2>
     <div class="resume-card-container">
         {% for resume in highest_rated_resumes %}
-            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings%}
+            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
         {% endfor %}
     </div>
-{% else %}
-<!-- Why does it say no resumes are available when I log out? -->
-    <p>No resumes are available.</p>
 {% endif %}
 
-<h2 class="sub-header">Unrated</h2>
+
 {% if unrated_resumes %}
+<h2 class="sub-header">Unrated</h2>
     <div class="resume-card-container">
         {% for resume in unrated_resumes %}
             {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at %}
         {% endfor %}
     </div>
-{% else %}
-<!-- Why does it say no resumes are available when I log out? -->
-    <p>No resumes are available.</p>
 {% endif %}
 
 

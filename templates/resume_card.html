@@ -1,3 +1,5 @@
+{% load humanize %}
+
 {% comment %}
 Usage:
 In head:
@@ -35,8 +37,8 @@ script src="% static 'resume_card.js' %"
     <!-- If you ever figure out best way to fix this, the title attribute will let the user see the full value even if text is shortened to fit -->
     <div class="resume-card-name" title="{{ resume_name }}">{{ resume_name }}</div>
     <div class="resume-card-text">
-        <a href="{% url 'user' user_id %}" class="username-link">{{ user }}</a>
+        <a href="{% url 'user' user_id %}" class="username-link">{{ user }} </a>
     </div>
 
-    <div class="resume-card-text">{{ created_at }}</div>
+    <div class="resume-card-text">{{ created_at|naturaltime }}</div>
 </div>

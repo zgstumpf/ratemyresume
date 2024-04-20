@@ -205,14 +205,13 @@ button.darkblue-btn {
     border: 1px solid #cccdcf;
     border-radius: 5px;
     margin: 5px;
+    margin-bottom: 10px;
     box-shadow: 0 0 3px #ccc;
     position: relative; /* Enables rated checkmark to have absolute position */
     flex-basis: calc(33.33% - 10px);
     height: 300px; /* Give all cards a consistent height */
-    margin-bottom: 10px;
     background-color: white;
     transition: transform 0.2s;
-
 }
 
 .resume-card:hover {
@@ -260,6 +259,10 @@ button.darkblue-btn {
 .resume-card-name,
 .resume-card-text {
     margin: 0px 5px;
+}
+
+.resume-card-text {
+    color: #6a6a6a;
 }
 
 .resume-card-avgrating {
