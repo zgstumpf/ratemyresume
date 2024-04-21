@@ -427,29 +427,44 @@ def sendinvite(request, group_id):
     return render(request, 'resumes/invite.html', {'groupInviteForm': groupInviteForm, 'group_id':group_id})
 
 def acceptinvite(request, invite_id):
-    invite = GroupInvite.objects.get(pk=invite_id)
+    """
+    AJAX
+    """
+    if request.method != 'POST':
+        return JsonResponse({"error": 'Method Not Allowed'}, status=405)
+
+    try:
+        invite = GroupInvite.objects.get(pk=invite_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": 'Does not exist'}, status=404)
 
     if request.user != invite.invitee:
-        return HttpResponseForbidden("You are not permitted to perform this action.")
+        return JsonResponse({"error": "You are not the invitee of this invitation."}, status=401)
 
     invite.group.members.add(invite.invitee)
     invite.action = 'accepted'
     invite.action_at = timezone.now()
     invite.save()
 
-    return HttpResponseRedirect(f"/group/{invite.group.id}/") #TODO: convert to ajax
+    return JsonResponse({"group": invite.group.name}, status=200)
 
 def rejectinvite(request, invite_id):
-    invite = GroupInvite.objects.get(pk=invite_id)
+    if request.method != 'POST':
+        return JsonResponse({"error": 'Method Not Allowed'}, status=405)
+
+    try:
+        invite = GroupInvite.objects.get(pk=invite_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": 'Does not exist'}, status=404)
 
     if request.user != invite.invitee:
-        return HttpResponseForbidden("You are not permitted to perform this action.")
+        return JsonResponse({"error": "You are not the invitee of this invitation."}, status=401)
 
     invite.action = 'rejected'
     invite.action_at = timezone.now()
     invite.save()
 
-    return HttpResponseRedirect(f"/group/{invite.group.id}/") # TODO: convert to ajax
+    return JsonResponse({"group": invite.group.name}, status=200)
 
 def sendrequest(request, group_id):
     """

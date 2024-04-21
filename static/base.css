@@ -197,34 +197,33 @@ button.red-btn {
 }
 
 .popup-msg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     position: fixed;
-    top: 75px; /* Adjust as needed */
-    /* left: 20px; Adjust as needed */
-    background-color: rgb(94, 222, 111); /* Background color */
-    padding: 10px; /* Padding around the text */
-    border: 1px solid #ccc; /* Border */
-    border-radius: 5px; /* Rounded corners */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow */
+    left: 50%; /* Place the left side of the popup at the horizontal center of the screen */
+    transform: translateX(-50%);
+
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     z-index: 999; /* Ensure the box appears above other content */
-    animation: slideIn 0.5s forwards;
+    animation: slideIn 0.75s forwards;
+}
+
+.popup-msg > * {
+    display: inline;
 }
 
 @keyframes slideIn {
     from {
-        left: -300px; /* Initial position off the screen */
+        top: -300px; /* Initial position off the screen */
     }
     to {
-        left: 20px; /* Final position at top left */
+        top: 3%; /* Final position at top left */
     }
-}
-
-.close-btn {
-    /* position button top right corner of its parent div */
-    position: absolute;
-    top: -5px;
-    right: 3px;
-
-    cursor: pointer;
 }
 
 .resume-card-container {
@@ -373,7 +372,7 @@ button.red-btn {
     margin-right: 10px;
 }
 
-.group-activity-card {
+.group-notif-card {
     max-width: 750px;
     padding: 10px;
     border: 1px solid #cccdcf;
@@ -403,14 +402,14 @@ button.red-btn {
     color: #6a6a6a;
 }
 
-.group-activity-text {
+.group-notif-text {
     margin-bottom: 10px;
 }
 
-.group-activity-options {
+.group-notif-options {
     margin-bottom: 5px;
 }
 
-.group-activity-options > * {
+.group-notif-options > * {
     display: inline;
 }

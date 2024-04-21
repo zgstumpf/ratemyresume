@@ -42,17 +42,18 @@
 <!-- need to make sure this is just the user's group invites -->
     {% for groupInvite in groupInvites %}
 
-        <div class="group-activity-card">
-            <div class="group-activity-text">
+        <div class="group-notif-card">
+            <div class="group-notif-text">
                 <div><a href="{% url 'user' groupInvite.group.owner.id %}" class="username-link">{{ groupInvite.group.owner}}</a> invited you to join <a href="{% url 'grouppage' groupInvite.group.id %}" class="group-link bold">{{ groupInvite.group.name}}</a>. <span class="lightgray">{{ groupInvite.created_at|naturaltime }}</span></div>
             </div>
 
-            <div class="group-activity-options">
-                <form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
+            <div class="group-notif-options">
+                <form class="accept-invite" data-url="{% url 'acceptinvite' groupInvite.id %}" method="post">
                     {% csrf_token %}
                     <button class="darkblue-btn" type="submit">Accept</button>
                 </form>
-                <form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
+
+                <form class="reject-invite" data-url="{% url 'rejectinvite' groupInvite.id %}" method="post">
                     {% csrf_token %}
                     <button class="red-btn" type="submit">Reject</button>
                 </form>
