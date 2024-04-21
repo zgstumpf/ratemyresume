@@ -29,3 +29,16 @@ th, td {
     width:213px;
     height:275px;
 }
+
+.blank-upload-card {
+    display: flex; /* Flexbox to center contents */
+    flex-direction: column; /* Put plus sign and text on top of each other */
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(210, 210, 210, 0.8)
+}
+
+.plus-sign {
+    font-size: xx-large;
+}

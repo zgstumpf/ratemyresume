@@ -4,62 +4,36 @@
 {% block pageSpecificStaticFiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'resumes/user.css' %}">
     <script src="{% static 'resumes/user.js' %}"></script>
+    <script src="{% static 'resume_card.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 {% if isUserHome %}
-    <h1 class="page-header">Hello, {{user}}!</h1>
+    <h1 class="page-header">Home</h1>
+    <p class="page-description">Hello, {{ user }}! This is your homepage, where you can view your resumes and see alerts from groups.</p>
 {% else %}
-    <h1 class="page-header">{{ thisPageUsername }}'s resumes</h1>
+    <h1 class="page-header">{{ thisPageUsername }}</h1>
+    <p class="page-description">You are viewing {{ thisPageUsername}}'s page.</p>
 {% endif%}
 
 
 
 <h2 class="sub-header">Resumes</h2>
 
-{% if isUserHome %}
-<a href="{% url 'upload' %}">Upload a new resume</a>
-{% endif %}
+<div class="resume-card-container">
+    {% if isUserHome %}
+    <div class="resume-card blank-upload-card" data-url="{% url 'upload' %}">
+        <div class="plus-sign">+</div>
+        <div>Upload new resume</div>
+    </div>
+    {% endif%}
 
-{% if resumes %}
-<div class="table-container">
-<table>
-    <thead>
-        <tr>
-        <th>Name</th>
-        <th>Rating</th>
-        <th>Ratings</th>
-        <th>Comments</th>
-        <th>Uploaded</th>
-        <th></th> <!-- Abilities column -->
-        </tr>
-    </thead>
-    <tbody>
-        {% for resume in resumes %}
-        <tr>
-        <td>
-            <a class="resume-name-in-table" href="{% url 'details' resume_id=resume.id %}">{{ resume.name }}
-                <img class="resume-image-preview" src="{{ resume.imageData }}">
-            </a>
-        </td>
-
-        {% if resume.avgRating %}
-        <td>{{ resume.avgRating }} / 10</td>
-        {% else %}
-        <td>--</td>
-        {% endif %}
-        <td>{{ resume.numRatings }}</td>
-        <td>{{ resume.numComments }}</td>
-        <td>{{ resume.created_at }}</td>
-        <td><a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    {% for resume in resumes %}
+        {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
+    {% endfor %}
 </div>
-{% else %}
-<p>No resumes</p>
-{% endif %}
+
+
 
 {% if isUserHome %}
 <h2 class="sub-header">Group Invites</h2>

@@ -20,7 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // <div class="resume-card" data-detailsUrl="{% url 'details' resume.id %}">
     $('.resume-card').click(function(){
-        window.location.href = $(this).data('detailsurl')
+        // When I gave the blank upload card class="resume-card" so it would have right CSS, it also had the JS from here
+        // applied to it. The blank card doesn't have a data-detailsURL; it has a data-url redirecting to upload page.
+        if ($(this).data('url')) {
+            window.location.href = $(this).data('url')
+        }
+        else {
+            window.location.href = $(this).data('detailsurl')
+        }
     })
 
 

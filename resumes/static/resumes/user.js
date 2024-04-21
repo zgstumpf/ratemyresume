@@ -19,4 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
         $(this).find(".resume-image-preview").hide()
     })
 
+
+    $('.blank-upload-card').click(function () {
+        console.log('lll')
+        console.log($(this).data('url'))
+        // window.location.href = $(this).data('url')
+    })
+
 });
