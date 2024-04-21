@@ -144,6 +144,40 @@ button.darkblue-btn {
     font: 400 16px Arial !important; /* Fixes bug where <a> and <button> are different heights */
 }
 
+/* TODO: Consolidate code for both buttons */
+
+.red-btn {
+    background-color: #ff4040;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+
+.red-btn:hover {
+    background-color: rgb(211, 44, 44);
+}
+
+/* <a> elements and <button> elements are styled a little differently by default, so here we fix those differences */
+a.red-btn {
+    color: white;
+    text-decoration: none;
+}
+
+a.red-btn:hover {
+    color: white;
+    text-decoration: none;
+}
+
+button.red-btn {
+    /* Override default */
+    border-width: 0px;
+}
+
+a.red-btn,
+button.red-btn {
+    font: 400 16px Arial !important; /* Fixes bug where <a> and <button> are different heights */
+}
+
 /* For forms */
 .error-msg {
     color: red;
@@ -337,4 +371,46 @@ button.darkblue-btn {
 
 .search-btn {
     margin-right: 10px;
+}
+
+.group-activity-card {
+    max-width: 750px;
+    padding: 10px;
+    border: 1px solid #cccdcf;
+    border-radius: 5px;
+    margin: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 3px #ccc;
+    background-color: white;
+    transition: transform 0.2s;
+}
+
+.group-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.group-link:hover {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.lightgray {
+    color: #6a6a6a;
+}
+
+.group-activity-text {
+    margin-bottom: 10px;
+}
+
+.group-activity-options {
+    margin-bottom: 5px;
+}
+
+.group-activity-options > * {
+    display: inline;
 }

@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% load static %}
 {% block pageSpecificStaticFiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'resumes/user.css' %}">
     <script src="{% static 'resumes/user.js' %}"></script>
     <script src="{% static 'resume_card.js' %}"></script>
+    <script src="{% static 'group_activity_card.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -38,20 +40,26 @@
 {% if isUserHome %}
 <h2 class="sub-header">Group Invites</h2>
 <!-- need to make sure this is just the user's group invites -->
-    {% if groupInvites %}
-        {% for groupInvite in groupInvites %}
-            <form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Accept Invitation to {{groupInvite.group.name}}</button>
-            </form>
-            <form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Reject</button>
-            </form>
-        {% endfor %}
-    {% else %}
-        <p>No pending invitations</p>
-    {% endif %}
+    {% for groupInvite in groupInvites %}
+
+        <div class="group-activity-card">
+            <div class="group-activity-text">
+                <div><a href="{% url 'user' groupInvite.group.owner.id %}" class="username-link">{{ groupInvite.group.owner}}</a> invited you to join <a href="{% url 'grouppage' groupInvite.group.id %}" class="group-link bold">{{ groupInvite.group.name}}</a>. <span class="lightgray">{{ groupInvite.created_at|naturaltime }}</span></div>
+            </div>
+
+            <div class="group-activity-options">
+                <form action="{% url 'acceptinvite' groupInvite.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="darkblue-btn" type="submit">Accept</button>
+                </form>
+                <form action="{% url 'rejectinvite' groupInvite.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="red-btn" type="submit">Reject</button>
+                </form>
+            </div>
+        </div>
+
+    {% endfor %}
 {% endif %}
 
 {% endblock %}
