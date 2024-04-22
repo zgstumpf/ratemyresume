@@ -452,7 +452,11 @@ def acceptinvite(request, invite_id):
     invite.action_at = timezone.now()
     invite.save()
 
-    return JsonResponse({"group": invite.group.name}, status=200)
+    groupCardHtml = render_to_string('group_card.html', {
+            'group': invite.group
+        }).replace('\n', '')
+
+    return JsonResponse({"group": invite.group.name, "groupCardHtml": groupCardHtml}, status=200)
 
 def rejectinvite(request, invite_id):
     if request.method != 'POST':
@@ -638,8 +642,6 @@ def resumeSearch(request):
             'numRatings': resume.numRatings
         }).replace('\n', '')
         resume_html_list.append(resume_html)
-
-    print(resume_html_list)
 
     return JsonResponse({"results": resume_html_list}, status=200)
 
