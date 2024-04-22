@@ -339,6 +339,10 @@ button.red-btn {
     color: #464646;
 }
 
+.txt-sm {
+    font-size: 14px;
+}
+
 .page-description {
     font-size: 20px;
     margin-bottom: 20px;

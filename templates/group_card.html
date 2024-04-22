@@ -1,0 +1,8 @@
+{% load humanize %}
+
+<div class="group-card" data-url="{% url 'grouppage' group.id %}">
+    <div class="group-card-name">{{group.name}}</div>
+    <p class="card-subheader">{{group.description}}</p>
+    <span class="card-subheader txt-sm">{{ group.members.count }} {% if group.members.count == 1 %}member{% else %}members{% endif %} &middot; Owned by <a href="{% url 'user' group.owner.id %}" class="username-link">{{ group.owner }}</a></span>
+    <div class="card-subheader txt-sm">Last activity {{ group.last_activity|naturaltime }}</div>
+</div>

@@ -231,23 +231,29 @@ def upload(request):
     return render(request, 'resumes/upload.html', {'form': form})
 
 def user(request, user_id):
-    user = User.objects.get(pk=user_id)
+    user = get_object_or_404(User, pk=user_id)
     username = user.username
 
     resumes = getResumesUserPermittedToView(request.user, user)
     attachAvgAndNumRatings(resumes)
-    attachImagesAsStrings(resumes)
     attachNumComments(resumes)
 
+    # Without initializing this i think passing 0 groupInvites to context causes errors
     groupInvites = GroupInvite.objects.none()
+    # If user is on someone else's page, they should see no invites.
     if request.user == user:
         groupInvites = GroupInvite.objects.filter(invitee=user).exclude(action__isnull=False).order_by('-created_at') # later may want this in own view
+
+    groups = PrivateGroup.objects.filter(members=user)
+    for group in groups:
+        group.last_activity = last_group_activity(group.id)
 
     context = {
         'resumes': resumes,
         'isUserHome': user_id == request.user.id, #True if user searched for themself
         'thisPageUsername': username,
         'groupInvites': groupInvites, # later may want this in own view
+        'groups': groups
     }
 
     return render(request, 'resumes/user.html', context)
@@ -637,3 +643,19 @@ def resumeSearch(request):
 
     return JsonResponse({"results": resume_html_list}, status=200)
 
+def last_group_activity(group_id: str):
+    """
+    Returns `datetime.datetime` object that is the more recent of:
+    - the last time a member joined the group
+    - the last time a resume was specifically shared with the group
+    """
+    # return time when last member joined, or when resume was specifically shared with group
+    lastMemberJoinDate = UserPrivateGroupMembership.objects.filter(group_id=group_id).order_by('-join_date').values_list('join_date', flat=True).first()
+
+    resumeIdsSharedSpecificallyWithGroup = ResumeGroupViewingPermissions.objects.filter(group_id=group_id).values_list('resume_id', flat=True)
+    lastSpecificResumeShareDate = Resume.objects.filter(id__in=resumeIdsSharedSpecificallyWithGroup).order_by('-created_at').values_list('created_at', flat=True).first()
+
+    # If a resume was never specifically shared with the group, lastSpecificResumeShareDate will be None, and max will break.
+    # In this case, remove it before evaluating max.
+    # lastMemberJoinDate will never be None since the owner is made a member upon creating the group.
+    return  max(filter(None, [lastMemberJoinDate, lastSpecificResumeShareDate]))

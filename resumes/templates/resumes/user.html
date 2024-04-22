@@ -7,6 +7,7 @@
     <script src="{% static 'resumes/user.js' %}"></script>
     <script src="{% static 'resume_card.js' %}"></script>
     <script src="{% static 'group_activity_card.js' %}"></script>
+    <script src="{% static 'group_card.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -38,29 +39,44 @@
 
 
 {% if isUserHome %}
-<h2 class="sub-header">Group Invites</h2>
-<!-- need to make sure this is just the user's group invites -->
-    {% for groupInvite in groupInvites %}
+    {% if groupInvites %}
+        <h2 class="sub-header">Group Invites</h2>
+        <!-- need to make sure this is just the user's group invites -->
+        {% for groupInvite in groupInvites %}
 
-        <div class="group-notif-card">
-            <div class="group-notif-text">
-                <div><a href="{% url 'user' groupInvite.group.owner.id %}" class="username-link">{{ groupInvite.group.owner}}</a> invited you to join <a href="{% url 'grouppage' groupInvite.group.id %}" class="group-link bold">{{ groupInvite.group.name}}</a>. <span class="lightgray">{{ groupInvite.created_at|naturaltime }}</span></div>
+            <div class="group-notif-card">
+                <div class="group-notif-text">
+                    <div><a href="{% url 'user' groupInvite.group.owner.id %}" class="username-link">{{ groupInvite.group.owner}}</a> invited you to join <a href="{% url 'grouppage' groupInvite.group.id %}" class="group-link bold">{{ groupInvite.group.name}}</a>. <span class="lightgray">{{ groupInvite.created_at|naturaltime }}</span></div>
+                </div>
+
+                <div class="group-notif-options">
+                    <form class="accept-invite" data-url="{% url 'acceptinvite' groupInvite.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="darkblue-btn" type="submit">Accept</button>
+                    </form>
+
+                    <form class="reject-invite" data-url="{% url 'rejectinvite' groupInvite.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="red-btn" type="submit">Reject</button>
+                    </form>
+                </div>
             </div>
 
-            <div class="group-notif-options">
-                <form class="accept-invite" data-url="{% url 'acceptinvite' groupInvite.id %}" method="post">
-                    {% csrf_token %}
-                    <button class="darkblue-btn" type="submit">Accept</button>
-                </form>
+        {% endfor %}
+    {% endif %}
+{% endif %}
 
-                <form class="reject-invite" data-url="{% url 'rejectinvite' groupInvite.id %}" method="post">
-                    {% csrf_token %}
-                    <button class="red-btn" type="submit">Reject</button>
-                </form>
-            </div>
-        </div>
-
+<h2 class="sub-header">Groups</h2>
+{% if groups %}
+    {% for group in groups %}
+        {% include 'group_card.html' with group=group %}
     {% endfor %}
+{% else %}
+    {% if isUserHome %}
+        <p>You are not in any groups.</p>
+    {% else %}
+        <p>{{ thisPageUsername }} is not in any groups.</p>
+    {% endif %}
 {% endif %}
 
 {% endblock %}
