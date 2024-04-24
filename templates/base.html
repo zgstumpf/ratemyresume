@@ -32,10 +32,10 @@
 
         <!-- Could replace this with img logo later -->
         <a class="nav-element" href="{% url 'index' %}">ratemyresume</a>
-        <a class="nav-element" href="{% url 'index' %}">Explore</a> <!-- Later these 2 will link to separate pages-->
+        <a class="nav-element" href="{% url 'index' %}">Resumes</a> <!-- Later these 2 will link to separate pages-->
+        <a class="nav-element" href="{% url 'groups' %}">Groups</a>
 
         {% if user.is_authenticated %}
-            <a class="nav-element" href="{% url 'groups' %}">Groups</a>
             <a class="nav-element nav-element-right" href="{% url 'logout' %}">Log out</a>
             <a class="nav-element nav-element-right" href="{% url 'user' request.user.id %}">Home</a>
         {% else %}
