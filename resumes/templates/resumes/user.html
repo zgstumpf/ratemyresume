@@ -39,8 +39,8 @@
 
 
 {% if isUserHome %}
+    <h2 class="sub-header">Notifications</h2>
     {% if groupInvites %}
-        <h2 class="sub-header">Group Invites</h2>
         <!-- need to make sure this is just the user's group invites -->
         {% for groupInvite in groupInvites %}
 
@@ -63,6 +63,32 @@
             </div>
 
         {% endfor %}
+    {% endif %}
+
+    {% if joinRequests %}
+        {% for joinRequest in joinRequests %}
+            <div class="group-notif-card">
+                <div class="group-notif-text">
+                    <div><a href="{% url 'user' joinRequest.user.id %}" class="username-link">{{ joinRequest.user}}</a> wants to join <a href="{% url 'grouppage' joinRequest.group.id %}" class="group-link bold">{{ joinRequest.group}}</a>. <span class="lightgray">{{ joinRequest.created_at|naturaltime }}</span></div>
+                </div>
+
+                <div class="group-notif-options">
+                    <form class="accept-request" data-url="{% url 'acceptrequest' joinRequest.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="darkblue-btn" type="submit">Accept</button>
+                    </form>
+
+                    <form class="reject-request" data-url="{% url 'rejectrequest' joinRequest.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="red-btn" type="submit">Reject</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if not groupInvites and not joinRequests %}
+        <p>If you had any notifications, they would appear here.</p>
     {% endif %}
 {% endif %}
 

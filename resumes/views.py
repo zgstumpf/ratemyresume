@@ -238,11 +238,15 @@ def user(request, user_id):
     attachAvgAndNumRatings(resumes)
     attachNumComments(resumes)
 
-    # Without initializing this i think passing 0 groupInvites to context causes errors
+    # Initialize to prevent error when passing empty variable to context
     groupInvites = GroupInvite.objects.none()
+    joinRequests = JoinRequest.objects.none()
     # If user is on someone else's page, they should see no invites.
     if request.user == user:
         groupInvites = GroupInvite.objects.filter(invitee=user).exclude(action__isnull=False).order_by('-created_at') # later may want this in own view
+        groupsUserOwns = PrivateGroup.objects.filter(owner=user).values_list('id', flat=True)
+        joinRequests = JoinRequest.objects.filter(group__in=groupsUserOwns, action__isnull=True)
+
 
     groups = PrivateGroup.objects.filter(members=user)
     for group in groups:
@@ -253,6 +257,7 @@ def user(request, user_id):
         'isUserHome': user_id == request.user.id, #True if user searched for themself
         'thisPageUsername': username,
         'groupInvites': groupInvites, # later may want this in own view
+        'joinRequests': joinRequests,
         'groups': groups
     }
 
@@ -385,9 +390,10 @@ def grouppage(request, group_id):
     # third: public resumes and resumes for signed in users
     resumes = Resume.objects.none()
     for member in group.members.all():
-        resumes = resumes.union(getResumesUserPermittedToView(request.user, member))
-
-    resumes = attach_has_user_rated(request.user, resumes)
+        member_resumes = getResumesUserPermittedToView(request.user, member)
+        member_resumes = member_resumes.order_by() # remove ordering since calling union on ordered queryset produces error
+        resumes = resumes.union(member_resumes)
+        resumes = attach_has_user_rated(request.user, resumes)
 
     context = {
         'group': group,
@@ -485,7 +491,10 @@ def sendrequest(request, group_id):
 
     # Why not just skip this line and plug group_id=group_id into the create()?
     # - Because doing that, Django would not validate that group_id links to an existing group.
-    group = get_object_or_404(PrivateGroup, pk=group_id)
+    try:
+        group = PrivateGroup.objects.get(pk=group_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "Does not exist"}, status=404)
 
     # Members of a group can not request to join the group
     if request.user in group.members.all():
@@ -503,29 +512,43 @@ def sendrequest(request, group_id):
     return JsonResponse({"message": "sent request"}, status=200)
 
 def acceptrequest(request, joinRequest_id):
-    joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
+    try:
+        joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "Does not exist"}, status=404)
+
     group = joinRequest.group
+
     # Do not confuse request with joinRequest here!
-    if request.user == group.owner:
-        group.members.add(joinRequest.user)
-        joinRequest.action = 'accepted'
-        joinRequest.action_at = timezone.now()
-        joinRequest.save()
-        return JsonResponse({"message": "Accepted"}, status=200) # ajax
-    else:
-        return JsonResponse({"error": "unauthorized"}, status=401) # TODO: is there a better way to do this?
+    # Only owner can accept request
+    if group.owner != request.user:
+        return JsonResponse({"error": "unauthorized"}, status=401)
+
+    group.members.add(joinRequest.user)
+    joinRequest.action = 'accepted'
+    joinRequest.action_at = timezone.now()
+    joinRequest.save()
+    return JsonResponse({"message": "Accepted", "group": group.name, "newMember": joinRequest.user.username}, status=200) # ajax
+
 
 def rejectrequest(request, joinRequest_id):
-    joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
+    try:
+        joinRequest = JoinRequest.objects.get(pk=joinRequest_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "Does not exist"}, status=404)
+
     group = joinRequest.group
+
     # Do not confuse request with joinRequest here!
-    if request.user == group.owner:
-        joinRequest.action = 'rejected'
-        joinRequest.action_at = timezone.now()
-        joinRequest.save()
-        return JsonResponse({"message": "Join request successfully rejected"}, status=200) # ajax
-    else:
-        return JsonResponse({"error": "unauthorized"}, status=401) # TODO: is there a better way to do this?
+    if group.owner != request.user:
+        return JsonResponse({"error": "unauthorized"}, status=401)
+
+
+    joinRequest.action = 'rejected'
+    joinRequest.action_at = timezone.now()
+    joinRequest.save()
+    return JsonResponse({"message": "Join request successfully rejected"}, status=200) # ajax
+
 
 def getResumesUserPermittedToView(requestingUser: User, resumeOwner: User):
     """
