@@ -8,6 +8,7 @@
 
 {% block content %}
 
+<h1 class="page-header">Create a group</h1>
 
 <form id="createGroupForm"
     method="post"
@@ -16,7 +17,7 @@
     {{createPrivateGroupForm}}
     {% csrf_token %}
 
-    <button type="submit">Submit</button>
+    <button class="darkblue-btn" type="submit">Submit</button>
 </form>
 
 {% endblock %}

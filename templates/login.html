@@ -7,23 +7,25 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Log in</h1>
+  <div id="login-box">
+    <h1 id="login-header" class="page-header">Log in</h1>
 
-  {% if next %}
-    {% if user.is_authenticated %}
-      <p>Your account doesn't have access to this page. To proceed,
-      please login with an account that has access.</p>
-    {% else %}
-      <p>Please login to see this page.</p>
+    {% if next %}
+      {% if user.is_authenticated %}
+        <p>Your account doesn't have access to this page. To proceed,
+        please login with an account that has access.</p>
+      {% else %}
+        <p>Please login to see this page.</p>
+      {% endif %}
     {% endif %}
-  {% endif %}
 
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    {{ authenticationForm }}
+    <form id="login-form" method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      {{ authenticationForm }}
 
-    <input type="hidden" name="next" value="{{ next }}">
-    <button type="submit">Login</button>
-  </form>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="darkblue-btn" type="submit">Log in</button>
+    </form>
+  </div>
 
 {% endblock %}

@@ -7,11 +7,11 @@
 {% endblock %}
 
 {% block content %}
-<h1>Create an account</h1>
+<h1 class="page-header">Create an account</h1>
 <form id="signupForm" method="post" action="{% url 'signup' %}">
     {% csrf_token %}
     {{ signUpForm }}
     <input type="hidden" name="next" value="{{ next }}">
-    <button type="submit">Sign up</button>
+    <button class="darkblue-btn" type="submit">Sign up</button>
 </form>
 {% endblock %}

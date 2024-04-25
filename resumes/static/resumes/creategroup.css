@@ -1,0 +1,7 @@
+#createGroupForm > label, input {
+    display: block;
+}
+
+#createGroupForm input {
+    margin-bottom: 20px;
+}

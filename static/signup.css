@@ -1,7 +1,7 @@
-#login-form > label, input {
+#signupForm > label, input {
     display: block;
 }
 
-#login-form input {
+#signupForm input {
     margin-bottom: 20px;
 }
