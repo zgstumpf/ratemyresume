@@ -54,4 +54,59 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = $(this).data('detailsurl')
     })
 
+
+    // Create new query whenever user types in search bar
+    $('#inviteUsersSearchBar').on('input', function() {
+        query = $(this).val()
+        $('#searchUsersToInviteForm').submit()
+    });
+
+    $('#searchUsersToInviteForm').on('submit', function(event) {
+        event.preventDefault()
+
+        let url = $(this).attr('action');
+
+        $.ajax({
+            data: $(this).serialize(),
+            type: 'GET',
+            url: url,
+            headers: {'X-CSRFToken': getCsrf()},
+            crossDomain: false,
+            success: function (response) {
+                console.log(response)
+                response = response.results.join(' ')
+                $('#userResults').html(response)
+                readyInviteForms()
+            },
+            error: function (response) {
+                console.error(response.responseJSON.error)
+            }
+        });
+    })
+
+    function readyInviteForms() {
+        $('.inviteUserForm').on('submit', function(event) {
+            console.log('... inviting user')
+            event.preventDefault()
+
+            var url = $(this).attr('action');
+            console.log('csrf', getCsrf())
+            $.ajax({
+                data: $(this).serialize(),
+                type: 'POST',
+                url: url,
+                headers: {'X-CSRFToken': getCsrf()},
+                crossDomain: false,
+                success: function (response) {
+                    console.log(response)
+                    popupMsg("Your invite was successfully sent.")
+                },
+                error: function (response) {
+                    console.error(response.responseJSON.error)
+                }
+            });
+        })
+    }
+
+
 });

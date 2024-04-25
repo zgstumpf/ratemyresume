@@ -61,3 +61,8 @@ div.dt-container .dt-paging .dt-paging-button {
     display: inline-block; /* Needed for margin to have effect */
     margin-bottom: 15px; /* Put space between button and members area */
 }
+
+#inviteUsersSearchBar {
+    margin-right: 0px;
+    width: 100%
+}

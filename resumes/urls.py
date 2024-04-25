@@ -12,7 +12,7 @@ urlpatterns = [
     path('groups/create/', views.creategroup, name='creategroup'),
     path('group/<str:group_id>/', views.grouppage, name='grouppage'),
     path('groups/', views.groups, name='groups'),
-    path('invite/<str:group_id>/', views.sendinvite, name='sendinvite'),
+    path('invite/', views.sendinvite, name='sendinvite'),
     path('acceptinvite/<str:invite_id>/', views.acceptinvite, name='acceptinvite'),
     path('rejectinvite/<str:invite_id>/', views.rejectinvite, name='rejectinvite'),
     path('join/<str:group_id>/', views.sendrequest, name='sendrequest'),
@@ -20,5 +20,6 @@ urlpatterns = [
     path('rejectrequest/<str:joinRequest_id>/', views.rejectrequest, name='rejectrequest'),
     path('resumes/search/', views.resumeSearch, name='resumeSearch'),
     path('groups/search/', views.group_search, name='group_search'),
+    path('users/search', views.user_search, name='user_search')
 
 ]

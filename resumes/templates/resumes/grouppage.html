@@ -4,6 +4,7 @@
 {% load static %}
 {% block pageSpecificStaticFiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'resumes/grouppage.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'resumes/invite_user_select.css' %}">
     <script src="{% static 'resumes/grouppage.js' %}"></script>
 {% endblock %}
 
@@ -19,8 +20,7 @@
 <p>Created {{ group.created_at|naturaltime }}</p>
 
 {% if isOwner %}
-    <a class="darkblue-btn main-action-btn" href="{% url 'sendinvite' group.id %}">Invite user</a>
-    <a class="darkblue-btn main-action-btn" href="{% url 'sendinvite' group.id %}" data-toggle="modal" data-target="#inviteModal">Invite user 2</a>
+    <a class="darkblue-btn main-action-btn" href="{% url 'sendinvite' %}" data-toggle="modal" data-target="#inviteModal">Invite user</a>
 {% elif not isMember and not joinRequestsPending %}
     <form id="send-request-form" action="{% url 'sendrequest' group.id %}" method="post">
         {% csrf_token %}
@@ -39,11 +39,22 @@
           </button>
         </div>
         <div class="modal-body">
-          ...
+            <form id="searchUsersToInviteForm" method="GET" action="{% url 'user_search' %}" data-group-id="{{ group.id }}">
+                <input id="inviteUsersSearchBar" class="search-bar" type="text" name="query" placeholder="Search">
+
+                {% comment %} group.id gets passed to view user_search, then gets passed to template invite_user_select.html
+                so group id is accessible in view sendinvite {% endcomment %}
+                <input type="hidden" name="group_id" value="{{ group.id }}">
+
+                <!-- Is this button needed? -->
+                <button class="search-btn" type="submit" style="display: none;"></button>
+            </form>
+
+            <div id="userResults"></div>
+
         </div>
         <div class="modal-footer">
-          <button type="button" class="red-btn" data-dismiss="modal">Quit</button>
-          <button type="button" class="darkblue-btn">Send invitations</button>
+          <button type="button" class="darkblue-btn" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>

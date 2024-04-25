@@ -1,0 +1,12 @@
+<div class="invite-user-container">
+    <a href="{% url 'user' user.id %}" class="username-link">{{ user }}</a>
+    <form class="inviteUserForm"
+        method="post"
+        action="{% url 'sendinvite' %}"
+        enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="invitee_id" value="{{ user.id }}">
+        <input type="hidden" name="group_id" value="{{ group_id }}">
+        <button class="blue-btn" type="submit">Invite</button>
+    </form>
+</div>

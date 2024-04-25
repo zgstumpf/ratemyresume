@@ -1,0 +1,11 @@
+.invite-user-container {
+    display: flex;
+    justify-content: space-between; /* Get username and invite button on other ends */
+
+    margin-top: 10px; /* Spacing between first user and search bar, and spacing between users */
+    margin-left: 10px; /* Aligns username with text in search bar */
+}
+
+.invite-user-container > * {
+    display: inline-block; /* Gets username and invite button on same line */
+}

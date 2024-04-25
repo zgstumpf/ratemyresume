@@ -418,30 +418,64 @@ def groups(request):
 
     return render(request, 'resumes/groups.html', {'groups': groups})
 
-def sendinvite(request, group_id):
-    groupInviteForm = GroupInviteForm()
-    if request.method == 'POST':
-        groupInviteForm = GroupInviteForm(request.POST)
-        if groupInviteForm.is_valid():
-            cleaned_data = groupInviteForm.cleaned_data
-            invitee = cleaned_data.get('invitee')
-            sender = request.user
-            group = PrivateGroup.objects.get(pk=group_id)
+def sendinvite(request):
+    """
+    AJAX
+    """
+    # groupInviteForm = GroupInviteForm()
+    # if request.method == 'POST':
+    #     groupInviteForm = GroupInviteForm(request.POST)
+    #     if groupInviteForm.is_valid():
+    #         cleaned_data = groupInviteForm.cleaned_data
+    #         invitee = cleaned_data.get('invitee')
+    #         sender = request.user
+    #         group = PrivateGroup.objects.get(pk=group_id)
 
-            # Can't send invites to members, can't send invites to users who have pending invites.
-            if not invitee in group.members.all() and not GroupInvite.objects.filter(group=group, invitee=invitee).exclude(action__isnull=False).exists():
-                GroupInvite.objects.create(
-                    invitee=invitee,
-                    sender=sender,
-                    group=group
-                )
-                # Clear groupInviteForm to let user invite another user
-                groupInviteForm = GroupInviteForm()
-            else:
-                # TODO: Later separate these error messages
-                groupInviteForm.add_error('invitee', "This use is already in your group, or an invitation to this user already exists for your group.")
+    #         # Can't send invites to members, can't send invites to users who have pending invites.
+    #         if not invitee in group.members.all() and not GroupInvite.objects.filter(group=group, invitee=invitee).exclude(action__isnull=False).exists():
+    #             GroupInvite.objects.create(
+    #                 invitee=invitee,
+    #                 sender=sender,
+    #                 group=group
+    #             )
+    #             # Clear groupInviteForm to let user invite another user
+    #             groupInviteForm = GroupInviteForm()
+    #         else:
+    #             # TODO: Later separate these error messages
+    #             groupInviteForm.add_error('invitee', "This use is already in your group, or an invitation to this user already exists for your group.")
 
-    return render(request, 'resumes/invite.html', {'groupInviteForm': groupInviteForm, 'group_id':group_id})
+    # return render(request, 'resumes/invite.html', {'groupInviteForm': groupInviteForm, 'group_id':group_id})
+    if request.method != 'POST':
+        return JsonResponse({"error": 'Method Not Allowed'}, status=405)
+
+    invitee_id = request.POST.get('user_id')
+    group_id = request.POST.get('group_id')
+
+    try:
+        group = PrivateGroup.objects.get(pk=group_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": 'Group does not exist'}, status=404)
+
+    try:
+        invitee = User.objects.get(pk=invitee_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": 'Invitee does not exist'}, status=404)
+
+    if invitee in group.members.all():
+        return JsonResponse({"error": 'Invitee is already a member of the group'}, status=500)
+
+    if GroupInvite.objects.filter(group=group, invitee=invitee).exclude(action__isnull=False).exists():
+        return JsonResponse({"error": 'Invitee already has a pending invite to this group'}, status=500)
+
+
+    GroupInvite.objects.create(
+        invitee=invitee,
+        sender=request.user, # group owner
+        group=group
+    )
+
+    return JsonResponse({"message": "Invitation sent"}, status=200)
+
 
 def acceptinvite(request, invite_id):
     """
@@ -690,6 +724,37 @@ def group_search(request):
 
     return JsonResponse({"results": groups_html_list}, status=200)
 
+
+def user_search(request):
+    """
+    AJAX. Returns HTML invite forms for users that can be invited to a certain group.
+    """
+    query = request.GET.get('query', '')
+    group_id = request.GET.get('group_id', '')
+
+    try:
+        group = PrivateGroup.objects.get(pk=group_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "Something went wrong - This page does not have a group id."}, status=404)
+
+    group_member_ids = group.members.all().values_list('id', flat=True)
+
+    users = User.objects.filter(
+        Q(username__contains=query) |
+        Q(email__contains=query) |
+        Q(first_name__contains=query) |
+        Q(last_name__contains=query)
+    ).exclude(id__in=group_member_ids) # Do not return users who are already in the group
+
+    users_html_list = []
+    for user in users:
+        user_html = render_to_string('invite_user_select.html', {
+            'user': user,
+            'group_id': group_id
+        }).replace('\n', '')
+        users_html_list.append(user_html)
+
+    return JsonResponse({"results": users_html_list}, status=200)
 
 
 def last_group_activity(group_id: str):
