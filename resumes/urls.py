@@ -18,6 +18,7 @@ urlpatterns = [
     path('join/<str:group_id>/', views.sendrequest, name='sendrequest'),
     path('acceptrequest/<str:joinRequest_id>/', views.acceptrequest, name='acceptrequest'),
     path('rejectrequest/<str:joinRequest_id>/', views.rejectrequest, name='rejectrequest'),
-    path('resumes/search/', views.resumeSearch, name='resumeSearch')
+    path('resumes/search/', views.resumeSearch, name='resumeSearch'),
+    path('groups/search/', views.group_search, name='group_search'),
 
 ]

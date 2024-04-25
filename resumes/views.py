@@ -410,7 +410,11 @@ def grouppage(request, group_id):
     return render(request, "resumes/grouppage.html", context)
 
 def groups(request):
-    groups = PrivateGroup.objects.order_by("created_at")
+    groups = PrivateGroup.objects.all()
+
+    for group in groups:
+        group.last_activity = last_group_activity(group.id)
+
     return render(request, 'resumes/groups.html', {'groups': groups})
 
 def sendinvite(request, group_id):
@@ -667,6 +671,25 @@ def resumeSearch(request):
         resume_html_list.append(resume_html)
 
     return JsonResponse({"results": resume_html_list}, status=200)
+
+def group_search(request):
+    query = request.GET.get('query', '')
+
+    groups = PrivateGroup.objects.filter(Q(name__contains=query) | Q(description__contains=query))
+
+    for group in groups:
+        group.last_activity = last_group_activity(group.id)
+
+    groups_html_list = []
+    for group in groups:
+        group_html = render_to_string('group_card.html', {
+            'group': group
+        }).replace('\n', '')
+        groups_html_list.append(group_html)
+
+    return JsonResponse({"results": groups_html_list}, status=200)
+
+
 
 def last_group_activity(group_id: str):
     """

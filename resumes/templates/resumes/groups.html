@@ -12,22 +12,20 @@
 
 
 <div class="options">
-    <form id="search" method="GET" action="">
-        <input class="search-bar" type="text" name="query" placeholder="Search... (TODO)">
+    <form id="search" method="GET" action="{% url 'group_search' %}">
+        <input class="search-bar" type="text" name="query" placeholder="Search">
         <button class="darkblue-btn search-btn"  type="submit">Search</button>
     </form>
 
     <a class="darkblue-btn" href="{% url 'creategroup' %}">Create a group</a>
 </div>
 
+<h2 id="results-header" class="sub-header"></h2>
+<div id="results-groups"></div>
 
+<h2 class="sub-header">All</h2>
 {% for group in groups %}
-<div class="group-card" data-url="{% url 'grouppage' group.id %}">
-    <div class="group-card-name">{{group.name}}</div>
-    <div class="card-subheader"><a href="{% url 'user' group.owner.id %}" class="username-link">{{ group.owner }}</a></div>
-    <p class="card-subheader">{{group.description}}</p>
-    <div class="card-subheader">{{ group.members.count }} {% if group.members.count == 1 %}member{% else %}members{% endif %}</div>
-</div>
+    {% include 'group_card.html' with group=group %}
 {% endfor %}
 
 {% endblock %}
