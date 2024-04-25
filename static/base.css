@@ -126,6 +126,7 @@ body {
 a.darkblue-btn {
     color: white;
     text-decoration: none;
+    text-wrap: nowrap;
 }
 
 a.darkblue-btn:hover {
@@ -160,6 +161,7 @@ button.darkblue-btn {
 a.red-btn {
     color: white;
     text-decoration: none;
+    text-wrap: nowrap;
 }
 
 a.red-btn:hover {
@@ -258,12 +260,12 @@ button.red-btn {
     }
   }
 
-  /* Media query for even smaller viewports */
-  @media screen and (max-width: 600px) {
+/* Media query for even smaller viewports */
+@media screen and (max-width: 600px) {
     .resume-card {
-      flex-basis: calc(100% - 10px); /* Width is 100% of the container minus margin */
+        flex-basis: calc(100% - 10px); /* Width is 100% of the container minus margin */
     }
-  }
+}
 
 .resume-image-skeleton {
     position: relative;
@@ -356,7 +358,7 @@ button.red-btn {
 }
 
 .search-bar {
-    width: 50%;
+    width: 450px;
     padding-left: 10px;
 
     border: 1px solid black;
@@ -373,6 +375,19 @@ button.red-btn {
 
 .search-btn {
     margin-right: 10px;
+}
+
+@media screen and (max-width: 900px) {
+    /* When screen gets to small to fit search bar and buttons,
+    make search bar take up full width and move buttons below */
+    .options input {
+        display: block;
+    }
+
+    .search-bar {
+        width: 100%;
+        margin-bottom: 10px; /* Put space between search bar and buttons */
+    }
 }
 
 .group-notif-card {

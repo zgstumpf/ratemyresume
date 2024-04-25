@@ -20,7 +20,7 @@
         {% comment %}width: fit-content ensures the default browser error message when a required file input is _blank
         is centered with the content instead of centered in the middle of the page since form-fields expand to fit the page{% endcomment%}
         <div class="form-field file-field" style='width: fit-content'>
-            <label for="{{ form.file.id_for_label }}">Upload resume (pdf only) <span class="required-text">* Required</span></label>
+            <label for="{{ form.file.id_for_label }}">Upload resume (pdf only) <span class="required-text">*</span></label>
             {% comment %}TODO: Poor UX.{% endcomment %}
             <p>To convert any file type to pdf, use <a href="https://www.freeconvert.com/pdf-converter" target="_blank">freeconvert.com</a>.</p>
             {% comment %}TODO: Not a secure solution to verify pdf at all, but good enough for now.{% endcomment %}
@@ -31,7 +31,7 @@
         </div>
 
         <div class="form-field">
-            <label for="{{ form.name.id_for_label }}">If you had to refer to this specific resume, what name would you use? <span class="required-text">* Required</span></label>
+            <label for="{{ form.name.id_for_label }}">If you had to refer to this specific resume, what name would you use? <span class="required-text">*</span></label>
             {{ form.name }}
             {% for error in form.name.errors %}
                 <p class="error-msg">{{ error }}</p>
@@ -57,7 +57,7 @@
         </div>
 
         <div class="form-field">
-            <label for="{{ form.visibility.id_for_label }}">Visibility <span class="required-text">* Required</span></label>
+            <label for="{{ form.visibility.id_for_label }}">Visibility <span class="required-text">*</span></label>
             {{ form.visibility }}
 
             <div class="checkbox">
