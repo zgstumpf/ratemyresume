@@ -83,22 +83,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* This will be the universal table for the site */
-.table-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-
-}
-
-.table-container > table {
-    width: 80%;
-}
-
-.table-container th, td {
-    border-bottom: 1px solid rgb(205, 205, 205);
-}
-
 .blue-btn {
     background-color: #007bff;
     color:#F7F7F7;
@@ -185,7 +169,6 @@ button.red-btn {
 }
 .required-text {
     color: red;
-    font-style: italic;
 }
 
 .username-link {

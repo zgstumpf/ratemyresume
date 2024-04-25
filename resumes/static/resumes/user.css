@@ -1,24 +1,3 @@
-/* For any elements to be aligned with table, they must have margin-left:10%; */
-/* p {
-    margin-left: 10%;
-} */
-
-.table-container {
-    width: 100%;
-    display: flex;
-    justify-content: left;
-    /* Some spacing between table and 'Upload new' link */
-    margin-top: 10px;
-}
-
-/* table {
-    width: 80%;
-} */
-
-th, td {
-    border-bottom: 1px solid rgb(205, 205, 205);
-}
-
 .resume-image-preview {
     display: none;
     position: absolute;

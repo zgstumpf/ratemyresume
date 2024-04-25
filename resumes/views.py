@@ -394,6 +394,7 @@ def grouppage(request, group_id):
         member_resumes = member_resumes.order_by() # remove ordering since calling union on ordered queryset produces error
         resumes = resumes.union(member_resumes)
         resumes = attach_has_user_rated(request.user, resumes)
+        attachAvgAndNumRatings(resumes)
 
     context = {
         'group': group,

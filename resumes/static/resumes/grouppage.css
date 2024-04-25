@@ -10,9 +10,36 @@
     cursor: pointer;
 }
 
+.table-container {
+    margin: 10px;
+}
+
 /* Fixes bug where if a datatables table has only usernames that looked like numbers, datatables would align text right. */
 table.dataTable th.dt-type-numeric,table.dataTable th.dt-type-date,table.dataTable td.dt-type-numeric,table.dataTable td.dt-type-date {
     text-align: left;
+}
+
+/* Make some datatables text labels smaller */
+.dt-container label,
+.dt-length select,
+.dt-info {
+    font-size: 14px;
+}
+
+.dt-length select {
+    margin-right: 5px; /* Put some space between the # entries per page dropdown and label */
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+    padding: 0px; /* Remove excessive padding between datatables paging buttons */
+}
+
+/* Make paging arrows bigger */
+.dt-paging-button.first,
+.dt-paging-button.previous,
+.dt-paging-button.next,
+.dt-paging-button.last {
+    font-size: 24px;
 }
 
 .header-name {
@@ -24,4 +51,13 @@ table.dataTable th.dt-type-numeric,table.dataTable th.dt-type-date,table.dataTab
 
 .header-quick-info {
     font-style: italic;
+}
+
+#group-icon {
+    margin-right: 10px;
+}
+
+.main-action-btn {
+    display: inline-block; /* Needed for margin to have effect */
+    margin-bottom: 15px; /* Put space between button and members area */
 }

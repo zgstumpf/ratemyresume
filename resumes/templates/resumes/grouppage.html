@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% load static %}
 {% block pageSpecificStaticFiles %}
@@ -10,23 +11,23 @@
 
 
 <h1 class="page-header">
-    <img src="{% static 'resumes/svg/group.svg' %}" alt="Group icon" height="40px" width="40px" style="margin-right: 10px;">
+    <img id="group-icon" src="{% static 'resumes/svg/group.svg' %}" alt="Group icon" height="40px" width="40px">
     {{ group.name }}
 </h1>
 
 <p>Owner: <a href="{% url 'user' group.owner.id %}" class="username-link">{{ group.owner.username }}</a></p>
-<p>Created {{ group.created_at }}</p>
+<p>Created {{ group.created_at|naturaltime }}</p>
+
 {% if isOwner %}
-<a href="{% url 'sendinvite' group.id %}">Invite user</a>
+    <a class="darkblue-btn main-action-btn" href="{% url 'sendinvite' group.id %}">Invite user</a>
 {% elif not isMember and not joinRequestsPending %}
-<form id="send-request-form" action="{% url 'sendrequest' group.id %}" method="post">
-    {% csrf_token %}
-    <button class="blue-btn" type="submit">Request to join</button>
-    <div id="send-request-form-error" class="error-msg"></div>
-</form>
+    <form id="send-request-form" action="{% url 'sendrequest' group.id %}" method="post">
+        {% csrf_token %}
+        <button class="darkblue-btn main-action-btn" type="submit">Request to join</button>
+        <div id="send-request-form-error" class="error-msg"></div>
+    </form>
 {% endif %}
 
-<br>
 
 <div class="area">
     <div id="members-header" class="area-header">
@@ -36,22 +37,24 @@
     </div>
     <div id="members-data" style="display:none">
         {% if group.members.all %}
-        <table class="datatables" style="width: 100%">
-            <thead>
-                <tr>
-                    <th></th> <!-- Username column -->
-                </tr>
-            </thead>
-            <tbody>
-                {% for member in group.members.all %}
-                <tr>
-                    <td>
-                        <a href="{% url 'user' member.id %}" class="username-link">{{member.username}}</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table class="datatables" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th></th> <!-- Username column -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in group.members.all %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'user' member.id %}" class="username-link">{{member.username}}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
         <p>No members</p>
         {% endif %}
@@ -228,25 +231,7 @@
 <!-- This will be the new resume card that will be used throughout the website -->
 <div class="resume-card-container">
 {% for resume in resumes %}
-    <div class="resume-card" data-detailsurl="{% url 'details' resume.id %}">
-        <div class="resume-id" style="display:none" data-url="{% url 'get_resume_preview_image' resume.id %}"></div>
-        <div class="resume-image-skeleton"></div>
-
-        {% if resume.hasUserRated %}
-        <div class="resume-card-rated-checkmark">
-            <img src="{% static 'resumes/svg/checkmark.svg' %}" alt="Checkmark icon" title="You have rated this resume" height="40px" width="40px">
-        </div>
-        {% endif %}
-
-        <!-- There is still the problem of text clipping out of the card or entering a second line if the resume name or username is too long -->
-        <!-- If you ever figure out best way to fix this, the title attribute will let the user see the full value even if text is shortened to fit -->
-        <div class="resume-card-name" title="{{ resume.name }}">{{ resume.name }}</div>
-        <div class="resume-card-text">
-            <a href="{% url 'user' resume.user.id %}" class="username-link">{{ resume.user }}</a>
-        </div>
-
-        <div class="resume-card-text">{{ resume.created_at }}</div>
-    </div>
+    {% include 'resume_card.html' with resume=resume%}
 {% endfor %}
 </div>
 {% endblock %}
