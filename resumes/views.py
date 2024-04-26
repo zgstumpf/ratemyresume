@@ -422,33 +422,10 @@ def sendinvite(request):
     """
     AJAX
     """
-    # groupInviteForm = GroupInviteForm()
-    # if request.method == 'POST':
-    #     groupInviteForm = GroupInviteForm(request.POST)
-    #     if groupInviteForm.is_valid():
-    #         cleaned_data = groupInviteForm.cleaned_data
-    #         invitee = cleaned_data.get('invitee')
-    #         sender = request.user
-    #         group = PrivateGroup.objects.get(pk=group_id)
-
-    #         # Can't send invites to members, can't send invites to users who have pending invites.
-    #         if not invitee in group.members.all() and not GroupInvite.objects.filter(group=group, invitee=invitee).exclude(action__isnull=False).exists():
-    #             GroupInvite.objects.create(
-    #                 invitee=invitee,
-    #                 sender=sender,
-    #                 group=group
-    #             )
-    #             # Clear groupInviteForm to let user invite another user
-    #             groupInviteForm = GroupInviteForm()
-    #         else:
-    #             # TODO: Later separate these error messages
-    #             groupInviteForm.add_error('invitee', "This use is already in your group, or an invitation to this user already exists for your group.")
-
-    # return render(request, 'resumes/invite.html', {'groupInviteForm': groupInviteForm, 'group_id':group_id})
     if request.method != 'POST':
         return JsonResponse({"error": 'Method Not Allowed'}, status=405)
 
-    invitee_id = request.POST.get('user_id')
+    invitee_id = request.POST.get('invitee_id')
     group_id = request.POST.get('group_id')
 
     try:
@@ -738,13 +715,15 @@ def user_search(request):
         return JsonResponse({"error": "Something went wrong - This page does not have a group id."}, status=404)
 
     group_member_ids = group.members.all().values_list('id', flat=True)
+    pending_invite_ids = GroupInvite.objects.filter(group=group_id).values_list('invitee_id', flat=True)
+    excluded_ids = group_member_ids.union(pending_invite_ids)
 
     users = User.objects.filter(
         Q(username__contains=query) |
         Q(email__contains=query) |
         Q(first_name__contains=query) |
         Q(last_name__contains=query)
-    ).exclude(id__in=group_member_ids) # Do not return users who are already in the group
+    ).exclude(id__in=excluded_ids) # Do not return users who are already in the group
 
     users_html_list = []
     for user in users:

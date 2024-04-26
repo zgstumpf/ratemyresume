@@ -45,9 +45,6 @@
                 {% comment %} group.id gets passed to view user_search, then gets passed to template invite_user_select.html
                 so group id is accessible in view sendinvite {% endcomment %}
                 <input type="hidden" name="group_id" value="{{ group.id }}">
-
-                <!-- Is this button needed? -->
-                <button class="search-btn" type="submit" style="display: none;"></button>
             </form>
 
             <div id="userResults"></div>

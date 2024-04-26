@@ -86,10 +86,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function readyInviteForms() {
         $('.inviteUserForm').on('submit', function(event) {
-            console.log('... inviting user')
             event.preventDefault()
 
-            var url = $(this).attr('action');
+            const url = $(this).attr('action');
+            let form = $(this)
+
             console.log('csrf', getCsrf())
             $.ajax({
                 data: $(this).serialize(),
@@ -98,8 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {'X-CSRFToken': getCsrf()},
                 crossDomain: false,
                 success: function (response) {
-                    console.log(response)
                     popupMsg("Your invite was successfully sent.")
+                    form.closest('.invite-user-container').remove()
                 },
                 error: function (response) {
                     console.error(response.responseJSON.error)
