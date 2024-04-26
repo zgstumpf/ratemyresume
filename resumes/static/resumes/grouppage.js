@@ -109,4 +109,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    $('#inviteModal').on('hide.bs.modal', function () {
+        $('#inviteUsersSearchBar').val('')
+        $('#userResults').html('')
+    });
+
+
+
 });
