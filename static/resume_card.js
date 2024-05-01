@@ -91,5 +91,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+
+
+
+    tippy('.resume-card-menu', {
+      content: '<a class="menu-option" href="#">Edit</a><button class="menu-option">Delete</button>',
+      allowHTML: true,
+      interactive: true,
+      appendTo: () => document.body, // Fixes positioning
+      placement: 'bottom',
+      trigger: 'click',
+    });
+
+
+    // Separates clicking card and clicking menu actions.
+    $('.resume-card-menu').click(function(event) {
+        event.stopPropagation()
+    })
+
+
 });
 

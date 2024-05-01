@@ -68,5 +68,10 @@
         {% block content %}
         {% endblock %}
     </div>
+
+
+    {% comment %} Tippy documentation said to place this at bottom of body and before own scripts {% endcomment %}
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
 </body>
 </html>

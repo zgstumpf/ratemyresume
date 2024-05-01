@@ -290,6 +290,37 @@ button.red-btn {
     border-radius: 50%; /* circle */
 }
 
+.menu-option {
+    display: block
+}
+
+a.menu-option {
+    color: white;
+    text-decoration: none;
+    text-wrap: nowrap;
+}
+
+a.menu-option:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+button.menu-option {
+    border-width: 0px;
+    background-color: inherit;
+    color: white;
+    padding: 0px;
+}
+
+button.menu-option:hover {
+    text-decoration: underline;
+}
+
+a.menu-option,
+button.menu-option {
+    font: 400 16px Arial !important;
+}
+
 .resume-card-name,
 .resume-card-text {
     margin: 0px 5px;
