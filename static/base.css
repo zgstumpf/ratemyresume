@@ -277,6 +277,19 @@ button.red-btn {
     font-size: 18px;
 }
 
+
+.resume-card-menu {
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+}
+
+.resume-card-menu:hover {
+    cursor: pointer;
+    background-color: #d1d0d0;
+    border-radius: 50%; /* circle */
+}
+
 .resume-card-name,
 .resume-card-text {
     margin: 0px 5px;
@@ -287,7 +300,7 @@ button.red-btn {
 }
 
 .resume-card-avgrating {
-    position:absolute;
+    position: absolute;
     top: 5%;
     right: 5%;
 

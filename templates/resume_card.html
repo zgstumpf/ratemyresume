@@ -32,10 +32,14 @@ script src="% static 'resume_card.js' %"
     {% endif %}
 
 
+    <svg class="resume-card-menu" height="25px" width="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(90)">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="6" r="2" transform="rotate(90 12 6)" fill="#6a6a6a"></circle> <circle cx="12" cy="12" r="2" transform="rotate(90 12 12)" fill="#6a6a6a"></circle> <path d="M12 20C10.8954 20 10 19.1046 10 18C10 16.8954 10.8954 16 12 16C13.1046 16 14 16.8954 14 18C14 19.1046 13.1046 20 12 20Z" fill="#6a6a6a"></path> </g>
+    </svg>
 
     <!-- There is still the problem of text clipping out of the card or entering a second line if the resume name or username is too long -->
     <!-- If you ever figure out best way to fix this, the title attribute will let the user see the full value even if text is shortened to fit -->
     <div class="resume-card-name" title="{{ resume_name }}">{{ resume_name }}</div>
+
     <div class="resume-card-text">
         <a href="{% url 'user' user_id %}" class="username-link">{{ user }} </a>
     </div>
