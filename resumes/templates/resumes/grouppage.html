@@ -18,7 +18,7 @@
 </h1>
 
 <p>Owner: <a href="{% url 'user' group.owner.id %}" class="username-link">{{ group.owner.username }}</a></p>
-<p>Created {{ group.created_at|naturaltime }}</p>
+<p class="lightgray txt-sm">Created {{ group.created_at|naturaltime }}</p>
 
 {% if isOwner %}
     <a class="darkblue-btn main-action-btn" href="{% url 'sendinvite' %}" data-toggle="modal" data-target="#inviteModal">Invite user</a>
