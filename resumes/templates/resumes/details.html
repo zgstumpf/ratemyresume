@@ -27,7 +27,7 @@
             </span>
         </div>
         <p class="resume-description">{{ resume.description }}</p>
-        <span>Uploaded {{ resume.created_at|naturaltime }}</span>
+        <span class="lightgray txt-sm">Uploaded {{ resume.created_at|naturaltime }}</span>
     </div>
 
 
@@ -42,7 +42,7 @@
 
 
     <h2 class="sub-header">Rate</h2>
-    <div class="section-separator"></div>
+
     <div id="rating-section">
 
         <div id="rating-scale">
@@ -85,9 +85,6 @@
 
 
     <h2 class="sub-header">Comments</h2>
-    <div class="section-separator"></div>
-
-
     <div id="write-comment-area">
         <form id="commentForm"
             method="post"

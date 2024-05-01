@@ -36,7 +36,6 @@
     justify-content: center;
     align-items: center;
     margin: 0px 2px;
-    /* border: 1px solid black; */
     border: 1px solid #cccdcf;
     border-radius: 2px;
     /* Remove width or min-width, and it collapses width-wise. I'm not sure why. */
@@ -45,35 +44,30 @@
     transition: transform .2s
 }
 
-/* .rating-option:hover and .rating-option-selected should be the same */
-.rating-option:hover {
-    background-color: #0066d3;
-    color: #F7F7F7;
-    cursor: pointer;
-    transform: scale(1.25);
-}
 
+.rating-option:hover,
 .rating-option-selected {
     background-color: #0066d3;
     color: #F7F7F7;
     cursor: pointer;
     transform: scale(1.25);
 }
-/* ------------------------------------------------------------------- */
 
 .rating-label {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* margin: 0px 5px; */
 }
 
-.rating-label-left {
-    margin-right: 5px;
+@media screen and (max-width: 600px) {
+    .rating-label {
+        display: none; /* Leave more width to rating-options */
+    }
 }
 
+.rating-label-left,
 .rating-label-right {
-    margin-left: 5px;
+    margin-right: 5px;
 }
 
 #ratingForm {

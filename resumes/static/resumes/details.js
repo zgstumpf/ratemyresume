@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
         $('#rating-description').text('Rate the resume relative to resumes of individuals with a similar education level and years of career experience.')
     }
 
-    
+
     $('#commentForm').submit(function (event) {
         event.preventDefault();
 
@@ -26,35 +26,19 @@ document.addEventListener("DOMContentLoaded", () => {
             success: function (response) {
                 $('#no-comments-placeholder').remove()
                 $('.write-comment-input').val('')
-
-                // Insert data from response into comments so user sees their data on the page without need for refresh
-                comment = response.comment
-                var commentHTML = `
-                <div class="comment">
-                        <p class="comment-user-header comment-username">${comment.user}</p>
-                `
-                if (comment.user===ownerUsernameForJS){
-                    commentHTML += `
-                        <p class="comment-user-header owner-designation">Resume Owner</p>
-                    `
-                }
-                commentHTML += `
-                        <p class="comment-user-header">${comment.created_at}</p>
-                        <p>${comment.text}</p>
-                </div>
-                `
-
-                $("#comment-section").prepend(commentHTML)
+                $('#comment-section').prepend(response.commentHtml)
             },
             error: function (response) {
-                console.error("Error happened in ajax")
+                console.error(response.responseJSON.error)
             }
         });
     });
 
+
     $('#submit-comment-button').click(function() {
         $('#commentForm').submit()
     });
+
 
     $('#ratingForm').submit(function (event) {
         event.preventDefault();

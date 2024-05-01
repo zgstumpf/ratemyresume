@@ -87,35 +87,28 @@ def details(request, resume_id):
     # If request originates from searching URL, request.method == 'GET'
     # If request originates from form submission, request.method == 'POST'
     if request.method == 'POST':
+
         # 'form_type' is a hidden input field added to the comment form with a preset value of 'comment_form'
         # When the form is submitted, 'form-type' and its value will be submitted with it in the request
         # Because the details view has multiple forms, this hidden input field is used to identify the forms
         if request.POST['form_type'] == 'comment_form':
-            # Django takes care of extracting required info from request
             comment_form = UploadCommentForm(request.POST)
 
-            # Django does validation and sanitizes data
             if comment_form.is_valid():
-                # Save the form data to a comment object, but do not upload to database yet
                 comment = comment_form.save(commit=False)
 
-                # Add user_id (from request info) and resume_id (from URL) to comment object
                 comment.user_id = request.user.id
                 comment.resume_id = resume_id
-
-                # Upload comment to database
                 comment.save()
 
-                # If we called render, every time the user makes a comment or rating, the page would refresh,
-                # which would take time to load and cause a visual effect that would be annoying after a while
-                # Instead, return JSON data to the JavaScript AJAX function.
-                # Then, we can use JavaScript to update parts of the page without refreshing the whole page.
-                comment_data = {
-                    "user": request.user.username,
-                    "text": comment.text,
-                    "created_at": comment.created_at # TODO: date is in wrong format
-                }
-                return JsonResponse({"comment": comment_data}, status=200)
+                # for AJAX
+                commentHtml = render_to_string('comment.html', {
+                    'comment': comment,
+                    'resume': resume
+                }).replace('\n', '')
+
+                return JsonResponse({'commentHtml': commentHtml}, status=200)
+
         elif request.POST['form_type'] == 'rating_form':
             rating_form = RatingForm(request.POST)
 
