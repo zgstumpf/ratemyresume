@@ -20,21 +20,6 @@ from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivat
 
 # View for homepage
 def index(request):
-    # resumes = Resume.objects.order_by("created_at")
-
-    # # TODO: may want to think about a more efficient way to do this.
-    # for resume in resumes:
-    #     if not isUserPermittedToViewResume(request.user, resume):
-    #         resumes = resumes.exclude(pk=resume.pk)
-
-    # resumes = attach_has_user_rated(request.user, resumes)
-
-    # new_resumes = Resume.objects.none()
-    # for resume in resumes:
-    #     # Resume is "new" if it was uploaded in last 72 hrs
-    #     if resume.created_at >= timezone.now() - timedelta(hours=72):
-    #         new_resumes = new_resumes.union(resume)
-
     new_resumes = Resume.objects.filter(created_at__gte = timezone.now() - timedelta(hours=72))
     new_resumes = [r for r in new_resumes if isUserPermittedToViewResume(request.user, r)]
     new_resumes = attachAvgAndNumRatings(new_resumes)

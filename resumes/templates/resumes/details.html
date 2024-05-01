@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% load static %}
 {% block pageSpecificStaticFiles %}
@@ -26,14 +27,14 @@
             </span>
         </div>
         <p class="resume-description">{{ resume.description }}</p>
-        <span>Uploaded {{ resume.created_at}}</span>
+        <span>Uploaded {{ resume.created_at|naturaltime }}</span>
     </div>
 
 
     <h2 class="sub-header">Resume</h2>
 
     {% comment %} Ideally, the width and the height should be set so no scrollbars appear on the embed element for a 1 page. resume {% endcomment %}
-    <embed id="embedded-pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="850" height="1050">
+    <embed id="embedded-pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="850" height="1125">
     <div id="viewing-options">
         <a href="{{ resume.file.url }}" target="_blank">Download</a>
         <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a>
@@ -60,8 +61,11 @@
             <div class="rating-label rating-label-right">Excellent</div>
         </div>
 
-        <p id="rating-description"></p>
-        <p id="rating-score"></p>
+        <p id="rating-description" class="lightgray">
+            {% if userRating %}
+                You rated this resume {{ userRating.created_at|naturaltime }}
+            {% endif %}
+        </p>
 
         {% comment %}This form has display: none, so it is invisible and does not affect any elements on the DOM.
         When a rating option is clicked, the value from the option is inserted into this form and the form is
@@ -102,26 +106,30 @@
 
         </form>
 
-        <div id="submit-comment-button" title="Send comment">
+        <button id="submit-comment-button" class="darkblue-btn" title="Send comment">
             <svg id="submit-comment-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send-arrow-down-fill" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M15.854.146a.5.5 0 0 1 .11.54L13.026 8.03A4.5 4.5 0 0 0 8 12.5c0 .5 0 1.5-.773.36l-1.59-2.498L.644 7.184l-.002-.001-.41-.261a.5.5 0 0 1 .083-.886l.452-.18.001-.001L15.314.035a.5.5 0 0 1 .54.111M6.637 10.07l7.494-7.494.471-1.178-1.178.471L5.93 9.363l.338.215a.5.5 0 0 1 .154.154z"/>
                 <path fill-rule="evenodd" d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-1.646a.5.5 0 0 1-.722-.016l-1.149-1.25a.5.5 0 1 1 .737-.676l.28.305V11a.5.5 0 0 1 1 0v1.793l.396-.397a.5.5 0 0 1 .708.708z"/>
             </svg>
             Send
-        </div>
+        </button>
     </div>
 
     <div id="comment-section">
-        {% for comment in comments %}
-        <div class="comment">
-            <a href="{% url 'user' comment.user.id %}" class="comment-user-header comment-username username-link">{{ comment.user }}</a>
-            {% if comment.user == resume.user %}
-            <p class="comment-user-header owner-designation">Resume Owner</p>
-            {% endif %}
-            <p class="comment-user-header">{{ comment.created_at }}</p>
-            <p>{{ comment.text }}</p>
-        </div>
-        {% endfor %}
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="comment">
+                    <a href="{% url 'user' comment.user.id %}" class="comment-user-header comment-username username-link">{{ comment.user }}</a>
+                    {% if comment.user == resume.user %}
+                    <p class="comment-user-header owner-designation">Resume Owner</p>
+                    {% endif %}
+                    <p class="comment-user-header">{{ comment.created_at }}</p>
+                    <p>{{ comment.text }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p id="no-comments-placeholder">Be the first to comment</p>
+        {% endif %}
     </div>
 
 

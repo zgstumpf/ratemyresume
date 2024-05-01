@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'resumes/grouppage.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'resumes/invite_user_select.css' %}">
     <script src="{% static 'resumes/grouppage.js' %}"></script>
+    <script src="{% static 'resume_card.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -40,7 +41,7 @@
         </div>
         <div class="modal-body">
             <form id="searchUsersToInviteForm" method="GET" action="{% url 'user_search' %}" data-group-id="{{ group.id }}">
-                <input id="inviteUsersSearchBar" class="search-bar" type="text" name="query" placeholder="Search">
+                <input id="inviteUsersSearchBar" class="search-bar" type="text" name="query" placeholder="Search by username, email, or name">
 
                 {% comment %} group.id gets passed to view user_search, then gets passed to template invite_user_select.html
                 so group id is accessible in view sendinvite {% endcomment %}
@@ -90,14 +91,11 @@
     </div>
 </div>
 
-<br>
 
-
-<!-- Here will be group activity, including resumes and (later) board messages. -->
-<!-- This will be the new resume card that will be used throughout the website -->
+<h2 class="sub-header">Resumes</h2>
 <div class="resume-card-container">
-{% for resume in resumes %}
-    {% include 'resume_card.html' with resume=resume%}
-{% endfor %}
+    {% for resume in resumes %}
+        {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
+    {% endfor %}
 </div>
 {% endblock %}

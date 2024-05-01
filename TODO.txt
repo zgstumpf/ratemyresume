@@ -2,8 +2,6 @@ increase security of uploading files if you ever deploy to production: https://s
 Current pdf validation is poor - users could easily bypass it
 Good UX should automatically convert to pdf, which I haven't done since many packages require Word to be installed or an API key
 
-? move rating area to top of resume page - see web visual studio marketplace extensions for inspiration
-
 profile page so user knows who they are
 
 try auto code security scanning: https://owasp.org/www-community/Free_for_Open_Source_Application_Security_Tools
@@ -12,8 +10,8 @@ convert all model choices to class enums so they can be used outside of models.p
 
 figure out foreign key issues when trying to delete DB records
 
-image previews must be delivered via ajax to reduce loading time
-
 Bug: When navbar becomes toggled for small screen, nav elements originally floated to right appear in wrong order on dropdown list.
 Bug: Toggling responsive navbar causes hamburger icon to shift a few pixels due to relative/absolute positioning
 Bug: 'Upload a resume' button on index page gets wrapped wrong when screen is about 640px
+
+has user rated checkmark not appearing on grouppage.html, replaced with duplicate preview image in html

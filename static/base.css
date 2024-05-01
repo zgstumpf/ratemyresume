@@ -201,6 +201,10 @@ button.red-btn {
     display: inline;
 }
 
+.popup-msg > svg {
+    margin-right: 10px;
+}
+
 @keyframes slideIn {
     from {
         top: -300px; /* Initial position off the screen */

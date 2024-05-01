@@ -47,14 +47,14 @@
 
 /* .rating-option:hover and .rating-option-selected should be the same */
 .rating-option:hover {
-    background-color: #007bff;
+    background-color: #0066d3;
     color: #F7F7F7;
     cursor: pointer;
     transform: scale(1.25);
 }
 
 .rating-option-selected {
-    background-color: #007bff;
+    background-color: #0066d3;
     color: #F7F7F7;
     cursor: pointer;
     transform: scale(1.25);
@@ -78,37 +78,6 @@
 
 #ratingForm {
     display: none;
-}
-
-#submit-comment-button {
-    display: inline-block;
-    padding: 5px;
-
-    /* Border should be same color as its background, since it should only be visible when hovered over
-    We still need to include border so border spacing is consistent when hovered over */
-    border: 1px solid #F7F7F7;;
-    border-radius: 5px;
-}
-
-#submit-comment-button:hover {
-    cursor: pointer;
-    background-color: #cccdcf;
-    border: 1px solid #cccdcf;
-}
-
-/* TODO: Needs to be applied sitewide */
-/* .content {
-    margin: 0 10%;
-} */
-
-.cursive-header {
-    font-family: "Style Script", cursive;
-    font-weight: 400;
-    font-style: normal;
-
-    border-bottom: 1px solid #cccdcf;
-    margin-bottom: 20px;
-    margin-top: 35px;
 }
 
 #write-comment-area {
