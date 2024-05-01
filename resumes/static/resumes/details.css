@@ -102,11 +102,17 @@
 }
 
 .comment {
+    border-bottom: 1px solid lightgray;
     margin-bottom: 30px;
 }
 
 .comment-user-header {
+    margin-bottom: 10px;
+}
+
+.comment-user-header > * {
     display: inline-block;
+    margin-right: 5px;
 }
 
 .owner-designation {
@@ -114,8 +120,4 @@
     color: #F7F7F7;
     border-radius: 5px;
     padding: 0px 5px;
-}
-
-.comment-username {
-    margin-right: 5px;
 }

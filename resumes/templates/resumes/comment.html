@@ -1,0 +1,17 @@
+{% load humanize %}
+
+<div class="comment">
+    <div class="comment-user-header">
+        <a href="{% url 'user' comment.user.id %}" class="comment-username username-link">{{ comment.user }}</a>
+
+        {% comment %}When this template is used in details.html, that template has a resume object
+        which is used here{% endcomment %}
+        {% if comment.user == resume.user %}
+            <span class="owner-designation">Owner</span>
+        {% endif %}
+
+        <div class="lightgray txt-sm">{{ comment.created_at|naturaltime }}</div>
+    </div>
+
+    <p class="comment-text">{{ comment.text }}</p>
+</div>

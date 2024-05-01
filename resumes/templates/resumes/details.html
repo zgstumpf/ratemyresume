@@ -86,24 +86,19 @@
 
     <h2 class="sub-header">Comments</h2>
     <div class="section-separator"></div>
-    <!--
-    When this form is submitted, a POST request is made to the URL specified in the action attribute
-    Example: When resume.id == 1, action="details/1/"
-    This POST request is sent to that URL. The URL forwards the information to the corresponding view
-    as defined in resumes/urls.py, which is resumes/views.py -> details()
-    -->
+
+
     <div id="write-comment-area">
         <form id="commentForm"
             method="post"
             action="{% url 'details' resume_id=resume.id %}"
             enctype="multipart/form-data">
-            <!-- Since there are multiple forms on this page, this hidden input field is used to identify the form
-            once the form information is sent to the backend. -->
-            <input type="hidden" name="form_type" value="comment_form">
             {% csrf_token %}
-
             <textarea class="write-comment-input" name="text" placeholder="Write a comment" maxlength="2000"></textarea>
 
+            {% comment %}Since there are multiple forms on this page, this hidden input field is used to identify the form
+            once the form information is sent to the backend.{% endcomment %}
+            <input type="hidden" name="form_type" value="comment_form">
         </form>
 
         <button id="submit-comment-button" class="darkblue-btn" title="Send comment">
@@ -118,14 +113,7 @@
     <div id="comment-section">
         {% if comments %}
             {% for comment in comments %}
-                <div class="comment">
-                    <a href="{% url 'user' comment.user.id %}" class="comment-user-header comment-username username-link">{{ comment.user }}</a>
-                    {% if comment.user == resume.user %}
-                    <p class="comment-user-header owner-designation">Resume Owner</p>
-                    {% endif %}
-                    <p class="comment-user-header">{{ comment.created_at }}</p>
-                    <p>{{ comment.text }}</p>
-                </div>
+                {% include 'comment.html' with comment=comment %}
             {% endfor %}
         {% else %}
             <p id="no-comments-placeholder">Be the first to comment</p>
