@@ -15,7 +15,7 @@ input {
     display: flex;
     align-items: center;
     background-color: #ffe344;
-    border: 2px solid lightgrey;
+    border: 1px solid lightgrey;
     border-radius: 5px;
     padding: 2px;
     margin-bottom: 10px;

@@ -14,6 +14,9 @@ class UploadResumeForm(ModelForm):
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
+
+        self.fields['name'].widget.attrs['value'] = f"{request.user}'s resume"
+
        # User can only select groups they are a member of
         self.fields['groupsSharedWith'].widget = forms.CheckboxSelectMultiple()
         self.fields['groupsSharedWith'].queryset = PrivateGroup.objects.filter(members=request.user)

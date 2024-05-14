@@ -88,7 +88,7 @@
     {% endif %}
 
     {% if not groupInvites and not joinRequests %}
-        <p>If you had any notifications, they would appear here.</p>
+        <p>No notifications</p>
     {% endif %}
 {% endif %}
 
@@ -97,7 +97,7 @@
 
 {% if isUserHome %}
     <div class="options">
-        <a class="darkblue-btn" href="{% url 'groups' %}">Explore</a>
+        <a class="darkblue-btn" href="{% url 'groups' %}">Search</a>
         <a class="darkblue-btn" href="{% url 'creategroup' %}">Create</a>
     </div>
 {% endif %}
