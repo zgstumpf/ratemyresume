@@ -59,19 +59,23 @@ function setClickListeners(resumeCard){
  * Uses {@link https://atomiks.github.io/tippyjs/|Tippy.js} to generate the Edit and Delete options when the menu icon is clicked.
  */
 function addMenuTooltip(resumeCard){
-    tippy($(resumeCard).find('.resume-card-menu')[0], {
-        content: `<a class="menu-option" href="${$(resumeCard).data('edit-url')}">Edit</a><button class="menu-option" data-toggle="modal" data-target="#deleteConfirmationModal">Delete</button>`,
+    const tooltipInstance = tippy($(resumeCard).find('.resume-card-menu')[0], {
+        content: `<a class="menu-option" href="${$(resumeCard).data('edit-url')}">Edit</a><button class="menu-option delete-resume-btn" data-toggle="modal" data-target="#deleteConfirmationModal">Delete</button>`,
         allowHTML: true,
         interactive: true,
         appendTo: () => document.body, // Fixes positioning
         placement: 'bottom',
         trigger: 'click',
         onCreate(instance) {
-            instance.popper.addEventListener('click', () => {
-                $('#deleteConfirmationModal').data('delete-url', $(resumeCard).data('delete-url'));
+            instance.popper.addEventListener('click', (event) => {
+                if (event.target.classList.contains('delete-resume-btn')) {
+                    // Copy url from resume card into the modal
+                    $('#deleteConfirmationModal').data('delete-url', $(resumeCard).data('delete-url'));
+                    tooltipInstance.hide();
+                }
             });
         },
-      });
+    });
 }
 
 /**
