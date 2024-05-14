@@ -16,7 +16,7 @@ from io import BytesIO
 from datetime import timedelta
 
 from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite, JoinRequest, ResumeGroupViewingPermissions, UserPrivateGroupMembership
-from .forms import UploadResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm, GroupInviteForm
+from .forms import UploadResumeForm, EditResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm, GroupInviteForm
 
 # View for homepage
 def index(request):
@@ -207,6 +207,19 @@ def upload(request):
 
     # TODO: Fix if returning an errored form, file upload is cleared.
     return render(request, 'resumes/upload.html', {'form': form})
+
+
+@login_required
+def edit_resume(request, resume_id):
+    resume = Resume.objects.get(pk=resume_id)
+    if request.method == 'POST':
+        form = EditResumeForm(request.POST, request=request, instance=resume)
+        if form.is_valid():
+            form.save()
+            # Redirect or do something else
+    else:
+        form = EditResumeForm(request=request, instance=resume)
+    return render(request, 'edit_resume.html', {'form': form})
 
 def user(request, user_id):
     user = get_object_or_404(User, pk=user_id)

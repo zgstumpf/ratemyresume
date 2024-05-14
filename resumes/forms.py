@@ -31,6 +31,18 @@ class UploadResumeForm(ModelForm):
         return cleaned_data
 
 
+class EditResumeForm(UploadResumeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta(UploadResumeForm.Meta):
+        fields = ['name', 'description', 'commentsEnabled', 'visibility', 'groupsSharedWith']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # Add any additional validation specific to the edit form here
+        return cleaned_data
+
 
 class UploadCommentForm(ModelForm):
     class Meta:

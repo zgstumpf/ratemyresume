@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block pageSpecificStaticFiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'resumes/upload.css' %}">
+    <script src="{% static 'resumes/upload.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">Edit Resume</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-field">
+            <label for="{{ form.name.id_for_label }}">If you had to refer to this specific resume, what name would you use? <span class="required-text">*</span></label>
+            {{ form.name }}
+            {% for error in form.name.errors %}
+                <p class="error-msg">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.description.id_for_label }}">The description you put here will be displayed at the top of this resume's page:</label>
+            {{ form.description }}
+            {% for error in form.description.errors %}
+                <p class="error-msg">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="form-field-thin">
+            <div class="checkbox">
+                {{ form.commentsEnabled }}
+                <label for="{{ form.commentsEnabled.id_for_label }}">Allow comments</label>
+            </div>
+            {% for error in form.commentsEnabled.errors %}
+                <p class="error-msg">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.visibility.id_for_label }}">Visibility <span class="required-text">*</span></label>
+            {{ form.visibility }}
+
+            <div class="checkbox">
+                {{ form.groupsSharedWith }}
+            </div>
+            {% for error in form.visibility.errors %}
+                <p class="error-msg">{{ error }}</p>
+            {% endfor %}
+            {% for error in form.groupsSharedWith.errors %}
+            <p class="error-msg">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="darkblue-btn">Submit</button>
+    </form>
+
+{% endblock %}
+

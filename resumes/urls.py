@@ -8,6 +8,7 @@ urlpatterns = [
     path('resume_preview_image/<str:resume_id>/', views.get_resume_preview_image, name='get_resume_preview_image'),
     path('view_pdf/<str:resume_id>/', views.view_pdf, name='view_pdf'),
     path('upload/', views.upload, name='upload'),
+    path('resume/<str:resume_id>/edit/', views.edit_resume, name='edit_resume'),
     path('user/<int:user_id>/', views.user, name='user'),
     path('groups/create/', views.creategroup, name='creategroup'),
     path('group/<str:group_id>/', views.grouppage, name='grouppage'),
