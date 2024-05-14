@@ -15,10 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 form.closest('.group-notif-card').remove()
                 $('#group-container').prepend(response.groupCardHtml)
 
-                // TODO: Copied from group_card.js - can you find a way to consolidate?
-                $('.group-card').click(function(){
-                    window.location.href = $(this).data('url')
-                })
+                // Add JS to just the newly added group card
+                addJavaScriptFunctionalityToGroupCard($('#group-container').children('.group-card').first())
 
                 popupMsg(`You are now a member of ${response.group}.`)
             },
