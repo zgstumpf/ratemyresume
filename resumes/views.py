@@ -298,6 +298,24 @@ def user(request, user_id):
     return render(request, "resumes/user.html", context)
 
 
+@login_required
+def delete_resume(request, resume_id):
+    """
+    AJAX
+    """
+    try:
+        resume = Resume.objects.get(pk=resume_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "Resume does not exist"}, status=404)
+
+    if request.user != resume.user:
+        return JsonResponse(
+            {"error": "You can't delete a resume you don't own."}, status=401
+        )
+
+    resume.delete()
+    return JsonResponse(status=200)
+
 def attachAvgAndNumRatings(resumes):
     """
     Given a Django queryset of multiple resume objects, returns them with avgRating and numRatings properties for each.

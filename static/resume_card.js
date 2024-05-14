@@ -60,12 +60,17 @@ function setClickListeners(resumeCard){
  */
 function addMenuTooltip(resumeCard){
     tippy($(resumeCard).find('.resume-card-menu')[0], {
-        content: `<a class="menu-option" href="${$(resumeCard).data('edit-url')}">Edit</a><button class="menu-option">Delete</button>`,
+        content: `<a class="menu-option" href="${$(resumeCard).data('edit-url')}">Edit</a><button class="menu-option" data-toggle="modal" data-target="#deleteConfirmationModal">Delete</button>`,
         allowHTML: true,
         interactive: true,
         appendTo: () => document.body, // Fixes positioning
         placement: 'bottom',
         trigger: 'click',
+        onCreate(instance) {
+            instance.popper.addEventListener('click', () => {
+                $('#deleteConfirmationModal').data('resume-id', $(resumeCard).data('resume-id'));
+            });
+        },
       });
 }
 

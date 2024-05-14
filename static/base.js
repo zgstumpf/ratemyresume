@@ -2,6 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Put all JS code in here
     // Make sure page-specific JS functions have different names than site-wide functions.
 
+    $(document).on('click', '#confirmDeleteBtn', function() {
+        const resumeId = $('#deleteConfirmationModal').data('resume-id');
+        console.log('delete ', resumeId)
+        // Perform delete action using the resume ID
+    });
 
 
 
