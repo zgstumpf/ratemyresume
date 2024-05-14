@@ -6,11 +6,3 @@ Text: #222222
 Background: #F7F7F7
 
 See https://coolors.co/ for color pallete inspiration
-
-
-Fonts
-Regular Google Fonts, Inter
-
-Navbar
-------
-Position: fixed

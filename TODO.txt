@@ -15,3 +15,5 @@ Bug: Toggling responsive navbar causes hamburger icon to shift a few pixels due 
 Bug: 'Upload a resume' button on index page gets wrapped wrong when screen is about 640px
 
 has user rated checkmark not appearing on grouppage.html, replaced with duplicate preview image in html
+
+figure out way to stop repeating JavaScript during initial render and ajax!!!
