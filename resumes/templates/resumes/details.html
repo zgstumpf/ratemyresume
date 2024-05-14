@@ -41,47 +41,47 @@
     </div>
 
 
-    <h2 class="sub-header">Rate</h2>
+    {% if request.user != resume.user %}
+        <h2 class="sub-header">Rate</h2>
+        <div id="rating-section">
+            <div id="rating-scale">
+                <div class="rating-label rating-label-left">Poor</div>
+                <div class="rating-option" data-value="0">0</div>
+                <div class="rating-option" data-value="1">1</div>
+                <div class="rating-option" data-value="2">2</div>
+                <div class="rating-option" data-value="3">3</div>
+                <div class="rating-option" data-value="4">4</div>
+                <div class="rating-option" data-value="5">5</div>
+                <div class="rating-option" data-value="6">6</div>
+                <div class="rating-option" data-value="7">7</div>
+                <div class="rating-option" data-value="8">8</div>
+                <div class="rating-option" data-value="9">9</div>
+                <div class="rating-option" data-value="10">10</div>
+                <div class="rating-label rating-label-right">Excellent</div>
+            </div>
 
-    <div id="rating-section">
+            <p id="rating-description" class="lightgray">
+                {% if userRating %}
+                    You rated this resume {{ userRating.created_at|naturaltime }}
+                {% endif %}
+            </p>
 
-        <div id="rating-scale">
-            <div class="rating-label rating-label-left">Poor</div>
-            <div class="rating-option" data-value="0">0</div>
-            <div class="rating-option" data-value="1">1</div>
-            <div class="rating-option" data-value="2">2</div>
-            <div class="rating-option" data-value="3">3</div>
-            <div class="rating-option" data-value="4">4</div>
-            <div class="rating-option" data-value="5">5</div>
-            <div class="rating-option" data-value="6">6</div>
-            <div class="rating-option" data-value="7">7</div>
-            <div class="rating-option" data-value="8">8</div>
-            <div class="rating-option" data-value="9">9</div>
-            <div class="rating-option" data-value="10">10</div>
-            <div class="rating-label rating-label-right">Excellent</div>
+            {% comment %}This form has display: none, so it is invisible and does not affect any elements on the DOM.
+            When a rating option is clicked, the value from the option is inserted into this form and the form is
+            submitted automatically.{% endcomment %}
+            <form id="ratingForm"
+                method="post"
+                action="{% url 'details' resume_id=resume.id %}"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="rating_form_value">Rating:</label>
+                <input id="rating_form_value" type="number" name="value" required>
+
+                <input type="hidden" name="form_type" value="rating_form">
+                <button type="submit">Submit</button>
+            </form>
         </div>
-
-        <p id="rating-description" class="lightgray">
-            {% if userRating %}
-                You rated this resume {{ userRating.created_at|naturaltime }}
-            {% endif %}
-        </p>
-
-        {% comment %}This form has display: none, so it is invisible and does not affect any elements on the DOM.
-        When a rating option is clicked, the value from the option is inserted into this form and the form is
-        submitted automatically.{% endcomment %}
-        <form id="ratingForm"
-            method="post"
-            action="{% url 'details' resume_id=resume.id %}"
-            enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="rating_form_value">Rating:</label>
-            <input id="rating_form_value" type="number" name="value" required>
-
-            <input type="hidden" name="form_type" value="rating_form">
-            <button type="submit">Submit</button>
-        </form>
-    </div>
+    {% endif %}
 
 
     <h2 class="sub-header">Comments</h2>

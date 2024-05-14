@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (userRating) {
         visuallySelectRatingOption(userRating)
-    } else {
-        $('#rating-description').text('Rate the resume relative to resumes of individuals with a similar education level and years of career experience.')
     }
 
 

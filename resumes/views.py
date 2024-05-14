@@ -320,6 +320,7 @@ def delete_resume(request, resume_id):
 
     return JsonResponse({"resume_id": resume_id}, status=200)
 
+
 def attachAvgAndNumRatings(resumes):
     """
     Given a Django queryset of multiple resume objects, returns them with avgRating and numRatings properties for each.
@@ -448,9 +449,12 @@ def grouppage(request, group_id):
     if requestingUserIsOwner:
         joinRequests = JoinRequest.objects.filter(group=group)
         groupInvites = GroupInvite.objects.filter(group=group)
-    else:
+    elif requestingUserIsMember:
         joinRequests = JoinRequest.objects.filter(group=group, user=request.user)
         groupInvites = GroupInvite.objects.filter(group=group, invitee=request.user)
+    else:
+        joinRequests = JoinRequest.objects.none()
+        groupInvites = GroupInvite.objects.none()
 
     joinRequestsPending = joinRequests.filter(action__isnull=True)
     joinRequestsHistory = joinRequests.filter(action__isnull=False)
@@ -594,6 +598,8 @@ def sendrequest(request, group_id):
     """
     if request.method != "POST":
         return HttpResponse("Method Not Allowed", status=405)
+    if request.user.is_authenticated == False:
+        return JsonResponse({"error": "You are not logged in"}, status=401)
 
     # Why not just skip this line and plug group_id=group_id into the create()?
     # - Because doing that, Django would not validate that group_id links to an existing group.

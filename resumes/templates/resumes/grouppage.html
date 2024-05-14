@@ -22,7 +22,7 @@
 
 {% if isOwner %}
     <a class="darkblue-btn main-action-btn" href="{% url 'sendinvite' %}" data-toggle="modal" data-target="#inviteModal">Invite user</a>
-{% elif not isMember and not joinRequestsPending %}
+{% elif not isMember and not joinRequestsPending and request.user.is_authenticated %}
     <form id="send-request-form" action="{% url 'sendrequest' group.id %}" method="post">
         {% csrf_token %}
         <button class="darkblue-btn main-action-btn" type="submit">Request to join</button>
@@ -94,8 +94,12 @@
 
 <h2 class="sub-header">Resumes</h2>
 <div class="resume-card-container">
-    {% for resume in resumes %}
-        {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user requestingUser=request.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
-    {% endfor %}
+    {% if resumes %}
+        {% for resume in resumes %}
+            {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user requestingUser=request.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
+        {% endfor %}
+    {% else %}
+        <p>No resumes</p>
+    {% endif %}
 </div>
 {% endblock %}
