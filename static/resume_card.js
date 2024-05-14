@@ -60,7 +60,7 @@ function setClickListeners(resumeCard){
  */
 function addMenuTooltip(resumeCard){
     tippy($(resumeCard).find('.resume-card-menu')[0], {
-        content: '<a class="menu-option" href="#">Edit</a><button class="menu-option">Delete</button>',
+        content: `<a class="menu-option" href="${$(resumeCard).data('edit-url')}">Edit</a><button class="menu-option">Delete</button>`,
         allowHTML: true,
         interactive: true,
         appendTo: () => document.body, // Fixes positioning

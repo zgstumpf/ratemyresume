@@ -8,12 +8,13 @@
 
 {% block content %}
     <h1 class="page-header">Edit Resume</h1>
+    <embed class="embedded-pdf" src="data:application/pdf;base64,{{ file }}" type="application/pdf" width="850" height="1125">
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="form-field">
-            <label for="{{ form.name.id_for_label }}">If you had to refer to this specific resume, what name would you use? <span class="required-text">*</span></label>
+            <label for="{{ form.name.id_for_label }}">Name <span class="required-text">*</span></label>
             {{ form.name }}
             {% for error in form.name.errors %}
                 <p class="error-msg">{{ error }}</p>
@@ -21,7 +22,7 @@
         </div>
 
         <div class="form-field">
-            <label for="{{ form.description.id_for_label }}">The description you put here will be displayed at the top of this resume's page:</label>
+            <label for="{{ form.description.id_for_label }}">Description</label>
             {{ form.description }}
             {% for error in form.description.errors %}
                 <p class="error-msg">{{ error }}</p>

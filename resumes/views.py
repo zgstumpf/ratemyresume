@@ -128,9 +128,8 @@ def details(request, resume_id):
                 return JsonResponse({"value": rating.value, "updated_at": rating.updated_at}, status=200)
                 # After here, you enter details.js to the success block of <$('#ratingForm').submit(function (event)>
 
-    pdf_path = resume.file.path
-    with open(pdf_path, 'rb') as pdf_file:
-        pdf_content = base64.b64encode(pdf_file.read()).decode()
+
+    pdf_content = pdf_to_str(resume)
 
     # This ratings code is copied from attachAvgAndNumRatings because passing a single object to that function
     # didn't work. TODO: Refactor.
@@ -211,15 +210,21 @@ def upload(request):
 
 @login_required
 def edit_resume(request, resume_id):
-    resume = Resume.objects.get(pk=resume_id)
+    resume = get_object_or_404(Resume, pk=resume_id)
+
+    if request.user != resume.user:
+        return HttpResponse("You can't edit someone else's resume.", status=403)
+
     if request.method == 'POST':
         form = EditResumeForm(request.POST, request=request, instance=resume)
         if form.is_valid():
             form.save()
-            # Redirect or do something else
+            return HttpResponseRedirect(f'/details/{resume.id}/')
     else:
         form = EditResumeForm(request=request, instance=resume)
-    return render(request, 'edit_resume.html', {'form': form})
+
+    pdf_content = pdf_to_str(resume)
+    return render(request, 'edit_resume.html', {'form': form, 'file': pdf_content})
 
 def user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
@@ -744,3 +749,14 @@ def last_group_activity(group_id: str):
     # In this case, remove it before evaluating max.
     # lastMemberJoinDate will never be None since the owner is made a member upon creating the group.
     return  max(filter(None, [lastMemberJoinDate, lastSpecificResumeShareDate]))
+
+
+def pdf_to_str(resume: Resume) -> str:
+    """
+    Returns a string representing the contents of a resume's file. This string can be inserted into an HTML template with:
+    ```html
+    <embed src="data:application/pdf;base64,{{ pdf_string }}" type="application/pdf" width="..." height="...">
+    ```
+    """
+    with open(resume.file.path, 'rb') as file:
+        return base64.b64encode(file.read()).decode()

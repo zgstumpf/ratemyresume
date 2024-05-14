@@ -34,7 +34,7 @@
     <h2 class="sub-header">Resume</h2>
 
     {% comment %} Ideally, the width and the height should be set so no scrollbars appear on the embed element for a 1 page. resume {% endcomment %}
-    <embed id="embedded-pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="850" height="1125">
+    <embed class="embedded-pdf" src="data:application/pdf;base64,{{ pdf }}" type="application/pdf" width="850" height="1125">
     <div id="viewing-options">
         <a href="{{ resume.file.url }}" target="_blank">Download</a>
         <a href="{% url 'view_pdf' resume.id %}" target="_blank">Open in fullscreen</a>

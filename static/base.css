@@ -462,3 +462,8 @@ button.menu-option {
 .group-notif-options > * {
     display: inline;
 }
+
+.embedded-pdf {
+    /* Don't make user need to scroll horizontally if viewport width is too small */
+    max-width: 100%;
+}
