@@ -1,22 +1,19 @@
 from django.shortcuts import render, get_object_or_404
-from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, AnonymousUser
-from django.db import IntegrityError
-from django.db.models import Q, Count, QuerySet, OuterRef, Subquery, Avg
+from django.contrib.auth.models import User
+from django.db.models import Q, Count, OuterRef, Subquery, Avg
 from django.template.loader import render_to_string
 from django.utils import timezone
 from pdf2image import convert_from_path
 
-import json
 import base64
 from io import BytesIO
 from datetime import timedelta
 
 from .models import Resume, Comment, Rating, PrivateGroup, GroupInvite, JoinRequest, ResumeGroupViewingPermissions, UserPrivateGroupMembership
-from .forms import UploadResumeForm, EditResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm, GroupInviteForm
+from .forms import UploadResumeForm, EditResumeForm, UploadCommentForm, RatingForm, CreatePrivateGroupForm
 
 # View for homepage
 def index(request):
@@ -73,8 +70,6 @@ def details(request, resume_id):
     # 2. commentForm or ratingForm are submitted, triggering corresponding functions
     #    in details.js. These functions send AJAX POST requests to the view
     #    (example) request: <WSGIRequest: POST '/details/1/'>
-    # request is type: <class 'django.core.handlers.wsgi.WSGIRequest'>
-    # You can use dir(request) to print all properties/methods of this class
     resume = get_object_or_404(Resume, pk=resume_id)
 
     if not isUserPermittedToViewResume(request.user, resume):
@@ -649,7 +644,7 @@ def getPermittedSpecificGroupResumeIds(user: User):
     # Look through the ResumeGroupViewingPermissions table. Retrieve resume_id if that resume is associated with a group_id from above list.
     # The ResumeGroupViewingPermissions table only stores resume_ids of resumes that have visibility set to 'shared_with_specific_groups'
     permittedResumeIds = ResumeGroupViewingPermissions.objects.filter(group_id__in=userGroupIds).values_list('resume_id', flat=True)
-    print(type(permittedResumeIds)) # TODO: should I return an empty of this class instead of ResumeGroupViewingPermissions class if user is anonymous
+    # TODO: should I return an empty of class type(permittedResumeIds) instead of ResumeGroupViewingPermissions class if user is anonymous?
     return permittedResumeIds
 
 def resumeSearch(request):
