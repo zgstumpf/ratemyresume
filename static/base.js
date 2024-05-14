@@ -4,14 +4,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     $('#confirmDeleteBtn').on('click', function(event) {
         event.preventDefault()
-
         $.ajax({
-            type: 'POST',
+            type: 'DELETE',
             url: $('#deleteConfirmationModal').data('delete-url'),
             headers: {'X-CSRFToken': getCsrf()},
             crossDomain: false,
             success: function (response) {
-                $(`.resume-card[data-resume-id=${response.resume_id}]`).remove(); // probably refactor to store resume id in id attribute
+                // remove resume card
+                $(`#${response.resume_id}`).remove();
+
+                // close modal
+                $('#deleteConfirmationModal').modal('hide')
             },
             error: function (response) {
                 console.error(response.responseJSON.error)
@@ -19,9 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     });
 
-
-
 });
+
+
 // Any JS code after this point will execute before HTML finishes loading
 // You shouldn't put JS code here unless you know what you're doing
 function toggleNavbar() {
