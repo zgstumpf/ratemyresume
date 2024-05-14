@@ -652,6 +652,7 @@ def resumeSearch(request):
             'resume_id': resume.id,
             'user_id': resume.user.id,
             'user': resume.user,
+            'requestingUser': request.user,
             'resume_name': resume.name,
             'hasUserRated': resume.hasUserRated,
             'created_at': resume.created_at,

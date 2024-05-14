@@ -32,7 +32,7 @@
     {% endif%}
 
     {% for resume in resumes %}
-        {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
+        {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user requestingUser=request.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
     {% endfor %}
 </div>
 
