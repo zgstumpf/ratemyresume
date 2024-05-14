@@ -10,7 +10,7 @@ script src="% static 'resume_card.js' %"
 % include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings%
 {% endcomment %}
 
-<div class="resume-card" data-detailsurl="{% url 'details' resume_id %}" data-edit-url="{% url 'edit_resume' resume_id %}" data-resume-id="{{ resume_id }}">
+<div class="resume-card" data-resume-id="{{ resume_id }}" data-detailsurl="{% url 'details' resume_id %}" data-edit-url="{% url 'edit_resume' resume_id %}" data-delete-url="{% url 'delete_resume' resume_id%}">
     <div class="resume-id" style="display:none" data-url="{% url 'get_resume_preview_image' resume_id %}"></div>
     <div class="resume-image-skeleton">
         {% if hasUserRated %}

@@ -68,7 +68,7 @@ function addMenuTooltip(resumeCard){
         trigger: 'click',
         onCreate(instance) {
             instance.popper.addEventListener('click', () => {
-                $('#deleteConfirmationModal').data('resume-id', $(resumeCard).data('resume-id'));
+                $('#deleteConfirmationModal').data('delete-url', $(resumeCard).data('delete-url'));
             });
         },
       });

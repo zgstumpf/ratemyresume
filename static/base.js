@@ -2,10 +2,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // Put all JS code in here
     // Make sure page-specific JS functions have different names than site-wide functions.
 
-    $(document).on('click', '#confirmDeleteBtn', function() {
-        const resumeId = $('#deleteConfirmationModal').data('resume-id');
-        console.log('delete ', resumeId)
-        // Perform delete action using the resume ID
+    $('#confirmDeleteBtn').on('click', function(event) {
+        event.preventDefault()
+
+        $.ajax({
+            type: 'POST',
+            url: $('#deleteConfirmationModal').data('delete-url'),
+            headers: {'X-CSRFToken': getCsrf()},
+            crossDomain: false,
+            success: function (response) {
+                $(`.resume-card[data-resume-id=${response.resume_id}]`).remove(); // probably refactor to store resume id in id attribute
+            },
+            error: function (response) {
+                console.error(response.responseJSON.error)
+            }
+        })
     });
 
 

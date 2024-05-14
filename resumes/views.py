@@ -313,8 +313,12 @@ def delete_resume(request, resume_id):
             {"error": "You can't delete a resume you don't own."}, status=401
         )
 
+    # Store resume id before deleting. We need to pass id to JavaScript so the corresponding
+    # resume card can be removed from the page.
+    resume_id = resume.id
     resume.delete()
-    return JsonResponse(status=200)
+
+    return JsonResponse({"resume_id": resume_id}, status=200)
 
 def attachAvgAndNumRatings(resumes):
     """
