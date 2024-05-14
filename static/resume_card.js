@@ -1,9 +1,18 @@
+// add JavaScript for any resume cards that exist on the page
 document.addEventListener("DOMContentLoaded", () => {
     $('.resume-card').each((_, resumeCard) => {
         addJavaScriptFunctionality(resumeCard)
     })
 });
 
+
+/**
+ * Applies JavaScript for a resume card (any element with class `resume-card`)
+ * - Loads preview image.
+ * - Enables redirects by clicking.
+ * - Generates tooltip for menu icon.
+ * - Applies background color to the rating metric.
+ */
 function addJavaScriptFunctionality(resumeCard){
     loadPreviewImage(resumeCard)
     setClickListeners(resumeCard)
@@ -11,6 +20,9 @@ function addJavaScriptFunctionality(resumeCard){
     colorRating(resumeCard)
 }
 
+/**
+ * Fetches resume screenshot via AJAX and replaces the loading animation.
+ */
 function loadPreviewImage(resumeCard){
     $.ajax({
         type: 'GET',
@@ -27,6 +39,9 @@ function loadPreviewImage(resumeCard){
     });
 }
 
+/**
+ * Enables redirecting to a resume's page when the card is clicked.
+ */
 function setClickListeners(resumeCard){
     $(resumeCard).click(function () {
         // When I gave the blank upload card class="resume-card" so it would have right CSS, it also had the JS from here
@@ -40,6 +55,9 @@ function setClickListeners(resumeCard){
     })
 }
 
+/**
+ * Uses {@link https://atomiks.github.io/tippyjs/|Tippy.js} to generate the Edit and Delete options when the menu icon is clicked.
+ */
 function addMenuTooltip(resumeCard){
     tippy($(resumeCard).find('.resume-card-menu')[0], {
         content: '<a class="menu-option" href="#">Edit</a><button class="menu-option">Delete</button>',
@@ -51,6 +69,9 @@ function addMenuTooltip(resumeCard){
       });
 }
 
+/**
+ * Sets the background color of the rating.
+ */
 function colorRating(resumeCard){
     function Interpolate(start, end, steps, count) {
         var s = start,
@@ -97,12 +118,12 @@ function colorRating(resumeCard){
     }
 
     var startColors = start.getColors(),
-        endColors = end.getColors();
-    var r = Interpolate(startColors.r, endColors.r, 5, rating);
-    var g = Interpolate(startColors.g, endColors.g, 5, rating);
-    var b = Interpolate(startColors.b, endColors.b, 5, rating);
+        endColors = end.getColors(),
+        r = Interpolate(startColors.r, endColors.r, 5, rating),
+        g = Interpolate(startColors.g, endColors.g, 5, rating),
+        b = Interpolate(startColors.b, endColors.b, 5, rating);
 
-    var opacity = 0.75
+    const opacity = 0.75
     $this.css({
         backgroundColor: "rgba(" + r + "," + g + "," + b + "," + opacity + ")"
     });
