@@ -1,9 +1,5 @@
 // add JavaScript for any group cards that exist on the page
 document.addEventListener("DOMContentLoaded", () => {
-    // $('.group-card').click(function(){
-    //     window.location.href = $(this).data('url')
-    // })
-
     $('.group-card').each((_, groupCard) => {
         addJavaScriptFunctionalityToGroupCard(groupCard)
     })
