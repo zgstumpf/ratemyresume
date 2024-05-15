@@ -133,10 +133,10 @@ STATICFILES_DIRS = [
 ]
 
 # Define the base URL for serving media files
-MEDIA_URL = '/resumes/files/'
+MEDIA_URL = '/media/'
 
 # Specify the directory where media files are stored
-MEDIA_ROOT = BASE_DIR / 'resumes/files'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
