@@ -24,7 +24,7 @@
             {% comment %}TODO: Poor UX.{% endcomment %}
             <p>To convert any file type to pdf, use <a href="https://www.freeconvert.com/pdf-converter" target="_blank">freeconvert.com</a>.</p>
             {% comment %}TODO: Not a secure solution to verify pdf at all, but good enough for now.{% endcomment %}
-            <input type="file" name="{{ form.file.name }}" id="{{ form.file.id_for_label }}" accept=".pdf" required>
+            <input type="file" name="{{ form.file.name }}" id="{{ form.file.id_for_label }}" accept=".pdf, .doc, .docx" required>
             {% for error in form.file.errors %}
                 <p class="error-msg">{{ error }}</p>
             {% endfor %}

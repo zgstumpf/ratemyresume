@@ -68,7 +68,7 @@ class Resume(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=150)
-    file = models.FileField(upload_to='resumes/', validators=[FileExtensionValidator(allowed_extensions=["pdf"])])
+    file = models.FileField(upload_to='resumes/', validators=[FileExtensionValidator(allowed_extensions=["pdf", "docx", "doc"])])
     description = models.CharField(max_length=1000, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

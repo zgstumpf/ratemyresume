@@ -230,16 +230,14 @@ def upload(request):
                         resume=resume, group=group
                     )
 
+            docx_to_pdf(resume)
+
             # redirect to a new URL:
             return HttpResponseRedirect(f"/details/{resume.id}/")
 
     # If this is a GET (or any other method) create the default form.
     else:
         form = UploadResumeForm(request=request)
-
-        # testing
-        print('call docx to pdf..')
-        docx_to_pdf()
 
     # TODO: Fix if returning an errored form, file upload is cleared.
     return render(request, "resumes/upload.html", {"form": form})
@@ -933,21 +931,26 @@ def pdf_to_str(resume: Resume) -> str:
         return base64.b64encode(file.read()).decode()
 
 
-def docx_to_pdf() -> str:
-    """ """
-    ##output_dir = "pdfs"
-    print(settings.MEDIA_ROOT)
-    #output_dir = os.path.join(settings.MEDIA_ROOT, 'resumes/files')
-    # subprocess.run(
-    #     f'/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir {output_dir} "{resume.file.path}"',
-    #     shell=True,
-    # )
+def docx_to_pdf(resume: Resume) -> str:
+    """
+    Uses LibreOffice to convert files to pdf
+    """
+    output_dir = os.path.join(settings.MEDIA_ROOT, 'resumes')
 
-    # pdf_file_path = (
-    #     f'{output_dir}{resume.file.path.rsplit("/", 1)[1].split(".")[0]}.pdf'
-    # )
+    subprocess.run(
+        f'/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir {output_dir} "{resume.file.path}"',
+        shell=True,
+    )
 
-    # if os.path.exists(pdf_file_path):
-    #     return pdf_file_path
-    # else:
-    #     return None
+    original_filename = os.path.basename(resume.file.path)
+    pdf_filename = os.path.splitext(original_filename)[0] + '.pdf'
+    pdf_file_path = os.path.join(output_dir, pdf_filename)
+
+    if os.path.exists(pdf_file_path):
+        # Update the resume object with the new PDF file
+        resume.file.name = f'resumes/{pdf_filename}'  # Update the file path in the database
+        resume.save()  # Save the changes to the database
+
+        return pdf_file_path
+    else:
+        return None
