@@ -132,6 +132,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'resumes/static'),
 ]
 
+# Define the base URL for serving media files
+MEDIA_URL = '/resumes/files/'
+
+# Specify the directory where media files are stored
+MEDIA_ROOT = BASE_DIR / 'resumes/files'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

@@ -12,10 +12,13 @@ from django.db.models import Q, Count, OuterRef, Subquery, Avg
 from django.template.loader import render_to_string
 from django.utils import timezone
 from pdf2image import convert_from_path
+from django.conf import settings
 
 import base64
 from io import BytesIO
 from datetime import timedelta
+import subprocess
+import os
 
 from .models import (
     Resume,
@@ -233,6 +236,10 @@ def upload(request):
     # If this is a GET (or any other method) create the default form.
     else:
         form = UploadResumeForm(request=request)
+
+        # testing
+        print('call docx to pdf..')
+        docx_to_pdf()
 
     # TODO: Fix if returning an errored form, file upload is cleared.
     return render(request, "resumes/upload.html", {"form": form})
@@ -924,3 +931,23 @@ def pdf_to_str(resume: Resume) -> str:
     """
     with open(resume.file.path, "rb") as file:
         return base64.b64encode(file.read()).decode()
+
+
+def docx_to_pdf() -> str:
+    """ """
+    ##output_dir = "pdfs"
+    print(settings.MEDIA_ROOT)
+    #output_dir = os.path.join(settings.MEDIA_ROOT, 'resumes/files')
+    # subprocess.run(
+    #     f'/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir {output_dir} "{resume.file.path}"',
+    #     shell=True,
+    # )
+
+    # pdf_file_path = (
+    #     f'{output_dir}{resume.file.path.rsplit("/", 1)[1].split(".")[0]}.pdf'
+    # )
+
+    # if os.path.exists(pdf_file_path):
+    #     return pdf_file_path
+    # else:
+    #     return None

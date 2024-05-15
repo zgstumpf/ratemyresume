@@ -1,0 +1,38 @@
+# Deployment
+
+## Install LibreOffice
+
+[Install LibreOffice](https://www.libreoffice.org/download/download-libreoffice/) 24.2.3 for MacOS(Intel)
+
+After installing, run this command to make sure you know the right path for it.
+
+```sh
+/Applications/LibreOffice.app/Contents/MacOS/soffice --help
+```
+
+## Test LibreOffice command to convert docx to pdf
+This command converts a file named `input.docx` to a new file `input.pdf`, which is stored in the `pdf` directory. Both `input.pdf` and `pdf` are in the root directory `/Users/zacharystumpf`. I found if `pdf` doesn't exist, the command will create it first. The quotes around `input.docx` allow the command to work if the input file has spaces in its name.
+
+```sh
+/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir pdfs "input.docx"
+```
+[Source](https://tariknazorek.medium.com/convert-office-files-to-pdf-with-libreoffice-and-python-a70052121c44)
+
+If that doesn't work, try this. In this command, the `"-env...` argument is meant to fix a bug where the command won't work if LibreOffice is currently open, though I didn't experience this bug in LibreOffice 24.2.3 for MacOS(Intel). It also uses a more specific argument for the `--convert-to` command, though I found it made no difference.
+
+```sh
+/Applications/LibreOffice.app/Contents/MacOS/soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to pdf:writer_pdf_Export --outdir pdfs "worddoc.docx"
+```
+[Source](https://stackoverflow.com/a/30465397/22737945)
+
+## Run command with Python
+[Source](https://tariknazorek.medium.com/convert-office-files-to-pdf-with-libreoffice-and-python-a70052121c44)
+
+
+
+## Docker
+get code including libreoffice in a docker image: https://www.digitalocean.com/community/questions/how-to-install-libreoffice-in-app
+
+
+## Hosting
+connect docker image to aws django apprunner: https://aws.amazon.com/blogs/containers/deploy-and-scale-django-applications-on-aws-app-runner/
