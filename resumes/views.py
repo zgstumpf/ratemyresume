@@ -230,7 +230,10 @@ def upload(request):
                         resume=resume, group=group
                     )
 
-            docx_to_pdf(resume)
+            try:
+                convert_to_pdf(resume)
+            except FileNotFoundError:
+                form.add_error('file', 'File failed to convert to pdf.')
 
             # redirect to a new URL:
             return HttpResponseRedirect(f"/details/{resume.id}/")
@@ -931,26 +934,35 @@ def pdf_to_str(resume: Resume) -> str:
         return base64.b64encode(file.read()).decode()
 
 
-def docx_to_pdf(resume: Resume) -> str:
+def convert_to_pdf(resume: Resume) -> str:
     """
-    Uses LibreOffice to convert files to pdf
+    Uses LibreOffice to convert a resume's file to pdf in media storage. LibreOffice must be installed on the device.
     """
-    output_dir = os.path.join(settings.MEDIA_ROOT, 'resumes')
+    output_dir = os.path.join(settings.MEDIA_ROOT, "resumes")
+    original_full_filepath = os.path.join(settings.MEDIA_ROOT, resume.file.name)
 
+    # Convert file to pdf, store in same directory
     subprocess.run(
         f'/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir {output_dir} "{resume.file.path}"',
         shell=True,
     )
 
+    # When converting, LibreOffice keeps the filename the same but changes extension to .pdf
     original_filename = os.path.basename(resume.file.path)
-    pdf_filename = os.path.splitext(original_filename)[0] + '.pdf'
-    pdf_file_path = os.path.join(output_dir, pdf_filename)
+    pdf_filename = os.path.splitext(original_filename)[0] + ".pdf"
+    pdf_full_filepath = os.path.join(output_dir, pdf_filename)
 
-    if os.path.exists(pdf_file_path):
-        # Update the resume object with the new PDF file
-        resume.file.name = f'resumes/{pdf_filename}'  # Update the file path in the database
-        resume.save()  # Save the changes to the database
+    if os.path.exists(pdf_full_filepath):
+        # LibreOffice conversion succeeded
 
-        return pdf_file_path
+        # In database, point resume to new pdf file
+        resume.file.name = f"resumes/{pdf_filename}"
+        resume.save()
+
+        # Now that pdf file is created, delete original file
+        os.remove(original_full_filepath)
+
+        return pdf_full_filepath
     else:
-        return None
+        # LibreOffice conversion failed
+        raise FileNotFoundError

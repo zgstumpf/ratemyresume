@@ -27,7 +27,9 @@ If that doesn't work, try this. In this command, the `"-env...` argument is mean
 
 ## Run command with Python
 [Source](https://tariknazorek.medium.com/convert-office-files-to-pdf-with-libreoffice-and-python-a70052121c44)
+The code is in resumes/views.py docx_to_pdf. It works, but the command is written for MacOS machines, so you need to make sure Docker is running on MacOS.
 
+**Important:** The current code stores user-created media (resumes) in the `media` directory. This works in development but it won't work in production. *Maybe use an S3 bucket?*
 
 
 ## Docker
