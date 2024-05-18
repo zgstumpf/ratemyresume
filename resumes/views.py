@@ -936,7 +936,11 @@ def pdf_to_str(resume: Resume) -> str:
 
 def convert_to_pdf(resume: Resume) -> str:
     """
-    Uses LibreOffice to convert a resume's file to pdf in media storage. LibreOffice must be installed on the device.
+    Uses LibreOffice to convert a resume's file to pdf in media storage.
+
+    LibreOffice must be installed on the device: https://www.libreoffice.org/download/download-libreoffice/
+
+    Tested with LibreOffice 24.2.3 for MacOS(Intel)
     """
     output_dir = os.path.join(settings.MEDIA_ROOT, "resumes")
     original_full_filepath = os.path.join(settings.MEDIA_ROOT, resume.file.name)

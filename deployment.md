@@ -27,14 +27,26 @@ If that doesn't work, try this. In this command, the `"-env...` argument is mean
 
 ## Run command with Python
 [Source](https://tariknazorek.medium.com/convert-office-files-to-pdf-with-libreoffice-and-python-a70052121c44)
-The code is in resumes/views.py docx_to_pdf. It works, but the command is written for MacOS machines, so you need to make sure Docker is running on MacOS.
+The code is in resumes/views.py convert_to_pdf. It works, but the command is written for MacOS machines, so you need to make sure Docker is running on MacOS.
 
-**Important:** The current code stores user-created media (resumes) in the `media` directory. This works in development but it won't work in production. *Maybe use an S3 bucket?*
+**Important:** The current code stores user-created media (resumes) in the `media` directory. This works in development but it won't work in production. *Maybe use an S3 bucket?* Also, currently there is no code to verify if file is safe.
 
+## Serving static (CSS, JS) and media (.pdf) files
+Amazon S3: https://testdriven.io/blog/storing-django-static-and-media-files-on-amazon-s3/
+
+## Database
+See the "Connecting a PostgreSQL database with Amazon RDS" section of [this guide](https://aws.amazon.com/blogs/containers/deploy-and-scale-django-applications-on-aws-app-runner/).
+
+While experimenting with S3 and PostegreSQL, just comment out old settings, and later get environment variables to work to switch between dev and prod configurations.
 
 ## Docker
-get code including libreoffice in a docker image: https://www.digitalocean.com/community/questions/how-to-install-libreoffice-in-app
+[Install Docker](https://docs.docker.com/desktop/install/mac-install/) Mac with Intel Chip
 
+I signed in with GitHub as zgstumpf@crimson.ua.edu and set my Docker username as `zgstumpf`
+
+Strategy: get code including LibreOffice in a docker image: https://www.digitalocean.com/community/questions/how-to-install-libreoffice-in-app
+
+This docker image will then be connected to AWS Django apprunner in the next step.
 
 ## Hosting
 connect docker image to aws django apprunner: https://aws.amazon.com/blogs/containers/deploy-and-scale-django-applications-on-aws-app-runner/
