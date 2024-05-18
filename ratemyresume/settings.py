@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'resumes.apps.ResumesConfig',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'storages',
 ]
 
 MIDDLEWARE = [

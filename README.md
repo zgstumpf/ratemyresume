@@ -96,6 +96,19 @@ When you are done developing, quit the server (**control + c**) and deactivate t
 conda deactivate
 ```
 
+<h4>Useful conda commands</h4>
+
+If you install a new package and want to update requirements.txt:
+
+```sh
+conda list -e > requirements.txt
+```
+
+Update your conda environment if requirements.txt ever changes:
+
+```sh
+conda install --file requirements.txt
+```
 
 <h2>Developers</h2>
 

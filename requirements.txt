@@ -1,20 +1,24 @@
 # This file may be used to create an environment using:
-# $ conda create --name <env> --file requirements.txt
+# $ conda create --name <env> --file <this file>
 # platform: osx-64
-# May not be usable with pip
 asgiref=3.7.2=pyhd8ed1ab_0
+boto3=1.34.82=py312hecd8cb5_0
+botocore=1.34.82=py312hecd8cb5_0
+brotli-python=1.0.9=py312hcec6c5f_8
 bzip2=1.0.8=h1de35cc_0
 c-ares=1.26.0=h10d778d_0
-ca-certificates=2024.2.2=h8857fd0_0
+ca-certificates=2024.3.11=hecd8cb5_0
 cairo=1.16.0=h691a603_2
 curl=8.5.0=h04015c4_0
 django=5.0.2=pyhd8ed1ab_0
+django-storages=1.14.3=pyhd8ed1ab_0
 expat=2.5.0=hcec6c5f_0
 fontconfig=2.13.94=h10f422b_0
 freetype=2.10.4=h4cff582_1
 gettext=0.21.1=h8a4c099_0
 glib=2.69.1=hfff2838_2
 icu=73.2=hf5e326d_0
+jmespath=1.0.1=py312hecd8cb5_0
 jpeg=9e=hb7f2c08_3
 krb5=1.20.1=h049b76e_0
 lcms2=2.12=hf1fd2bf_0
@@ -35,7 +39,7 @@ libxml2=2.10.4=h1bd7e62_1
 lz4-c=1.9.4=hf0c8a7f_0
 ncurses=6.4=hcec6c5f_0
 openjpeg=2.4.0=h66ea3da_0
-openssl=3.2.1=hd75f5a5_0
+openssl=3.0.13=hca72f7f_1
 pcre=8.45=he49afe7_0
 pdf2image=1.17.0=pyhd8ed1ab_0
 pillow=10.2.0=py312h6c40b1e_0
@@ -43,14 +47,19 @@ pip=23.3.1=py312hecd8cb5_0
 pixman=0.40.0=h9ed2024_1
 poppler=0.81.0=h031bf0f_2
 poppler-data=0.4.12=hd8ed1ab_0
+pysocks=1.7.1=py312hecd8cb5_0
 python=3.12.1=hd58486a_0
+python-dateutil=2.9.0post0=py312hecd8cb5_0
 readline=8.2=hca72f7f_0
+s3transfer=0.10.1=py312hecd8cb5_0
 setuptools=68.2.2=py312hecd8cb5_0
+six=1.16.0=pyhd3eb1b0_1
 sqlite=3.41.2=h6c40b1e_0
 sqlparse=0.4.4=py312hecd8cb5_0
 tk=8.6.12=h5d9f67b_0
 typing_extensions=4.9.0=py312hecd8cb5_1
 tzdata=2023d=h04d1e81_0
+urllib3=2.2.1=py312hecd8cb5_0
 wheel=0.41.2=py312hecd8cb5_0
 xz=5.4.5=h6c40b1e_0
 zlib=1.2.13=h4dc903c_0
