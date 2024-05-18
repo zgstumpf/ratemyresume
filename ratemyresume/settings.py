@@ -127,6 +127,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 if os.getenv('USE_S3') == 'True':
+    # Production settings
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
@@ -137,8 +138,14 @@ if os.getenv('USE_S3') == 'True':
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
-    STATIC_URL = 'static/' # URL prefix for static files.
-    STATIC_ROOT = BASE_DIR / 'static_provider' # directory where Django stores static files when you run collectstatic. Should be gitignored.
+    # Development settings
+
+    # URL prefix for static files
+    STATIC_URL = 'static/'
+
+    # Directory where static files are stored after running collectstatic. Should be gitignored.
+    # DO NOT NAME 'static' since this will overwrite the existing 'static' directory where static files are edited from.
+    STATIC_ROOT = BASE_DIR / 'static_provider'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'), # base.css, base.js
