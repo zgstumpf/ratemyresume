@@ -122,21 +122,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
-
+STATIC_URL = 'static/' # URL prefix for static files.
+STATIC_ROOT = BASE_DIR / 'static_provider' # directory where Django stores static files when you run collectstatic. Should be gitignored.
 STATICFILES_DIRS = [
-    # base.css, base.js
-    os.path.join(BASE_DIR, 'static'),
-
+    os.path.join(BASE_DIR, 'static'), # base.css, base.js
     os.path.join(BASE_DIR, 'resumes/static'),
 ]
 
-# Define the base URL for serving media files
-MEDIA_URL = '/media/'
-
-# Specify the directory where media files are stored
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media files (Uploaded by users)
+MEDIA_URL = '/media/' # base URL for serving media files
+MEDIA_ROOT = BASE_DIR / 'media' # directory where media files are stored
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

@@ -32,7 +32,7 @@ The code is in resumes/views.py convert_to_pdf. It works, but the command is wri
 **Important:** The current code stores user-created media (resumes) in the `media` directory. This works in development but it won't work in production. *Maybe use an S3 bucket?* Also, currently there is no code to verify if file is safe.
 
 ## Serving static (CSS, JS) and media (.pdf) files
-Amazon S3: https://testdriven.io/blog/storing-django-static-and-media-files-on-amazon-s3/
+I followed [this guide](https://testdriven.io/blog/storing-django-static-and-media-files-on-amazon-s3/) for Amazon S3.
 
 ## Database
 See the "Connecting a PostgreSQL database with Amazon RDS" section of [this guide](https://aws.amazon.com/blogs/containers/deploy-and-scale-django-applications-on-aws-app-runner/).

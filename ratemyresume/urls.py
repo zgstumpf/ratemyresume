@@ -29,4 +29,5 @@ urlpatterns = [
     path('', include('resumes.urls')),
 ]
 
+# Serve static files during development. Will only work if DEBUG is True.
 urlpatterns += staticfiles_urlpatterns()
