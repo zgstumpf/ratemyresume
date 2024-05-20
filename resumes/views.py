@@ -14,6 +14,8 @@ from django.utils import timezone
 from pdf2image import convert_from_path
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+import boto3
+from botocore.exceptions import NoCredentialsError
 
 import base64
 from io import BytesIO
@@ -161,7 +163,12 @@ def details(request, resume_id):
                 )
                 # After here, you enter details.js to the success block of <$('#ratingForm').submit(function (event)>
 
-    pdf_content = pdf_to_str(resume)
+    # deprecated - future code will use src aws url instead
+    # pdf_content = pdf_to_str(resume)
+    print(f'{resume.file.name=}')
+    # TODO: why do i need to specify s3 folder 'private'???
+    pdf_url = generate_presigned_url('private/' + resume.file.name)
+    print(f'{pdf_url=}')
 
     # This ratings code is copied from attachAvgAndNumRatings because passing a single object to that function
     # didn't work. TODO: Refactor.
@@ -185,7 +192,8 @@ def details(request, resume_id):
 
     context = {
         "resume": resume,
-        "pdf": pdf_content,
+        #"pdf": pdf_content,
+        "pdf_url": pdf_url,
         "comment_form": comment_form,
         "rating_form": rating_form,
         "comments": comments,
@@ -242,11 +250,11 @@ def upload(request):
 
             # For now, convert_to_pdf only works for files on local filesystem, not S3.
             # TODO: This will be changed later.
-            if settings.USE_S3 == 'False':
+            if settings.USE_S3 == "False":
                 try:
                     convert_to_pdf(resume)
                 except FileNotFoundError:
-                    form.add_error('file', 'File failed to convert to pdf.')
+                    form.add_error("file", "File failed to convert to pdf.")
 
             # redirect to a new URL:
             return HttpResponseRedirect(f"/details/{resume.id}/")
@@ -986,3 +994,16 @@ def convert_to_pdf(resume: Resume) -> str:
     else:
         # LibreOffice conversion failed
         raise FileNotFoundError
+
+
+def generate_presigned_url(file_name):
+    s3_client = boto3.client("s3")
+    try:
+        response = s3_client.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
+            ExpiresIn=3600,
+        )
+    except NoCredentialsError:
+        return None
+    return response
