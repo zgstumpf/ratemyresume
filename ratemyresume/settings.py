@@ -123,10 +123,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+USE_S3 = os.getenv('USE_S3')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-if os.getenv('USE_S3') == 'True':
+if USE_S3 == 'True':
     # Production settings
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -137,6 +137,12 @@ if os.getenv('USE_S3') == 'True':
     AWS_LOCATION = 'static'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    # S3 public media
+    PUBLIC_MEDIA_LOCATION = 'media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    # Make FileFields upload to S3
+    DEFAULT_FILE_STORAGE = 'ratemyresume.storage_backends.PublicMediaStorage'
 else:
     # Development settings
 
@@ -147,14 +153,15 @@ else:
     # DO NOT NAME 'static' since this will overwrite the existing 'static' directory where static files are edited from.
     STATIC_ROOT = BASE_DIR / 'static_provider'
 
+    # Media files (Uploaded by users)
+    MEDIA_URL = '/media/' # base URL for serving media files
+    MEDIA_ROOT = BASE_DIR / 'media' # directory where media files are stored
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'), # base.css, base.js
     os.path.join(BASE_DIR, 'resumes/static'),
 ]
 
-# Media files (Uploaded by users)
-MEDIA_URL = '/media/' # base URL for serving media files
-MEDIA_ROOT = BASE_DIR / 'media' # directory where media files are stored
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

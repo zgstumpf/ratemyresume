@@ -13,6 +13,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from pdf2image import convert_from_path
 from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
 import base64
 from io import BytesIO
@@ -222,7 +223,16 @@ def upload(request):
         if form.is_valid():
             resume = form.save(commit=False)
             resume.user_id = request.user.id
-            resume.save()
+
+            if settings.USE_S3:
+                resume.save()
+                print(resume.file.url)
+            else:
+                # Local filesystem storage
+                fs = FileSystemStorage()
+                filename = fs.save(resume.file.name, resume.file)
+                resume.file.name = filename
+                resume.save()
 
             if resume.visibility == "shared_with_specific_groups":
                 for group in form.cleaned_data["groupsSharedWith"]:
@@ -230,10 +240,13 @@ def upload(request):
                         resume=resume, group=group
                     )
 
-            try:
-                convert_to_pdf(resume)
-            except FileNotFoundError:
-                form.add_error('file', 'File failed to convert to pdf.')
+            # For now, convert_to_pdf only works for files on local filesystem, not S3.
+            # TODO: This will be changed later.
+            if settings.USE_S3 == 'False':
+                try:
+                    convert_to_pdf(resume)
+                except FileNotFoundError:
+                    form.add_error('file', 'File failed to convert to pdf.')
 
             # redirect to a new URL:
             return HttpResponseRedirect(f"/details/{resume.id}/")
