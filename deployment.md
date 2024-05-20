@@ -48,7 +48,7 @@ I signed in with GitHub as zgstumpf@crimson.ua.edu and set my Docker username as
 
 Strategy: get code including LibreOffice in a docker image: https://www.digitalocean.com/community/questions/how-to-install-libreoffice-in-app
 
-This docker image will then be connected to AWS Django apprunner in the next step.
+The `.env` file contents will be inserted into the Docker image and then it will be connected to AWS Django AppRunner.
 
 ## Hosting
 connect docker image to aws django apprunner: https://aws.amazon.com/blogs/containers/deploy-and-scale-django-applications-on-aws-app-runner/
