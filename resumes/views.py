@@ -937,12 +937,15 @@ def last_group_activity(group_id: str):
 
 
 def pdf_to_str(resume: Resume) -> str:
+    # TODO: deprecate this function for S3, since S3 resumes can use URL in src html
+    # attribute
     """
     Returns a string representing the contents of a resume's file. This string can be inserted into an HTML template with:
     ```html
     <embed src="data:application/pdf;base64,{{ pdf_string }}" type="application/pdf" width="..." height="...">
     ```
     """
+    print(resume.file.path)
     with open(resume.file.path, "rb") as file:
         return base64.b64encode(file.read()).decode()
 

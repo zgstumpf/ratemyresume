@@ -138,11 +138,8 @@ if USE_S3 == 'True':
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-    # S3 public media
-    PUBLIC_MEDIA_LOCATION = 'media'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
     # Make FileFields upload to S3
-    DEFAULT_FILE_STORAGE = 'ratemyresume.storage_backends.PublicMediaStorage'
+    DEFAULT_FILE_STORAGE = 'ratemyresume.storage_backends.MediaStorage'
 else:
     # Development settings
 
