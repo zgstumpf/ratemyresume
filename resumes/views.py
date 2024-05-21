@@ -15,7 +15,7 @@ from pdf2image import convert_from_path
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import boto3
-from botocore.exceptions import NoCredentialsError
+from botocore.exceptions import NoCredentialsError, ClientError
 
 import base64
 from io import BytesIO
@@ -165,11 +165,10 @@ def details(request, resume_id):
 
     # deprecated - future code will use src aws url instead
     # pdf_content = pdf_to_str(resume)
-    #print(f"{resume.file.name=}")
+    # print(f"{resume.file.name=}")
     # TODO: why do i need to specify s3 folder 'private'???
-    #pdf_url = create_presigned_url("private/" + resume.file.name)
-    pdf_url = resume_file_url(resume)
-    print(f"{pdf_url=}")
+    # pdf_url = create_presigned_url("private/" + resume.file.name)
+    file_source = resume_file_source(resume)
 
     # This ratings code is copied from attachAvgAndNumRatings because passing a single object to that function
     # didn't work. TODO: Refactor.
@@ -193,8 +192,8 @@ def details(request, resume_id):
 
     context = {
         "resume": resume,
-        # "pdf": pdf_content,
-        "pdf_url": pdf_url,
+        "USE_S3": settings.USE_S3,
+        "file_source": file_source,
         "comment_form": comment_form,
         "rating_form": rating_form,
         "comments": comments,
@@ -946,17 +945,20 @@ def last_group_activity(group_id: str):
 
 
 def pdf_to_str(resume: Resume) -> str:
-    # TODO: deprecate this function for S3, since S3 resumes can use URL in src html
-    # attribute
     """
     Returns a string representing the contents of a resume's file. This string can be inserted into an HTML template with:
     ```html
     <embed src="data:application/pdf;base64,{{ pdf_string }}" type="application/pdf" width="..." height="...">
     ```
     """
-    print(resume.file.path)
-    with open(resume.file.path, "rb") as file:
-        return base64.b64encode(file.read()).decode()
+    try:
+        with open(resume.file.path, "rb") as file:
+            return base64.b64encode(file.read()).decode()
+    except FileNotFoundError:
+        print(
+            f"File not found: {resume.file.path}. This may occur if settings.USE_S3 is 'False' and the resume was uploaded "
+            "when settings.USE_S3 was 'True'. In this case, the file is not in in your local filesystem, only in S3."
+        )
 
 
 def convert_to_pdf(resume: Resume) -> str:
@@ -970,36 +972,45 @@ def convert_to_pdf(resume: Resume) -> str:
     output_dir = os.path.join(settings.MEDIA_ROOT, "resumes")
     original_full_filepath = os.path.join(settings.MEDIA_ROOT, resume.file.name)
 
-    # Convert file to pdf, store in same directory
+    # Convert file to pdf, store in same directory as before.
+    # When converting, LibreOffice keeps the filename the same but changes extension to .pdf
+    # If input file had .pdf extension, LibreOffice will overwrite the original file and filename will be the same.
     subprocess.run(
+        # "" around resume.file.path ensures command works if filename has spaces
         f'/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir {output_dir} "{resume.file.path}"',
         shell=True,
     )
 
-    # When converting, LibreOffice keeps the filename the same but changes extension to .pdf
     original_filename = os.path.basename(resume.file.path)
     pdf_filename = os.path.splitext(original_filename)[0] + ".pdf"
     pdf_full_filepath = os.path.join(output_dir, pdf_filename)
 
-    if os.path.exists(pdf_full_filepath):
-        # LibreOffice conversion succeeded
-
+    if os.path.exists(pdf_full_filepath):  # LibreOffice conversion succeeded
         # In database, point resume to new pdf file
         resume.file.name = f"resumes/{pdf_filename}"
         resume.save()
 
-        # Now that pdf file is created, delete original file
-        os.remove(original_full_filepath)
+        # Now that pdf file is created, delete original file, unless LibreOffice overwrote the original.
+        if pdf_full_filepath != original_full_filepath:
+            os.remove(original_full_filepath)
 
         return pdf_full_filepath
-    else:
-        # LibreOffice conversion failed
+    else:  # LibreOffice conversion failed
         raise FileNotFoundError
 
 
-def resume_file_url(resume: Resume, port='8000') -> str:
-    if settings.USE_S3 != 'True':
-        return f'http://localhost:{port}{resume.file.url}'
+def resume_file_source(resume: Resume) -> str:
+    """
+    If `settings.USE_S3` is `'True'`, returns a presigned URL for the resume object in S3.
+
+    If `settings.USE_S3` is `'False'`, returns a base64 string representing the resume's file.
+
+    The returned value can be used in an HTML `<embed>` element.
+    """
+    if settings.USE_S3 != "True":
+        # Even though urls for media files are defined for development, the browser did not allow embedding
+        # a localhost url, so the old method of embedding the file as base64 will be used unless a fix is found
+        return pdf_to_str(resume)
 
     return create_presigned_url("private/" + resume.file.name)
 
@@ -1015,12 +1026,33 @@ def create_presigned_url(key: str):
     Python code. See `storage_backends.py` and `settings.DEFAULT_FILE_STORAGE`.
     """
     s3_client = boto3.client("s3")
+
+    if not s3_object_exists(key):
+        print(
+            f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is 'True' and the resume was uploaded "
+            "when settings.USE_S3 was 'False'. In this case, the file is not in S3, only in your local filesystem."
+        )
+        return None
+
     try:
-        response = s3_client.generate_presigned_url(
+        url = s3_client.generate_presigned_url(
             "get_object",
             Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": key},
             ExpiresIn=3600,
         )
     except NoCredentialsError:
         return None
-    return response
+    return url
+
+
+def s3_object_exists(key: str) -> bool:
+    """
+    Returns True if object with `key` exists in S3, False otherwise.
+    """
+    s3_client = boto3.client("s3")
+    try:
+        s3_client.head_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "404":
+            return False
+    return True
