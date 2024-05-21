@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
 
@@ -31,3 +33,7 @@ urlpatterns = [
 
 # Serve static files during development. Will only work if DEBUG is True.
 urlpatterns += staticfiles_urlpatterns()
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

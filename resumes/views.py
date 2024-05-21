@@ -165,10 +165,11 @@ def details(request, resume_id):
 
     # deprecated - future code will use src aws url instead
     # pdf_content = pdf_to_str(resume)
-    print(f'{resume.file.name=}')
+    #print(f"{resume.file.name=}")
     # TODO: why do i need to specify s3 folder 'private'???
-    pdf_url = generate_presigned_url('private/' + resume.file.name)
-    print(f'{pdf_url=}')
+    #pdf_url = create_presigned_url("private/" + resume.file.name)
+    pdf_url = resume_file_url(resume)
+    print(f"{pdf_url=}")
 
     # This ratings code is copied from attachAvgAndNumRatings because passing a single object to that function
     # didn't work. TODO: Refactor.
@@ -192,7 +193,7 @@ def details(request, resume_id):
 
     context = {
         "resume": resume,
-        #"pdf": pdf_content,
+        # "pdf": pdf_content,
         "pdf_url": pdf_url,
         "comment_form": comment_form,
         "rating_form": rating_form,
@@ -996,12 +997,28 @@ def convert_to_pdf(resume: Resume) -> str:
         raise FileNotFoundError
 
 
-def generate_presigned_url(file_name):
+def resume_file_url(resume: Resume, port='8000') -> str:
+    if settings.USE_S3 != 'True':
+        return f'http://localhost:{port}{resume.file.url}'
+
+    return create_presigned_url("private/" + resume.file.name)
+
+
+def create_presigned_url(key: str):
+    """
+    Returns temporary URL where private S3 objects can be accessed.
+
+    `key` parameter must match the object's Key at AWS Console > S3 >
+    object > Properties > Object overview > Key.
+
+    Private S3 objects are those with `default-acl: 'private'` in the
+    Python code. See `storage_backends.py` and `settings.DEFAULT_FILE_STORAGE`.
+    """
     s3_client = boto3.client("s3")
     try:
         response = s3_client.generate_presigned_url(
             "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": key},
             ExpiresIn=3600,
         )
     except NoCredentialsError:
