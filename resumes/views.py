@@ -393,7 +393,10 @@ def attachImagesAsStrings(resumes):
 def get_resume_preview_image(request, resume_id):
     try:
         resume = Resume.objects.get(pk=resume_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": f"Resume {resume_id} does not exist"}, status=404)
 
+    try:
         if not isUserPermittedToViewResume(request.user, resume):
             return JsonResponse(
                 {"error": f"Unauthorized to view preview for resume {resume_id}"},
@@ -401,6 +404,7 @@ def get_resume_preview_image(request, resume_id):
             )
 
         path = resume.file.path
+        print(path)
         # Convert PDFs to image
         image = convert_from_path(path)[0]  # 0 means do first page only
         buffered = BytesIO()
@@ -408,9 +412,8 @@ def get_resume_preview_image(request, resume_id):
         img_str = base64.b64encode(buffered.getvalue()).decode()
         imageData = f"data:image/jpeg;base64,{img_str}"
         return JsonResponse({"image": imageData}, status=200)
-    except ObjectDoesNotExist:
-        return JsonResponse({"error": f"Resume {resume_id} does not exist"}, status=404)
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse(
             {
                 "error": f"Unexpected error occured while getting preview image for resume {resume_id}"

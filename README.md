@@ -61,6 +61,13 @@ cd ratemyresume
 conda create --name ratemyresume --file requirements.txt
 ```
 
+5. Create the `.env` file
+
+In the root project directory, create a file named `.env`. Copy the template from `docs` > `env.md` and paste into the `.env` file.
+The `.env` file tells the site whether or not to use S3. S3 is used in production, but some development tasks don't require S3, so it can be turned off to save resources.
+
+6. Install LibreOffice. See `docs` > `LibreOffice.md`.
+
 <h3>Run locally for development</h3>
 
 1. There are two `ratemyresume` directories. If you haven't already, `cd` into the outer `ratemyresume` directory.
@@ -89,6 +96,8 @@ If you edit `models.py` to edit the database structure, you need to run some com
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+If you make any changes in the `.env` file, restart the server (quit the server and run `python manage.py runserver`) for your changes to take place.
 
 When you are done developing, quit the server (**control + c**) and deactivate the conda environment.
 
