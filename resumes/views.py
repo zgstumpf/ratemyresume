@@ -165,11 +165,6 @@ def details(request, resume_id):
                 )
                 # After here, you enter details.js to the success block of <$('#ratingForm').submit(function (event)>
 
-    # deprecated - future code will use src aws url instead
-    # pdf_content = pdf_to_str(resume)
-    # print(f"{resume.file.name=}")
-    # TODO: why do i need to specify s3 folder 'private'???
-    # pdf_url = create_presigned_url("private/" + resume.file.name)
     file_source = resume_file_source(resume)
 
     # This ratings code is copied from attachAvgAndNumRatings because passing a single object to that function
@@ -209,7 +204,6 @@ def details(request, resume_id):
     return render(request, "resumes/details.html", context)
 
 
-# TODO: ADD PERMISSION CHECKING
 def view_pdf(request, resume_id):
     resume = get_object_or_404(Resume, pk=resume_id)
 
@@ -415,7 +409,7 @@ def get_resume_preview_image(request, resume_id):
                 "when settings.USE_S3 was True. In this case, the file is not in in your local filesystem, only in S3."
             )
     else:
-        key = "private/" + resume.file.name
+        key = "private_media/" + resume.file.name
         if not s3_object_exists(key):
             print(
                 f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is True and the resume was uploaded "
@@ -1037,7 +1031,7 @@ def resume_file_source(resume: Resume) -> str:
         # a localhost url, so the old method of embedding the file as base64 will be used unless a fix is found
         return pdf_to_str(resume)
 
-    return create_presigned_url("private/" + resume.file.name)
+    return create_presigned_url("private_media/" + resume.file.name)
 
 
 def create_presigned_url(key: str):
