@@ -236,7 +236,6 @@ def upload(request):
 
             if settings.USE_S3:
                 resume.save()
-                print(resume.file.url)
             else:
                 # Local filesystem storage
                 fs = FileSystemStorage()
@@ -252,7 +251,7 @@ def upload(request):
 
             # For now, convert_to_pdf only works for files on local filesystem, not S3.
             # TODO: This will be changed later.
-            if settings.USE_S3 == "False":
+            if settings.USE_S3 == False:
                 try:
                     convert_to_pdf(resume)
                 except FileNotFoundError:
@@ -406,21 +405,21 @@ def get_resume_preview_image(request, resume_id):
 
     # For the standard 1 page resume pdf, the preview is larger in size than the pdf, so previews
     # are generated instead of stored
-    if settings.USE_S3 != "True":
+    if settings.USE_S3 == False:
         path = resume.file.path
         try:
             image = convert_from_path(pdf_path=path, first_page=1, last_page=1)[0]
         except PDFPageCountError:
             print(
-                f"File not found: {path}. This may occur if settings.USE_S3 is 'False' and the resume was uploaded "
-                "when settings.USE_S3 was 'True'. In this case, the file is not in in your local filesystem, only in S3."
+                f"File not found: {path}. This may occur if settings.USE_S3 is False and the resume was uploaded "
+                "when settings.USE_S3 was True. In this case, the file is not in in your local filesystem, only in S3."
             )
     else:
         key = "private/" + resume.file.name
         if not s3_object_exists(key):
             print(
-                f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is 'True' and the resume was uploaded "
-                "when settings.USE_S3 was 'False'. In this case, the file is not in S3, only in your local filesystem. Or, make sure you have the same key as in AWS."
+                f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is True and the resume was uploaded "
+                "when settings.USE_S3 was False. In this case, the file is not in S3, only in your local filesystem. Or, make sure you have the same key as in AWS."
             )
 
         s3_client = boto3.client("s3")
@@ -982,8 +981,8 @@ def pdf_to_str(resume: Resume) -> str:
             return base64.b64encode(file.read()).decode()
     except FileNotFoundError:
         print(
-            f"File not found: {resume.file.path}. This may occur if settings.USE_S3 is 'False' and the resume was uploaded "
-            "when settings.USE_S3 was 'True'. In this case, the file is not in in your local filesystem, only in S3."
+            f"File not found: {resume.file.path}. This may occur if settings.USE_S3 is False and the resume was uploaded "
+            "when settings.USE_S3 was True. In this case, the file is not in in your local filesystem, only in S3."
         )
 
 
@@ -1027,13 +1026,13 @@ def convert_to_pdf(resume: Resume) -> str:
 
 def resume_file_source(resume: Resume) -> str:
     """
-    If `settings.USE_S3` is `'True'`, returns a presigned URL for the resume object in S3.
+    If `settings.USE_S3` is `True`, returns a presigned URL for the resume object in S3.
 
-    If `settings.USE_S3` is `'False'`, returns a base64 string representing the resume's file.
+    If `settings.USE_S3` is `False`, returns a base64 string representing the resume's file.
 
     The returned value can be used in an HTML `<embed>` element.
     """
-    if settings.USE_S3 != "True":
+    if settings.USE_S3 == False:
         # Even though urls for media files are defined for development, the browser did not allow embedding
         # a localhost url, so the old method of embedding the file as base64 will be used unless a fix is found
         return pdf_to_str(resume)
@@ -1055,8 +1054,8 @@ def create_presigned_url(key: str):
 
     if not s3_object_exists(key):
         print(
-            f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is 'True' and the resume was uploaded "
-            "when settings.USE_S3 was 'False'. In this case, the file is not in S3, only in your local filesystem."
+            f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is True and the resume was uploaded "
+            "when settings.USE_S3 was False. In this case, the file is not in S3, only in your local filesystem."
         )
         return None
 
