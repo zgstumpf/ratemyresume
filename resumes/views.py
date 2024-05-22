@@ -393,73 +393,56 @@ def attachImagesAsStrings(resumes):
 
 
 def get_resume_preview_image(request, resume_id):
-    # TODO: is this check even needed? removing it will speed up code
     try:
         resume = Resume.objects.get(pk=resume_id)
     except ObjectDoesNotExist:
         return JsonResponse({"error": f"Resume {resume_id} does not exist"}, status=404)
 
-    try:
-        if not isUserPermittedToViewResume(request.user, resume):
-            return JsonResponse(
-                {"error": f"Unauthorized to view preview for resume {resume_id}"},
-                status=401,
+    if not isUserPermittedToViewResume(request.user, resume):
+        return JsonResponse(
+            {"error": f"Unauthorized to view preview for resume {resume_id}"},
+            status=401,
+        )
+
+    # For the standard 1 page resume pdf, the preview is larger in size than the pdf, so previews
+    # are generated instead of stored
+    if settings.USE_S3 != "True":
+        path = resume.file.path
+        try:
+            image = convert_from_path(pdf_path=path, first_page=1, last_page=1)[0]
+        except PDFPageCountError:
+            print(
+                f"File not found: {path}. This may occur if settings.USE_S3 is 'False' and the resume was uploaded "
+                "when settings.USE_S3 was 'True'. In this case, the file is not in in your local filesystem, only in S3."
+            )
+    else:
+        key = "private/" + resume.file.name
+        if not s3_object_exists(key):
+            print(
+                f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is 'True' and the resume was uploaded "
+                "when settings.USE_S3 was 'False'. In this case, the file is not in S3, only in your local filesystem. Or, make sure you have the same key as in AWS."
             )
 
-        # TODO: When S3 is on, I could download temp files and capture preview with similar code
-        # For the standard 1 page resume pdf, the preview is larger in size than the pdf, so previews
-        # are generated instead of stored
-        if settings.USE_S3 != "True":
-            path = resume.file.path
-            try:
-                image = convert_from_path(pdf_path=path, first_page=1, last_page=1)[0]
-            except PDFPageCountError:
-                print(
-                    f"File not found: {path}. This may occur if settings.USE_S3 is 'False' and the resume was uploaded "
-                    "when settings.USE_S3 was 'True'. In this case, the file is not in in your local filesystem, only in S3."
-                )
-        else:
-            s3_client = boto3.client("s3")
-            bucket_name = settings.AWS_STORAGE_BUCKET_NAME
-            key = "private/" + resume.file.name
+        s3_client = boto3.client("s3")
+        bucket_name = settings.AWS_STORAGE_BUCKET_NAME
 
-            if not s3_object_exists(key):
-                raise FileNotFoundError(
-                    f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is 'True' and the resume was uploaded "
-                    "when settings.USE_S3 was 'False'. In this case, the file is not in S3, only in your local filesystem. Or, make sure you have the same key as in AWS."
-                )
+        try:
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                s3_client.download_fileobj(bucket_name, key, tmp_file)
+                tmp_file_path = tmp_file.name
+                image = convert_from_path(tmp_file_path)[0]
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                {"error": "S3 Error"}, status=500
+            )
 
-            try:
-                # Create a temporary file to download the S3 object
-                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                    s3_client.download_fileobj(bucket_name, key, tmp_file)
-                    tmp_file_path = tmp_file.name
+    buffered = BytesIO()
+    image.save(buffered, format="JPEG")
+    imageString = base64.b64encode(buffered.getvalue()).decode()
+    imageData = f"data:image/jpeg;base64,{imageString}"
 
-                # Convert the temporary file to an image
-                image = convert_from_path(tmp_file_path)[0]  # 0 means do first page only
-
-                # Clean up the temporary file
-                os.remove(tmp_file_path)
-                print('successfully? created temp file and preview and cleared temp file')
-
-            except (NoCredentialsError, ClientError) as e:
-                return JsonResponse(
-                    {"error": f"Error accessing S3: {str(e)}"}, status=500
-                )
-
-        buffered = BytesIO()
-        image.save(buffered, format="JPEG")
-        img_str = base64.b64encode(buffered.getvalue()).decode()
-        imageData = f"data:image/jpeg;base64,{img_str}"
-        return JsonResponse({"image": imageData}, status=200)
-    except Exception as e:
-        print(e)
-        return JsonResponse(
-            {
-                "error": f"Unexpected error occured while getting preview image for resume {resume_id}"
-            },
-            status=500,
-        )
+    return JsonResponse({"image": imageData}, status=200)
 
 
 def attachNumComments(resumes):
