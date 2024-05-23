@@ -337,9 +337,17 @@ def delete_resume(request, resume_id):
             {"error": "You can't delete a resume you don't own."}, status=401
         )
 
-    # Store resume id before deleting. We need to pass id to JavaScript so the corresponding
-    # resume card can be removed from the page.
+    # Store resume id before deleting so it can be passed to JavaScript to
+    # remove the corresponding resume card from the page.
     resume_id = resume.id
+
+    # Delete resume file from S3 if it was uploaded when USE_S3 was True
+    key = "private_media/" + resume.file.name
+    if s3_object_exists(key):
+        s3_client = boto3.client("s3")
+        s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
+
+    # Delete resume from database
     resume.delete()
 
     return JsonResponse({"resume_id": resume_id}, status=200)
@@ -426,9 +434,7 @@ def get_resume_preview_image(request, resume_id):
                 image = convert_from_path(tmp_file_path)[0]
         except Exception as e:
             print(e)
-            return JsonResponse(
-                {"error": "S3 Error"}, status=500
-            )
+            return JsonResponse({"error": "S3 Error"}, status=500)
 
     buffered = BytesIO()
     image.save(buffered, format="JPEG")

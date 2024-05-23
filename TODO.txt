@@ -1,6 +1,4 @@
 increase security of uploading files if you ever deploy to production: https://stackoverflow.com/questions/3648421/only-accept-a-certain-file-type-in-filefield-server-side/43540603#43540603
-Current pdf validation is poor - users could easily bypass it
-Good UX should automatically convert to pdf, which I haven't done since many packages require Word to be installed or an API key
 
 profile page so user knows who they are
 
@@ -16,4 +14,12 @@ Bug: 'Upload a resume' button on index page gets wrapped wrong when screen is ab
 
 has user rated checkmark not appearing on grouppage.html, replaced with duplicate preview image in html
 
-figure out way to stop repeating JavaScript during initial render and ajax!!!
+When editing resume, are old permissions deleted from DB?
+
+All the switching between USE_S3 true or false is getting annoying. Honestly, S3 should be used for all media even during development
+to closely imitate production environment. For static files, using S3 should be toggleable since serving them locally allows instant changes,
+with S3 you would have to run collectstatic each time which would be way to slow. The static_provider directory during development is nonsense.
+
+Can you make server restart when .env is changed?
+
+May have to store resume previews after all - current solution is a little slow.
