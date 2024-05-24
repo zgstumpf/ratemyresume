@@ -18,6 +18,7 @@ from django.core.files.storage import FileSystemStorage
 import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
 from django.core.files import File
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 import tempfile
 import base64
@@ -228,30 +229,11 @@ def upload(request):
             resume = form.save(commit=False)
             resume.user_id = request.user.id
 
-            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-                for chunk in request.FILES["file"].chunks():
-                    temp_file.write(chunk)
-                temp_file_path = temp_file.name
-
-            output_dir = tempfile.mkdtemp()
-
-            convert_to_pdf(temp_file_path, output_dir)
-            expected_pdf_filename = os.path.splitext(os.path.basename(temp_file_path))[0] + ".pdf"
-            expected_pdf_path = os.path.join(output_dir, expected_pdf_filename)
-
-            if not os.path.exists(expected_pdf_path):
+            try:
+                save_as_pdf(resume, request.FILES["file"])
+            except FileNotFoundError:
                 form.add_error("file", "File failed to convert to pdf.")
                 return render(request, "resumes/upload.html", {"form": form})
-
-            pdf_path = expected_pdf_path
-            original_filename = os.path.splitext(request.FILES["file"].name)[0]
-            with open(pdf_path, "rb") as pdf_file:
-                resume.file.save(
-                    original_filename + ".pdf",
-                    File(pdf_file),
-                    save=False,
-                )
-            resume.save()
 
             if resume.visibility == "shared_with_specific_groups":
                 for group in form.cleaned_data["groupsSharedWith"]:
@@ -959,39 +941,60 @@ def last_group_activity(group_id: str):
     return max(filter(None, [lastMemberJoinDate, lastSpecificResumeShareDate]))
 
 
-def convert_to_pdf(tmp_path, output_dir) -> str:
+def save_as_pdf(resume: Resume, request_file: InMemoryUploadedFile) -> None:
     """
-    Uses LibreOffice to convert a resume's file to pdf in media storage.
+    Converts a resume's file to pdf, saves resume in database, and saves file in S3.
+
+    `request_file` example: `request.FILES["file"]`.
+
+    Raises `FileNotFoundError` if conversion failed.
 
     LibreOffice must be installed on the device: https://www.libreoffice.org/download/download-libreoffice/
 
     Tested with LibreOffice 24.2.3 for MacOS(Intel)
     """
-    # Convert file to pdf, store in same directory as before.
+
+    # Store resume in temporary file
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        for chunk in request_file.chunks():
+            temp_file.write(chunk)
+        temp_file_path = temp_file.name
+
+    # Create temporary directory to store pdf
+    output_dir = tempfile.mkdtemp()
+
     # When converting, LibreOffice keeps the filename the same but changes extension to .pdf
     # If input file had .pdf extension, LibreOffice will overwrite the original file and filename will be the same.
+    expected_pdf_filename = (
+        os.path.splitext(os.path.basename(temp_file_path))[0] + ".pdf"
+    )
+    expected_pdf_path = os.path.join(output_dir, expected_pdf_filename)
+
     subprocess.run(
-        # "" around resume.file.path ensures command works if filename has spaces
-        f'/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir {output_dir} "{tmp_path}"',
+        # quotations in case filename has spaces
+        f'/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir {output_dir} "{temp_file_path}"',
         shell=True,
     )
 
-    # original_filename = os.path.basename(resume.file.path)
-    # pdf_filename = os.path.splitext(original_filename)[0] + ".pdf"
-    # pdf_full_filepath = os.path.join(output_dir, pdf_filename)
+    if not os.path.exists(expected_pdf_path):
+        # Conversion failed - LibreOffice did not create the pdf file
+        raise FileNotFoundError
 
-    # if os.path.exists(pdf_full_filepath):  # LibreOffice conversion succeeded
-    #     # In database, point resume to new pdf file
-    #     resume.file.name = f"resumes/{pdf_filename}"
-    #     resume.save()
+    # Conversion worked
+    pdf_path = expected_pdf_path
+    original_filename = os.path.splitext(request_file.name)[0]
+    with open(pdf_path, "rb") as pdf_file:
+        resume.file.save(
+            name=original_filename + ".pdf",
+            content=File(pdf_file),
+            save=False,
+        )
+    resume.save()
 
-    #     # Now that pdf file is created, delete original file, unless LibreOffice overwrote the original.
-    #     if pdf_full_filepath != original_full_filepath:
-    #         os.remove(original_full_filepath)
-
-    #     return pdf_full_filepath
-    # else:  # LibreOffice conversion failed
-    #     raise FileNotFoundError
+    # Cleanup
+    os.remove(temp_file_path)
+    os.remove(pdf_path)
+    os.rmdir(output_dir)
 
 
 def resume_file_source(resume: Resume) -> str:
