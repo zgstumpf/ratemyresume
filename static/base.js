@@ -1,32 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Put all JS code in here
-    // Make sure page-specific JS functions have different names than site-wide functions.
-
-    $('#confirmDeleteBtn').on('click', function(event) {
-        event.preventDefault()
-        $.ajax({
-            type: 'DELETE',
-            url: $('#deleteConfirmationModal').data('delete-url'),
-            headers: {'X-CSRFToken': getCsrf()},
-            crossDomain: false,
-            success: function (response) {
-                // remove resume card
-                $(`#${response.resume_id}`).remove();
-
-                // close modal
-                $('#deleteConfirmationModal').modal('hide')
-            },
-            error: function (response) {
-                console.error(response.responseJSON.error)
-            }
-        })
-    });
-
-});
-
-
-// Any JS code after this point will execute before HTML finishes loading
-// You shouldn't put JS code here unless you know what you're doing
 function toggleNavbar() {
     var navbar = document.getElementById("rmr-navbar");
     if (navbar.className === "rmr-navbar") {

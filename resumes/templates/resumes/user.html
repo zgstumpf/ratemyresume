@@ -11,6 +11,7 @@
 {% endblock %}
 
 {% block content %}
+{% include 'resume_delete_modal.html' %}
 {% if isUserHome %}
     <h1 class="page-header">Home</h1>
     <p class="page-description">Hello, {{ user }}!</p>
@@ -35,9 +36,6 @@
         {% include 'resume_card.html' with resume_id=resume.id user_id=resume.user.id user=resume.user requestingUser=request.user resume_name=resume.name hasUserRated=resume.hasUserRated created_at=resume.created_at avgRating=resume.avgRating numRatings=resume.numRatings %}
     {% endfor %}
 </div>
-
-{% include 'resume_delete_modal.html' %}
-
 
 
 {% if isUserHome %}

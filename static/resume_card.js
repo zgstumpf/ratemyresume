@@ -12,12 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
  * - Enables redirects by clicking.
  * - Generates tooltip for menu icon.
  * - Applies background color to the rating metric.
+ * - Enables confirm delete resume button.
  */
 function addJavaScriptFunctionality(resumeCard){
     loadPreviewImage(resumeCard)
     setClickListeners(resumeCard)
     addMenuTooltip(resumeCard)
     colorRating(resumeCard)
+    modalEnableConfirmDeleteResumeButton()
 }
 
 /**
@@ -135,5 +137,29 @@ function colorRating(resumeCard){
     const opacity = 0.75
     $this.css({
         backgroundColor: "rgba(" + r + "," + g + "," + b + "," + opacity + ")"
+    });
+}
+
+/**
+ * Enables making API call to delete resume when confirm delete button of delete modal is clicked.
+ */
+function modalEnableConfirmDeleteResumeButton(){
+    $('#confirmDeleteBtn').on('click', function(event) {
+        event.preventDefault()
+        $.ajax({
+            type: 'DELETE',
+            url: $('#deleteConfirmationModal').data('delete-url'),
+            headers: {'X-CSRFToken': getCsrf()},
+            crossDomain: false,
+            success: function (response) {
+                // remove resume card
+                $(`#${response.resume_id}`).remove();
+
+                $('#deleteConfirmationModal').modal('hide')
+            },
+            error: function (response) {
+                console.error(response.responseJSON.error)
+            }
+        })
     });
 }
