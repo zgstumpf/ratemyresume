@@ -2,15 +2,6 @@ label, input {
     display: block;
 }
 
-/* I may want to apply this to all pages */
-.content {
-    margin: 0% 10%;
-}
-
-input {
-    width: 80%
-}
-
 .warning-box {
     display: flex;
     align-items: center;
@@ -54,4 +45,8 @@ input {
 .file-field {
     padding: 5px 10px;
     border: 1px solid #cccdcf;
+}
+
+.min-width-80 {
+    min-width: 80%;
 }

@@ -20,19 +20,16 @@
         {% comment %}width: fit-content ensures the default browser error message when a required file input is _blank
         is centered with the content instead of centered in the middle of the page since form-fields expand to fit the page{% endcomment%}
         <div class="form-field file-field" style='width: fit-content'>
-            <label for="{{ form.file.id_for_label }}">Upload resume (pdf only) <span class="required-text">*</span></label>
-            {% comment %}TODO: Poor UX.{% endcomment %}
-            <p>To convert any file type to pdf, use <a href="https://www.freeconvert.com/pdf-converter" target="_blank">freeconvert.com</a>.</p>
-            {% comment %}TODO: Not a secure solution to verify pdf at all, but good enough for now.{% endcomment %}
-            <!-- accept=".pdf, .doc, .docx" -->
-            <input type="file" name="{{ form.file.name }}" id="{{ form.file.id_for_label }}" required>
+            <label for="{{ form.file.id_for_label }}">Upload file<span class="required-text">*</span></label>
+            <input type="file" name="{{ form.file.name }}" id="{{ form.file.id_for_label }}" accept=".pdf, .doc, .docx, .odt, .abw, .rtf, .txt" required {% if resume_limit_error %}disabled{% endif %}>
+            <p class="error-msg">{{ resume_limit_error }}</p>
             {% for error in form.file.errors %}
                 <p class="error-msg">{{ error }}</p>
             {% endfor %}
         </div>
 
         <div class="form-field">
-            <label for="{{ form.name.id_for_label }}">If you had to refer to this specific resume, what name would you use? <span class="required-text">*</span></label>
+            <label for="{{ form.name.id_for_label }}">Resume name <span class="required-text">*</span></label>
             {{ form.name }}
             {% for error in form.name.errors %}
                 <p class="error-msg">{{ error }}</p>
@@ -40,7 +37,7 @@
         </div>
 
         <div class="form-field">
-            <label for="{{ form.description.id_for_label }}">The description you put here will be displayed at the top of this resume's page:</label>
+            <label for="{{ form.description.id_for_label }}">Description</label>
             {{ form.description }}
             {% for error in form.description.errors %}
                 <p class="error-msg">{{ error }}</p>
@@ -72,7 +69,7 @@
             {% endfor %}
         </div>
 
-        <button type="submit" class="darkblue-btn">Submit</button>
+        <button type="submit" class="darkblue-btn" {% if resume_limit_error %}disabled{% endif %}>Submit</button>
     </form>
 
 {% endblock %}

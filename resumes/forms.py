@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from django.core.exceptions import ValidationError
-from resumes.models import Resume, Comment, Rating, PrivateGroup, GroupInvite, UserPrivateGroupMembership
+from resumes.models import Resume, Comment, Rating, PrivateGroup, GroupInvite
 
 class UploadResumeForm(ModelForm):
     # For some reason, if you initialize groupsSharedWith to CheckboxSelectMultiple, it doesn't work,
@@ -16,6 +15,9 @@ class UploadResumeForm(ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['name'].widget.attrs['value'] = f"{request.user}'s resume"
+        self.fields['name'].widget.attrs['class'] = 'min-width-80'
+
+        self.fields['description'].widget = forms.Textarea(attrs={'class': 'min-width-80', 'rows': 2})
 
        # User can only select groups they are a member of
         self.fields['groupsSharedWith'].widget = forms.CheckboxSelectMultiple()

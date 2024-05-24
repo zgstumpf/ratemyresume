@@ -220,6 +220,12 @@ def view_pdf(request, resume_id):
 
 @login_required
 def upload(request):
+    RESUME_UPLOAD_LIMIT = 50
+    if Resume.objects.filter(user=request.user).count() >= RESUME_UPLOAD_LIMIT:
+        form = UploadResumeForm(request=request)
+        error = f"You cannot upload more than {RESUME_UPLOAD_LIMIT} resumes."
+        return render(request, "resumes/upload.html", {"form": form, "resume_limit_error": error})
+
     if request.method == "POST":
         # Create a form instance and populate it with data from the request (binding):
         form = UploadResumeForm(request.POST, request.FILES, request=request)
@@ -242,7 +248,6 @@ def upload(request):
                     )
 
             return HttpResponseRedirect(f"/details/{resume.id}/")
-
     # If this is a GET (or any other method) create the default form.
     else:
         form = UploadResumeForm(request=request)
