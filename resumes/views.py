@@ -228,44 +228,38 @@ def upload(request):
             resume = form.save(commit=False)
             resume.user_id = request.user.id
 
-            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                for chunk in request.FILES['file'].chunks():
-                    tmp_file.write(chunk)
-                tmp_file_path = tmp_file.name
-                print(f'{tmp_file_path=}')
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                for chunk in request.FILES["file"].chunks():
+                    temp_file.write(chunk)
+                temp_file_path = temp_file.name
 
             output_dir = tempfile.mkdtemp()
-            print(f'{output_dir=}')
 
-            convert_to_pdf(tmp_file_path, output_dir)
-            #pdf_filename = os.path.splitext(request.FILES['file'].name)[0] + ".pdf"
-            pdf_filename = os.path.splitext(os.path.basename(tmp_file_path))[0] + ".pdf"
-            print(f'{pdf_filename=}')
-            pdf_full_filepath = os.path.join(output_dir, pdf_filename)
-            print(f'{pdf_full_filepath=}')
+            convert_to_pdf(temp_file_path, output_dir)
+            expected_pdf_filename = os.path.splitext(os.path.basename(temp_file_path))[0] + ".pdf"
+            expected_pdf_path = os.path.join(output_dir, expected_pdf_filename)
 
-            if os.path.exists(pdf_full_filepath):
-                print('conversion worked')
-
-                # point this file to resume's file
-                with open(pdf_full_filepath, 'rb') as pdf_file:
-                    resume.file.save(os.path.splitext(request.FILES['file'].name)[0] + ".pdf", File(pdf_file), save=False)
-                resume.save()
-
-
-
-                if resume.visibility == "shared_with_specific_groups":
-                    for group in form.cleaned_data["groupsSharedWith"]:
-                        ResumeGroupViewingPermissions.objects.create(
-                            resume=resume, group=group
-                        )
-
-                # redirect to a new URL:
-                return HttpResponseRedirect(f"/details/{resume.id}/")
-
-            else:
-                print('conversion failed')
+            if not os.path.exists(expected_pdf_path):
                 form.add_error("file", "File failed to convert to pdf.")
+                return render(request, "resumes/upload.html", {"form": form})
+
+            pdf_path = expected_pdf_path
+            original_filename = os.path.splitext(request.FILES["file"].name)[0]
+            with open(pdf_path, "rb") as pdf_file:
+                resume.file.save(
+                    original_filename + ".pdf",
+                    File(pdf_file),
+                    save=False,
+                )
+            resume.save()
+
+            if resume.visibility == "shared_with_specific_groups":
+                for group in form.cleaned_data["groupsSharedWith"]:
+                    ResumeGroupViewingPermissions.objects.create(
+                        resume=resume, group=group
+                    )
+
+            return HttpResponseRedirect(f"/details/{resume.id}/")
 
     # If this is a GET (or any other method) create the default form.
     else:
@@ -291,7 +285,9 @@ def edit_resume(request, resume_id):
         form = EditResumeForm(request=request, instance=resume)
 
     file_source = resume_file_source(resume)
-    return render(request, "edit_resume.html", {"form": form, "file_source": file_source})
+    return render(
+        request, "edit_resume.html", {"form": form, "file_source": file_source}
+    )
 
 
 def user(request, user_id):
