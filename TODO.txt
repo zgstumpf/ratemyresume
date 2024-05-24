@@ -10,7 +10,6 @@ figure out foreign key issues when trying to delete DB records
 
 Bug: When navbar becomes toggled for small screen, nav elements originally floated to right appear in wrong order on dropdown list.
 Bug: Toggling responsive navbar causes hamburger icon to shift a few pixels due to relative/absolute positioning
-Bug: 'Upload a resume' button on index page gets wrapped wrong when screen is about 640px
 
 has user rated checkmark not appearing on grouppage.html, replaced with duplicate preview image in html
 

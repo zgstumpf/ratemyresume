@@ -8,7 +8,11 @@
 
 {% block content %}
     <h1 class="page-header">Edit Resume</h1>
-    <embed class="embedded-pdf" src="data:application/pdf;base64,{{ file }}" type="application/pdf" width="850" height="1125">
+    {% if USE_S3 == False %}
+        <embed src="data:application/pdf;base64,{{ file_source }}" type="application/pdf" width="850" height="1125">
+    {% else %}
+        <embed src="{{ file_source }}" type="application/pdf" width="850" height="1125">
+    {% endif %}
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}

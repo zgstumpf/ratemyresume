@@ -277,8 +277,8 @@ def edit_resume(request, resume_id):
     else:
         form = EditResumeForm(request=request, instance=resume)
 
-    pdf_content = pdf_to_str(resume)
-    return render(request, "edit_resume.html", {"form": form, "file": pdf_content})
+    file_source = resume_file_source(resume)
+    return render(request, "edit_resume.html", {"form": form, "file_source": file_source, "USE_S3": settings.USE_S3})
 
 
 def user(request, user_id):
