@@ -123,36 +123,22 @@ USE_I18N = True
 
 USE_TZ = True
 
-USE_S3 = bool(os.getenv('USE_S3'))
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-if USE_S3:
-    # Production settings
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+DEFAULT_FILE_STORAGE = 'ratemyresume.storage_backends.MediaStorage'
+
+STATIC_S3 = os.getenv('STATIC_S3') == 'True'
+if STATIC_S3:
     AWS_LOCATION = 'static'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-    # Make FileFields upload to S3
-    DEFAULT_FILE_STORAGE = 'ratemyresume.storage_backends.MediaStorage'
 else:
-    # Development settings
-
-    # URL prefix for static files
     STATIC_URL = 'static/'
-
-    # Directory where static files are stored after running collectstatic. Should be gitignored.
-    # DO NOT NAME 'static' since this will overwrite the existing 'static' directory where static files are edited from.
-    STATIC_ROOT = BASE_DIR / 'static_provider'
-
-    # Media files (Uploaded by users)
-    MEDIA_URL = '/media/' # base URL for serving media files
-    MEDIA_ROOT = BASE_DIR / 'media' # directory where media files are stored
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'), # base.css, base.js

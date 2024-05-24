@@ -1,5 +1,5 @@
 .env
 db.sqlite3
 *.pyc
-static_provider/
+
 .DS_Store

@@ -5,7 +5,7 @@
 ## Serving static (CSS, JS) and media (.pdf) files
 I followed [this guide](https://testdriven.io/blog/storing-django-static-and-media-files-on-amazon-s3/) for Amazon S3.
 
-Before deploying, in `.env`, set `USE_S3` to `True` then run `python manage.py collectstatic.`
+Before deploying, in `.env`, set `STATIC_S3` to `True` then run `python manage.py collectstatic.`
 
 ## Database
 See the "Connecting a PostgreSQL database with Amazon RDS" section of [this guide](https://aws.amazon.com/blogs/containers/deploy-and-scale-django-applications-on-aws-app-runner/).

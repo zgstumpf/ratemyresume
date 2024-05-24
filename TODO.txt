@@ -15,10 +15,6 @@ has user rated checkmark not appearing on grouppage.html, replaced with duplicat
 
 When editing resume, are old permissions deleted from DB?
 
-All the switching between USE_S3 true or false is getting annoying. Honestly, S3 should be used for all media even during development
-to closely imitate production environment. For static files, using S3 should be toggleable since serving them locally allows instant changes,
-with S3 you would have to run collectstatic each time which would be way to slow. The static_provider directory during development is nonsense.
-
 Can you make server restart when .env is changed?
 
 May have to store resume previews after all - current solution is a little slow.

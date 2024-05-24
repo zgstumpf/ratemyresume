@@ -189,7 +189,6 @@ def details(request, resume_id):
 
     context = {
         "resume": resume,
-        "USE_S3": settings.USE_S3,
         "file_source": file_source,
         "comment_form": comment_form,
         "rating_form": rating_form,
@@ -228,14 +227,7 @@ def upload(request):
             resume = form.save(commit=False)
             resume.user_id = request.user.id
 
-            if settings.USE_S3:
-                resume.save()
-            else:
-                # Local filesystem storage
-                fs = FileSystemStorage()
-                filename = fs.save(resume.file.name, resume.file)
-                resume.file.name = filename
-                resume.save()
+            resume.save()
 
             if resume.visibility == "shared_with_specific_groups":
                 for group in form.cleaned_data["groupsSharedWith"]:
@@ -245,11 +237,10 @@ def upload(request):
 
             # For now, convert_to_pdf only works for files on local filesystem, not S3.
             # TODO: This will be changed later.
-            if settings.USE_S3 == False:
-                try:
-                    convert_to_pdf(resume)
-                except FileNotFoundError:
-                    form.add_error("file", "File failed to convert to pdf.")
+            try:
+                convert_to_pdf(resume)
+            except FileNotFoundError:
+                form.add_error("file", "File failed to convert to pdf.")
 
             # redirect to a new URL:
             return HttpResponseRedirect(f"/details/{resume.id}/")
@@ -278,7 +269,7 @@ def edit_resume(request, resume_id):
         form = EditResumeForm(request=request, instance=resume)
 
     file_source = resume_file_source(resume)
-    return render(request, "edit_resume.html", {"form": form, "file_source": file_source, "USE_S3": settings.USE_S3})
+    return render(request, "edit_resume.html", {"form": form, "file_source": file_source})
 
 
 def user(request, user_id):
@@ -341,11 +332,9 @@ def delete_resume(request, resume_id):
     # remove the corresponding resume card from the page.
     resume_id = resume.id
 
-    # Delete resume file from S3 if it was uploaded when USE_S3 was True
     key = "private_media/" + resume.file.name
-    if s3_object_exists(key):
-        s3_client = boto3.client("s3")
-        s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
+    s3_client = boto3.client("s3")
+    s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
 
     # Delete resume from database
     resume.delete()
@@ -407,34 +396,17 @@ def get_resume_preview_image(request, resume_id):
 
     # For the standard 1 page resume pdf, the preview is larger in size than the pdf, so previews
     # are generated instead of stored
-    if settings.USE_S3 == False:
-        path = resume.file.path
-        try:
-            image = convert_from_path(pdf_path=path, first_page=1, last_page=1)[0]
-        except PDFPageCountError:
-            print(
-                f"File not found: {path}. This may occur if settings.USE_S3 is False and the resume was uploaded "
-                "when settings.USE_S3 was True. In this case, the file is not in in your local filesystem, only in S3."
-            )
-    else:
-        key = "private_media/" + resume.file.name
-        if not s3_object_exists(key):
-            print(
-                f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is True and the resume was uploaded "
-                "when settings.USE_S3 was False. In this case, the file is not in S3, only in your local filesystem. Or, make sure you have the same key as in AWS."
-            )
+    key = "private_media/" + resume.file.name
+    s3_client = boto3.client("s3")
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
 
-        s3_client = boto3.client("s3")
-        bucket_name = settings.AWS_STORAGE_BUCKET_NAME
-
-        try:
-            with tempfile.NamedTemporaryFile() as tmp_file:
-                s3_client.download_fileobj(bucket_name, key, tmp_file)
-                tmp_file_path = tmp_file.name
-                image = convert_from_path(tmp_file_path)[0]
-        except Exception as e:
-            print(e)
-            return JsonResponse({"error": "S3 Error"}, status=500)
+    try:
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            s3_client.download_fileobj(bucket_name, key, tmp_file)
+            tmp_file_path = tmp_file.name
+            image = convert_from_path(tmp_file_path)[0]
+    except Exception as e:
+        return JsonResponse({"error": "S3 Error"}, status=500)
 
     buffered = BytesIO()
     image.save(buffered, format="JPEG")
@@ -969,23 +941,6 @@ def last_group_activity(group_id: str):
     return max(filter(None, [lastMemberJoinDate, lastSpecificResumeShareDate]))
 
 
-def pdf_to_str(resume: Resume) -> str:
-    """
-    Returns a string representing the contents of a resume's file. This string can be inserted into an HTML template with:
-    ```html
-    <embed src="data:application/pdf;base64,{{ pdf_string }}" type="application/pdf" width="..." height="...">
-    ```
-    """
-    try:
-        with open(resume.file.path, "rb") as file:
-            return base64.b64encode(file.read()).decode()
-    except FileNotFoundError:
-        print(
-            f"File not found: {resume.file.path}. This may occur if settings.USE_S3 is False and the resume was uploaded "
-            "when settings.USE_S3 was True. In this case, the file is not in in your local filesystem, only in S3."
-        )
-
-
 def convert_to_pdf(resume: Resume) -> str:
     """
     Uses LibreOffice to convert a resume's file to pdf in media storage.
@@ -996,6 +951,11 @@ def convert_to_pdf(resume: Resume) -> str:
     """
     output_dir = os.path.join(settings.MEDIA_ROOT, "resumes")
     original_full_filepath = os.path.join(settings.MEDIA_ROOT, resume.file.name)
+    print(f'{output_dir=}')
+
+            # with tempfile.NamedTemporaryFile() as tmp_file:
+            # s3_client.download_fileobj(bucket_name, key, tmp_file)
+            # tmp_file_path = tmp_file.name
 
     # Convert file to pdf, store in same directory as before.
     # When converting, LibreOffice keeps the filename the same but changes extension to .pdf
@@ -1026,17 +986,10 @@ def convert_to_pdf(resume: Resume) -> str:
 
 def resume_file_source(resume: Resume) -> str:
     """
-    If `settings.USE_S3` is `True`, returns a presigned URL for the resume object in S3.
-
-    If `settings.USE_S3` is `False`, returns a base64 string representing the resume's file.
+    Returns a presigned URL for the resume object in S3.
 
     The returned value can be used in an HTML `<embed>` element.
     """
-    if settings.USE_S3 == False:
-        # Even though urls for media files are defined for development, the browser did not allow embedding
-        # a localhost url, so the old method of embedding the file as base64 will be used unless a fix is found
-        return pdf_to_str(resume)
-
     return create_presigned_url("private_media/" + resume.file.name)
 
 
@@ -1051,22 +1004,11 @@ def create_presigned_url(key: str):
     Python code. See `storage_backends.py` and `settings.DEFAULT_FILE_STORAGE`.
     """
     s3_client = boto3.client("s3")
-
-    if not s3_object_exists(key):
-        print(
-            f"Object with key '{key}' does not exist in S3. This may occur if settings.USE_S3 is True and the resume was uploaded "
-            "when settings.USE_S3 was False. In this case, the file is not in S3, only in your local filesystem."
-        )
-        return None
-
-    try:
-        url = s3_client.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": key},
-            ExpiresIn=3600,
-        )
-    except NoCredentialsError:
-        return None
+    url = s3_client.generate_presigned_url(
+        "get_object",
+        Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": key},
+        ExpiresIn=3600,
+    )
     return url
 
 
