@@ -77,4 +77,22 @@ document.addEventListener("DOMContentLoaded", () => {
         $(`.rating-option[data-value="${value}"]`).addClass("rating-option-selected")
     }
 
+
+    $('#confirmDeleteBtn').on('click', function(event) {
+        event.preventDefault()
+        $.ajax({
+            type: 'DELETE',
+            url: $('#delete-btn').data('delete-url'),
+            headers: {'X-CSRFToken': getCsrf()},
+            crossDomain: false,
+            success: function (response) {
+                $('#deleteConfirmationModal').modal('hide')
+                popupMsg('This resume has been deleted.')
+            },
+            error: function (response) {
+                console.error(response.responseJSON.error)
+            }
+        })
+    });
+
 });

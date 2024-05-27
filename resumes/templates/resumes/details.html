@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+    {% include 'resume_delete_modal.html' %}
     {% comment %} These divs are used to store context variables so JavaScript can access them. {% endcomment %}
     <div id="avgRatingForJS" style="display: none;">{{ avgRating }}</div>
     <div id="userRatingForJS" style="display: none;">{{ userRating.value }}</div>
@@ -122,7 +123,7 @@
         <h2 class="sub-header">Actions</h2>
         <div class="action-buttons">
             <a class="darkblue-btn" href="{% url 'edit_resume' resume.id %}">Edit</a>
-            <button class="red-btn">Delete (TODO)</button>
+            <button id="delete-btn" class="red-btn" data-delete-url="{% url 'delete_resume' resume.id %}" data-toggle="modal" data-target="#deleteConfirmationModal">Delete (TODO)</button>
         </div>
     {% endif %}
 
