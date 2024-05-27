@@ -409,9 +409,10 @@ def get_resume_preview_image(request, resume_id):
         with tempfile.NamedTemporaryFile() as tmp_file:
             s3_client.download_fileobj(bucket_name, key, tmp_file)
             tmp_file_path = tmp_file.name
+            print(tmp_file_path)
             image = convert_from_path(tmp_file_path)[0]
-    except Exception as e:
-        return JsonResponse({"error": "S3 Error"}, status=500)
+    except Exception:
+        return JsonResponse({"error": "Something went wrong"}, status=500)
 
     buffered = BytesIO()
     image.save(buffered, format="JPEG")

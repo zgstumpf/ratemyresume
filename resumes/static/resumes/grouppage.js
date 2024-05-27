@@ -30,11 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    $('.resume-card').each((_, resumeCard) => {
-        addJavaScriptFunctionality(resumeCard)
-    })
-
-
     // Create new query whenever user types in search bar
     $('#inviteUsersSearchBar').on('input', function() {
         query = $(this).val()
