@@ -16,3 +16,6 @@ has user rated checkmark not appearing on grouppage.html, replaced with duplicat
 Can you make server restart when .env is changed?
 
 May have to store resume previews after all - current solution is a little slow.
+
+May have to add install poppler to build step if you continue to use pdf2image
+https://github.com/Belval/pdf2image: Mac users will have to install poppler.
