@@ -120,8 +120,10 @@
 
     {% if request.user == resume.user %}
         <h2 class="sub-header">Actions</h2>
-        <a class="darkblue-btn" href="{% url 'edit_resume' resume.id %}">Edit</a>
-        <button class="red-btn">Delete (TODO)</button>
+        <div class="action-buttons">
+            <a class="darkblue-btn" href="{% url 'edit_resume' resume.id %}">Edit</a>
+            <button class="red-btn">Delete (TODO)</button>
+        </div>
     {% endif %}
 
 
