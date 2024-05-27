@@ -4,7 +4,7 @@ from django.template.defaultfilters import filesizeformat
 
 WORD_PROCESSING_CONTENT_TYPES = [
     "application/pdf",
-    "application/msword",  # Word .doc
+    "application/msword",  # Word .doc, .dot
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  # Word .docx
     "application/x-abiword",
     "application/vnd.oasis.opendocument.text", # OpenOffice .odt

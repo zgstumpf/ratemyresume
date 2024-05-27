@@ -21,7 +21,7 @@
         is centered with the content instead of centered in the middle of the page since form-fields expand to fit the page{% endcomment%}
         <div class="form-field file-field" style='width: fit-content'>
             <label for="{{ form.file.id_for_label }}">Upload file<span class="required-text">*</span></label>
-            <input type="file" name="{{ form.file.name }}" id="{{ form.file.id_for_label }}" accept=".pdf, .doc, .docx, .odt, .abw, .rtf, .txt" required {% if resume_limit_error %}disabled{% endif %}>
+            <input type="file" name="{{ form.file.name }}" id="{{ form.file.id_for_label }}" accept=".pdf, .doc, .docx, .dot, .odt, .abw, .rtf, .txt" required {% if resume_limit_error %}disabled{% endif %}>
             <p class="error-msg">{{ resume_limit_error }}</p>
             {% for error in form.file.errors %}
                 <p class="error-msg">{{ error }}</p>

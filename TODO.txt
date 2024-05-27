@@ -13,8 +13,6 @@ Bug: Toggling responsive navbar causes hamburger icon to shift a few pixels due 
 
 has user rated checkmark not appearing on grouppage.html, replaced with duplicate preview image in html
 
-When editing resume, are old permissions deleted from DB?
-
 Can you make server restart when .env is changed?
 
 May have to store resume previews after all - current solution is a little slow.
