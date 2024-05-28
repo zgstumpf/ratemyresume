@@ -3,15 +3,14 @@
 {% load static %}
 {% block pageSpecificStaticFiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'signup.css' %}">
-    <script src="{% static 'signup.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 <h1 class="page-header">Create an account</h1>
 <form id="signupForm" method="post" action="{% url 'signup' %}">
     {% csrf_token %}
-    {{ signUpForm }}
+    {{ form }}
     <input type="hidden" name="next" value="{{ next }}">
-    <button class="darkblue-btn" type="submit">Sign up</button>
+    <button class="darkblue-btn" type="submit">Submit</button>
 </form>
 {% endblock %}

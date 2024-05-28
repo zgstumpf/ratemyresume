@@ -12,3 +12,7 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["username", "password"]
+        help_texts = {
+            "username": "",
+            "password": ""
+        }

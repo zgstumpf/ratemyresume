@@ -26,12 +26,12 @@ def login_page(request):
     return render(request, 'login.html', {"authenticationForm": authenticationForm})
 
 def signup(request):
-    signUpForm = SignUpForm()
+    form = SignUpForm()
     if request.method == 'POST':
-        signUpForm = SignUpForm(request.POST)
-        if signUpForm.is_valid():
-            username = signUpForm.cleaned_data['username']
-            password = signUpForm.cleaned_data['password']
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
 
             user = User.objects.create_user(username=username, password=password)
 
@@ -40,4 +40,4 @@ def signup(request):
             # If POST was made with AJAX, we would use return JsonResponse({'success': True, "redirectURL": f'/user/{user.id}/'}, status=200)
             return redirect(f'/user/{user.id}/')
 
-    return render(request, 'signup.html', {"signUpForm": signUpForm})
+    return render(request, 'signup.html', {"form": form})

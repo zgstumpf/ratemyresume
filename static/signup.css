@@ -5,3 +5,7 @@
 #signupForm input {
     margin-bottom: 20px;
 }
+
+.errorlist {
+    color: red;
+}
