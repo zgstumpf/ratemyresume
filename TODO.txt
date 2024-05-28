@@ -1,7 +1,5 @@
 increase security of uploading files if you ever deploy to production: https://stackoverflow.com/questions/3648421/only-accept-a-certain-file-type-in-filefield-server-side/43540603#43540603
 
-profile page so user knows who they are
-
 try auto code security scanning: https://owasp.org/www-community/Free_for_Open_Source_Application_Security_Tools
 
 convert all model choices to class enums so they can be used outside of models.py
@@ -19,3 +17,5 @@ May have to store resume previews after all - current solution is a little slow.
 
 May have to add install poppler to build step if you continue to use pdf2image
 https://github.com/Belval/pdf2image: Mac users will have to install poppler.
+
+Pagination: https://pytutorial.com/how-to-make-a-pagination-with-django-and-ajaxjquery/
