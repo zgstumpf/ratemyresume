@@ -898,9 +898,6 @@ def user_search(request):
 
     users = User.objects.filter(
         Q(username__contains=query)
-        | Q(email__contains=query)
-        | Q(first_name__contains=query)
-        | Q(last_name__contains=query)
     ).exclude(
         id__in=excluded_ids
     )  # Do not return users who are already in the group
