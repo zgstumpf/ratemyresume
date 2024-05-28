@@ -85,45 +85,46 @@
         </div>
     {% endif %}
 
+    {% if resume.commentsEnabled %}
+        <h2 class="sub-header">Comments</h2>
+        <div id="write-comment-area">
+            <form id="commentForm"
+                method="post"
+                action="{% url 'details' resume_id=resume.id %}"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <textarea class="write-comment-input" name="text" placeholder="Write a comment" maxlength="2000"></textarea>
 
-    <h2 class="sub-header">Comments</h2>
-    <div id="write-comment-area">
-        <form id="commentForm"
-            method="post"
-            action="{% url 'details' resume_id=resume.id %}"
-            enctype="multipart/form-data">
-            {% csrf_token %}
-            <textarea class="write-comment-input" name="text" placeholder="Write a comment" maxlength="2000"></textarea>
+                {% comment %}Since there are multiple forms on this page, this hidden input field is used to identify the form
+                once the form information is sent to the backend.{% endcomment %}
+                <input type="hidden" name="form_type" value="comment_form">
+            </form>
 
-            {% comment %}Since there are multiple forms on this page, this hidden input field is used to identify the form
-            once the form information is sent to the backend.{% endcomment %}
-            <input type="hidden" name="form_type" value="comment_form">
-        </form>
+            <button id="submit-comment-button" class="darkblue-btn" title="Send comment">
+                <svg id="submit-comment-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send-arrow-down-fill" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15.854.146a.5.5 0 0 1 .11.54L13.026 8.03A4.5 4.5 0 0 0 8 12.5c0 .5 0 1.5-.773.36l-1.59-2.498L.644 7.184l-.002-.001-.41-.261a.5.5 0 0 1 .083-.886l.452-.18.001-.001L15.314.035a.5.5 0 0 1 .54.111M6.637 10.07l7.494-7.494.471-1.178-1.178.471L5.93 9.363l.338.215a.5.5 0 0 1 .154.154z"/>
+                    <path fill-rule="evenodd" d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-1.646a.5.5 0 0 1-.722-.016l-1.149-1.25a.5.5 0 1 1 .737-.676l.28.305V11a.5.5 0 0 1 1 0v1.793l.396-.397a.5.5 0 0 1 .708.708z"/>
+                </svg>
+                Send
+            </button>
+        </div>
 
-        <button id="submit-comment-button" class="darkblue-btn" title="Send comment">
-            <svg id="submit-comment-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send-arrow-down-fill" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15.854.146a.5.5 0 0 1 .11.54L13.026 8.03A4.5 4.5 0 0 0 8 12.5c0 .5 0 1.5-.773.36l-1.59-2.498L.644 7.184l-.002-.001-.41-.261a.5.5 0 0 1 .083-.886l.452-.18.001-.001L15.314.035a.5.5 0 0 1 .54.111M6.637 10.07l7.494-7.494.471-1.178-1.178.471L5.93 9.363l.338.215a.5.5 0 0 1 .154.154z"/>
-                <path fill-rule="evenodd" d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-1.646a.5.5 0 0 1-.722-.016l-1.149-1.25a.5.5 0 1 1 .737-.676l.28.305V11a.5.5 0 0 1 1 0v1.793l.396-.397a.5.5 0 0 1 .708.708z"/>
-            </svg>
-            Send
-        </button>
-    </div>
-
-    <div id="comment-section">
-        {% if comments %}
-            {% for comment in comments %}
-                {% include 'comment.html' with comment=comment %}
-            {% endfor %}
-        {% else %}
-            <p id="no-comments-placeholder">Be the first to comment</p>
-        {% endif %}
-    </div>
+        <div id="comment-section">
+            {% if comments %}
+                {% for comment in comments %}
+                    {% include 'comment.html' with comment=comment %}
+                {% endfor %}
+            {% else %}
+                <p id="no-comments-placeholder">Be the first to comment</p>
+            {% endif %}
+        </div>
+    {% endif %}
 
     {% if request.user == resume.user %}
         <h2 class="sub-header">Actions</h2>
         <div class="action-buttons">
             <a class="darkblue-btn" href="{% url 'edit_resume' resume.id %}">Edit</a>
-            <button id="delete-btn" class="red-btn" data-delete-url="{% url 'delete_resume' resume.id %}" data-toggle="modal" data-target="#deleteConfirmationModal">Delete (TODO)</button>
+            <button id="delete-btn" class="red-btn" data-delete-url="{% url 'delete_resume' resume.id %}" data-toggle="modal" data-target="#deleteConfirmationModal">Delete</button>
         </div>
     {% endif %}
 

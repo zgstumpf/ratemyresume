@@ -129,7 +129,7 @@ def details(request, resume_id):
         # 'form_type' is a hidden input field added to the comment form with a preset value of 'comment_form'
         # When the form is submitted, 'form-type' and its value will be submitted with it in the request
         # Because the details view has multiple forms, this hidden input field is used to identify the forms
-        if request.POST["form_type"] == "comment_form":
+        if resume.commentsEnabled == True and request.POST["form_type"] == "comment_form":
             comment_form = UploadCommentForm(request.POST)
 
             if comment_form.is_valid():
@@ -185,7 +185,6 @@ def details(request, resume_id):
     except ObjectDoesNotExist:
         userRating = None
 
-    # '-' before field name makes order_by do descending
     comments = Comment.objects.filter(resume_id=resume_id).order_by("-created_at")
     numComments = len(comments)
 
