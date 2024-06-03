@@ -1,3 +1,6 @@
+# Deprecated
+Most of this information is no longer applicable after using Docker.
+
 # LibreOffice
 ratemyresume uses LibreOffice to convert user-uploaded resumes, which may be of varying file types, to pdfs, which can be displayed on an HTML page. LibreOffice is free and open-source software and functions like Microsoft Word. For ratemyresume to use LibreOffice, it must be installed on the same system the app is running from. For development, installing LibreOffice to your device works, but for production, Docker will be used to ensure ratemyresume has access to LibreOffice.
 
