@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    command: bash -c "echo Hello"
+    # command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    container_name: ratemyresume_web
+    volumes:
+      - .:/ratemyresume_container
+    ports:
+      - "8000:8000"

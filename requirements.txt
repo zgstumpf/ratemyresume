@@ -1,6 +1,5 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
-# platform: osx-64
 asgiref=3.7.2=pyhd8ed1ab_0
 boto3=1.34.82=py312hecd8cb5_0
 botocore=1.34.82=py312hecd8cb5_0
