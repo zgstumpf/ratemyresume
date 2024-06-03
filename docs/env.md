@@ -1,7 +1,7 @@
 # The .env file
 If you are a team member, ask Zach for AWS keys.
 
-If you are a contributor, you will have to make your own S3 bucket for testing. Or, develop without testing S3 and hope it works with S3 enabled.
+If you are a contributor, you will have to make your own S3 bucket for testing.
 
 ## Template
 ```env
