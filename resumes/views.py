@@ -973,7 +973,7 @@ def save_as_pdf(resume: Resume, request_file: InMemoryUploadedFile) -> None:
 
     subprocess.run(
         # quotations in case filename has spaces
-        f'/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf --outdir {output_dir} "{temp_file_path}"',
+        f'libreoffice --headless --convert-to pdf --outdir {output_dir} "{temp_file_path}"',
         shell=True,
     )
 
