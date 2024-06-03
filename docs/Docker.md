@@ -1,17 +1,16 @@
-Build Docker image and run container
+Build Docker image and run container. Add `--build` to rebuild image.
 ```sh
-docker-compose up --build -d
+docker-compose up -d
 ```
 
-See output from `compose.yaml`
+Create `environment.yaml` file.
 ```sh
-docker-compose logs web
+conda env export --no-build | grep -v "^prefix: " > environment.yaml
 ```
 
-Still figuring out how to see output from `Dockerfile`
+Search http://localhost:8000/ to view web app running from Docker. All Python `print()` statements will print to Docker Desktop > Containers > ratemyresume
 
-
-Create `environment.yml` file. `--no-build` tells conda to leave out the build hash, which is unique to an operating system. Installing a package on MacOS may produce a build hash that does not work with Linux in Docker, which is why the build hash is excluded.
+Quit server
 ```sh
-conda env export --no-build | grep -v "^prefix: " > environment.yml
+docker-compose down
 ```

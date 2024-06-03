@@ -17,5 +17,6 @@ May have to store resume previews after all - current solution is a little slow.
 
 May have to add install poppler to build step if you continue to use pdf2image
 https://github.com/Belval/pdf2image: Mac users will have to install poppler.
+- Don't think this is a problem with Docker, poppler is specified in environment.yml
 
 Pagination: https://pytutorial.com/how-to-make-a-pagination-with-django-and-ajaxjquery/
