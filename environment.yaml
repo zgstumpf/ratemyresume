@@ -50,6 +50,7 @@ dependencies:
   - pixman=0.40.0
   - poppler=0.81.0
   - poppler-data=0.4.12
+  #- psycopg2-binary=2.9.9
   - pysocks=1.7.1
   - python=3.12.1
   - python-dateutil=2.9.0post0

@@ -59,7 +59,7 @@ cd ratemyresume
 
 In the root project directory, create a file named `.env`. Copy the template from `docs` > `env.md` and paste into the `.env` file.
 
-5. Build the Docker container
+5. Build the Docker container (must have Docker Desktop open)
 ```sh
 docker-compose up
 ```
@@ -68,7 +68,7 @@ docker-compose up
 
 1. There are two `ratemyresume` directories. If you haven't already, `cd` into the outer `ratemyresume` directory so you are in the directory containing `manage.py`.
 
-2. Run the Docker container
+2. Run the Docker container (must have Docker Desktop open)
 ```sh
 docker-compose up
 ```
@@ -88,12 +88,9 @@ If you make any changes in the `.env` file, restart the server (quit the server 
 
 When you are done developing, quit the Docker container with **control + c**.
 
-<h4>Useful conda commands</h4>
+<h4>Install Python package</h4>
 
-If you install a new package, update `environment.yaml`:
-```sh
-conda env export --no-build | grep -v "^prefix: " > environment.yaml
-```
+Manually add the package to `environment.yaml` then run `docker-compose build`.
 
 <h2>Developers</h2>
 
