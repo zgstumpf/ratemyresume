@@ -2,7 +2,8 @@ services:
   web:
     build: .
     # command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    # command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    command: tail -f /dev/null
     container_name: ratemyresume_web_server
     volumes:
       - .:/ratemyresume

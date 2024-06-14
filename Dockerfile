@@ -1,6 +1,9 @@
 # Get Anaconda
 FROM continuumio/miniconda3
 
+# Build prerequisites needed for Python psycopg package (https://www.psycopg.org/docs/install.html#build-prerequisites)
+RUN apt-get update && apt-get install build-essential python3-dev libpq-dev -y
+
 COPY environment.yaml /tmp/environment.yaml
 
 # Create conda environment from .yml file
