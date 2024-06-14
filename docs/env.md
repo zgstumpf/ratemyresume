@@ -1,14 +1,25 @@
 # The .env file
-If you are a team member, ask Zach for AWS keys.
+Data that should be kept secret from source control is stored in the `.env` file in the root directory of the project.
 
-If you are a contributor, you will have to make your own S3 bucket for testing.
+If you've just cloned the repo, you will have to create the `.env` file yourself.
 
 ## Template
 ```env
-# Set to True to fetch static files from S3. Set to False to fetch from local filesystem.
-STATIC_S3=False
+# S3
+# -----------------
 
-AWS_ACCESS_KEY_ID=update_this
-AWS_SECRET_ACCESS_KEY=update_this
-AWS_STORAGE_BUCKET_NAME=update_this
+# Set to True to fetch static files from S3. Set to False to fetch from local filesystem.
+STATIC_S3=
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_STORAGE_BUCKET_NAME=
+
+# Database
+# -----------------
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+DB_HOST=
+DB_PORT=
 ```

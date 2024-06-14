@@ -57,7 +57,7 @@ cd ratemyresume
 
 4. Create the `.env` file
 
-In the root project directory, create a file named `.env`. Copy the template from `docs` > `env.md` and paste into the `.env` file.
+In the root project directory, create a file named `.env`. Copy the template from `docs` > `env.md` and paste into the `.env` file. You need to fill in the values for each key - the project won't work without those values. Ask a team member for help, or retrieve the values from AWS.
 
 5. Build the Docker container (must have Docker Desktop open)
 ```sh
