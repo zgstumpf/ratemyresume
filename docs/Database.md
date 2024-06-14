@@ -60,10 +60,21 @@ Switch to Connection tab
 - Password: `DB_PASSWORD` from `env`
 - Save password? ✓
 
-### View table contents and execute SQL in pgAdmin 4
+### View table contents in pgAdmin 4
 
 Object Explorer -> Servers -> `DB_NAME` from `.env` -> Databases -> `DB_NAME` from `.env` -> Schemas -> public -> Tables
 
 Now you can see all tables in the database. To view the contents of a certain table, right-click the table name in Object Explorer and select **View/Edit Data**. Select **All Rows**, or whichever option suits your needs.
 
-You can execute SQL in the Query window.
+To execute SQL, right-click Tables in Object Explorer and select **Query Tool**.
+
+### Other actions
+
+Delete all tables (useful when changing database table configurations, DO NOT do this in production db). Run this SQL:
+```sql
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+```
+
+Refresh the database (after doing something like dropping all schemas to reset it): Object Explorer -> Servers -> right-click db name -> **Refresh...**
+

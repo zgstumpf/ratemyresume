@@ -50,7 +50,6 @@ dependencies:
   - pixman=0.40.0
   - poppler=0.81.0
   - poppler-data=0.4.12
-  #- psycopg2=2.9.9
   - pip
   - pip:
     - psycopg2>=2.9,<2.10 --no-binary psycopg2
