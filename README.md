@@ -73,7 +73,7 @@ docker-compose up
 docker-compose up
 ```
 
-4. In a browser of your choice, search [http://localhost:8000/](http://localhost:8000/).
+4. In a browser of your choice, search [http://localhost:8000/](http://localhost:8000/). The terminal output may give a different URL - ignore it. (The difference is due to using Docker.)
 
 Any changes you make to most files will automatically trigger page reloads. If you edit files in a `static` directory (CSS/JS files), you need to **manually** refresh the page to see the changes. Your browser may cache previous versions of a file to reduce refresh loading times, so if you don't see changes after refreshing, **hard reload**. Look up how to hard reload for your chosen browser. On Mac for Edge it is **command + shift + r**.
 
@@ -86,7 +86,7 @@ python manage.py migrate
 
 If you make any changes in the `.env` file, restart the server (quit the server and run `docker-compose up`) for your changes to take place.
 
-When you are done developing, quit the Docker container with **control + c**.
+When you are done developing, quit the Docker container with **control + c**, or stop it in Docker Desktop.
 
 <h4>Install Python package</h4>
 
