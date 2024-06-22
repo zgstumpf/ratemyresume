@@ -69,4 +69,6 @@ dependencies:
   - zlib=1.2.13
   - zstd=1.5.5
   - pip:
+    # This package must be installed with pip, not conda, to prevent segmentation fault error
+    # https://www.psycopg.org/docs/install.html#change-in-binary-packages-between-psycopg-2-7-and-2-8
     - psycopg2>=2.9,<2.10 --no-binary psycopg2
