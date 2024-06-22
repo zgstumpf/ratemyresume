@@ -59,7 +59,9 @@ cd ratemyresume
 
 In the root project directory, create a file named `.env`. Copy the template from `docs` > `env.md` and paste into the `.env` file. You need to fill in the values for each key - the project won't work without those values. Ask a team member for help, or retrieve the values from AWS.
 
-5. Build the Docker container (must have Docker Desktop open)
+5. Follow the instructions in `docs` > `Database.md` > `Add your IP address to the database VPC security group inbound rules`
+
+6. Build the Docker container (**must have Docker Desktop open**)
 ```sh
 docker-compose up
 ```
@@ -68,7 +70,7 @@ docker-compose up
 
 1. There are two `ratemyresume` directories. If you haven't already, `cd` into the outer `ratemyresume` directory so you are in the directory containing `manage.py`.
 
-2. Run the Docker container (must have Docker Desktop open)
+2. Run the Docker container (**must have Docker Desktop open**)
 ```sh
 docker-compose up
 ```

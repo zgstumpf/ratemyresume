@@ -82,3 +82,14 @@ DO NOT do this in the production database. This is useful when you make substant
     ```
 1. Object Explorer -> Servers -> right-click db name -> **Refresh...**
 
+### Add your IP address to the database VPC security group inbound rules
+
+You may need to do this again if you get a `Connection refused` error. Even if you already added your IP before, your IP address may change if you are connected to a different network than the first time.
+
+AWS -> RDS -> Databases -> ratemyresume-postgresql -> Connectivity & security tab -> click link under VPC security groups
+
+There should be one security group listed. Click the link under Security group ID. Then click **Edit inbound rules** -> **Add rule**.
+
+In the new rule, set the **Type** to `PostgreSQL` and the **Source** to `My IP`. Set **Description - optional** to something including your name, such as `Allow NAME computer to access database` so you (and the team) remembers why you made the rule if you ever have to go back to this screen.
+
+Click **Save rules** when done.

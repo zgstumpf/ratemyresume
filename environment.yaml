@@ -13,8 +13,8 @@ dependencies:
   - cairo=1.16.0
   - click=8.1.7
   - curl=8.5.0
-  - django=5.0.2
   - django-storages=1.14.3
+  - django=5.0.2
   - expat=2.5.0
   - fontconfig=2.13.94
   - freetype=2.10.4
@@ -48,15 +48,12 @@ dependencies:
   - pillow=10.2.0
   - pip=23.3.1
   - pixman=0.40.0
-  - poppler=0.81.0
   - poppler-data=0.4.12
-  - pip
-  - pip:
-    - psycopg2>=2.9,<2.10 --no-binary psycopg2
+  - poppler=0.81.0
   - pysocks=1.7.1
-  - python=3.12.1
   - python-dateutil=2.9.0post0
   - python-dotenv=0.21.0
+  - python=3.12.1
   - readline=8.2
   - s3transfer=0.10.1
   - setuptools=68.2.2
@@ -71,3 +68,5 @@ dependencies:
   - xz=5.4.5
   - zlib=1.2.13
   - zstd=1.5.5
+  - pip:
+    - psycopg2>=2.9,<2.10 --no-binary psycopg2
