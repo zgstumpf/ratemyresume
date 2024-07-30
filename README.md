@@ -17,14 +17,12 @@
   <li>Granular privacy controls for resumes</li>
   <li>Search functionality</li>
   <li>Responsive</li>
-  <li>AJAX to update content without a page refresh</li>
+  <li>AJAX</li>
 </ul>
 
-<h2>Contributing</h2>
+<h2>Install</h2>
 
-<h3>Install</h3>
-
-1. Install the required prequisites. If you want, install the recommended ones.
+1. Install the required prequisites.
 
     Required prequisite downloads:
     - **Docker** - [Make an account](https://hub.docker.com/) and [download Docker Desktop](https://docs.docker.com/engine/install/)
@@ -42,29 +40,31 @@
     - **GitHub Desktop** - GUI for Git
     - **pgAdmin 4** - See database contents and execute SQL for debugging
 
-2. Clone the repository to your device
+1. Clone the repository to your device
 
     ```sh
     git clone https://github.com/zgstumpf/ratemyresume.git
     ```
 
-3. Navigate into the new cloned directory
+1. Navigate into the new cloned directory
 
     ```sh
     cd ratemyresume
     ```
 
-4. Create the `.env` file
+1. Create the `.env` file
 
     In the root project directory, create a file named `.env`. Copy the template from `docs` > `env.md` and paste into the `.env` file. You need to fill in the values for each key. Ask a team member for help, or retrieve the values from AWS.
 
-6. Build the Docker container (**must have Docker Desktop open**)
+1. Open Docker Desktop
+
+1. Build the Docker container
 
     ```sh
     docker-compose up
     ```
 
-<h3>Run locally for development</h3>
+<h2>Run locally for development</h2>
 
 1. `cd` into the directory containing `manage.py`
 
@@ -87,6 +87,9 @@ If you make any changes in the `.env` file, restart the server (quit the server 
 
 When you are done developing, quit the Docker container with **control + c**, or stop it in Docker Desktop.
 
-<h4>Install Python package</h4>
+<h3>Install Python package</h3>
 
-Manually add the package to `environment.yaml` then run `docker-compose build`.
+1. Manually add the package name and version in `environment.yaml`
+1. ```sh
+    docker-compose build
+    ```
