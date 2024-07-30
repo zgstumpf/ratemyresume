@@ -22,3 +22,5 @@ https://github.com/Belval/pdf2image: Mac users will have to install poppler.
 Pagination: https://pytutorial.com/how-to-make-a-pagination-with-django-and-ajaxjquery/
 
 Docker: find some way to not repeat install libreoffice step every time
+
+Remove RDS Proxy from RDS - It costs like $20/mo

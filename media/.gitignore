@@ -1,6 +1,0 @@
-# The files in the 'media' directory should not be tracked by git, but the 'media' directory itself should
-
-# Ignore all files in this directory ...
-*
-# ... but include this .gitignore file
-!.gitignore

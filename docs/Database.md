@@ -21,15 +21,19 @@ Note: Free Tier provides 750 running hours per month at no charge, more than the
 
 Update `.env` with the values from AWS RDS, especially `DB_PASSWORD` since you can't come back and view it later in AWS RDS.
 
-After creating the database, change some settings to allow Django to access the database.
+After creating the database, change some settings to allow your device to access the database.
 
 AWS -> RDS -> Databases -> ratemyresume-postgresql
 
 Connectivity & security -> VPC security group -> default group -> Edit inbound rules -> Add rule
 
+Add this rule:
 - Type: PostgreSQL
-- Source: My IP
-- Description: Allows dev computer to access database
+- Source: Custom 0.0.0.0/0
+
+And add this rule:
+- Type: PostgreSQL
+- Source: Custom ::/0
 
 ## View database contents
 
@@ -82,14 +86,14 @@ DO NOT do this in the production database. This is useful when you make substant
     ```
 1. Object Explorer -> Servers -> right-click db name -> **Refresh...**
 
-### Add your IP address to the database VPC security group inbound rules
-
-You may need to do this again if you get a `Connection refused` error. Even if you already added your IP before, your IP address may change.
+### Edit VPC security group inbound rules
 
 AWS -> RDS -> Databases -> ratemyresume-postgresql -> Connectivity & security tab -> click link under VPC security groups
 
 There should be one security group listed. Click the link under Security group ID. Then click **Edit inbound rules** -> **Add rule**.
 
-In the new rule, set the **Type** to `PostgreSQL` and the **Source** to `My IP`. Set **Description - optional** to something including your name, such as `Allow NAME computer to access database`.
-
 Click **Save rules** when done.
+
+A `Connection refused` error usually means your IP address is not allowed by the database's VPC security group. Currently, the security group allows all IPs instead of a defined list because:
+- IPs may be dynamic and change between development sessions
+- a password is still required to connect to the database
