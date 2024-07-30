@@ -1,10 +1,8 @@
-<h1 align="center">Ratemyresume</h1>
+<h1>Ratemyresume</h1>
 
-<p align="center">Real people rate your resume</p>
+**Real people rate your resume**
 
-<hr/>
-
-<p>A website where you can upload your resume and get a rating from 0-10 from other users. Built with Django.</p>
+A website where you can upload your resume and get a rating from 0-10 from other users. Built with Django and AWS.
 
 <h2>Features</h2>
 
@@ -54,7 +52,7 @@
 
 1. Create the `.env` file
 
-    In the root project directory, create a file named `.env`. Copy the template from `docs` > `env.md` and paste into the `.env` file. You need to fill in the values for each key. Ask a team member for help, or retrieve the values from AWS.
+    In the root project directory, create a file named `.env`. Copy the template from `docs` > `env.md` and paste into the `.env` file. You need to fill in the values for each key. Ask a team member for help or retrieve the values from AWS.
 
 1. Open Docker Desktop
 
@@ -66,6 +64,8 @@
 
 <h2>Run locally for development</h2>
 
+1. Make sure the AWS services are running. The database may have been temporarily stopped during non-development periods.
+
 1. `cd` into the directory containing `manage.py`
 
 1. Open Docker Desktop
@@ -73,6 +73,8 @@
 1. Run `docker-compose up`
 
 1. In a browser, search [http://localhost:8000/](http://localhost:8000/). (The terminal output may give a different URL - ignore it.)
+
+Most errors should appear in the same terminal you ran `docker-compose up` in, but sometimes errors are only viewable in Docker Desktop (Containers -> ratemyresume). If the app fails to start, check there.
 
 Any changes you make to most files will automatically trigger page reloads. If you edit files in a `static` directory, you need to manually refresh the page to see the changes. If that doesn't work, **hard reload** the page.
 
