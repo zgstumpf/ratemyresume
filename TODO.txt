@@ -24,3 +24,5 @@ Pagination: https://pytutorial.com/how-to-make-a-pagination-with-django-and-ajax
 Docker: find some way to not repeat install libreoffice step every time
 
 Remove RDS Proxy from RDS - It costs like $20/mo
+
+!!! Database instance was deleted to save costs as I focus on other priorities
